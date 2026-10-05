@@ -104,7 +104,7 @@ lisenssi arvioidaan uudelleen (avoin kysymys, osio 13).
     "dev": "http://localhost:8082",
     "api": "http://localhost:8797/api",
     "production": "https://samppafin.github.io/Vaihtokaupat/",
-    "production_api": "https://vaihtokaupat.<tili>.workers.dev/api"
+    "production_api": "https://vaihtokaupat.es3-world-worker.workers.dev/api"
   },
   "branches": { "main": "main", "active": "feature/STORY-NNN" },
   "deploy": "Push main → GitHub Actions: testit → Worker (wrangler deploy) → GitHub Pages. Pull request ajaa vain testit.",
@@ -362,6 +362,7 @@ docs/tickets/testing/TICKET-TEST-NNN.json
 | 2026-10-05 | Yhteystiedot poistetaan, kun ilmoitus merkitään vaihdetuksi. Ilmoitus poistuu 6 kuukauden kuluttua viimeisestä muokkauksesta. | GDPR: minimointi ja säilytysaika | Sami |
 | 2026-10-05 | Suunnitelmien "ehdotukset"-laskuri jätetään MVP:n ulkopuolelle | Ehdotuksille ei ole kanavaa ilman viestejä | Sami |
 | 2026-10-05 | PLAN-001 hyväksyttiin, ja R2-ämpärin nimeksi tulee `vaihtokaupat-listings` | Hermeksen ehdotus STORY-001:n suunnitelmasta | Sami |
+| 2026-10-05 | Käytetään samaa Cloudflare-tiliä kuin BandRockilla. Worker-nimi `vaihtokaupat` oli vapaa, ja R2-ämpäri `vaihtokaupat-listings` luotiin. | Ratkaisee avoimen kysymyksen 8 | Sami |
 | 2026-10-05 | `@axe-core/playwright` (MPL-2.0) sallitaan kehitysaikaisena testityökaluna, vaikka lisenssilinjaus sallii muuten vain MIT-, Apache- ja BSD-lisenssit | Työkalu ei päädy julkaisuun, ja saavutettavuustestaus on osa testausstackia | Sami |
 
 ### Avoimet kysymykset
@@ -373,5 +374,5 @@ docs/tickets/testing/TICKET-TEST-NNN.json
 5. Mitä kautta kadonneen koodin poistopyynnöt tulevat ylläpidolle (esim. sähköpostiosoite)?
 6. Täyttävätkö Arena-ilmeen kontrastit WCAG AA -vaatimuksen spottivalojen ja liukuvärien päällä? Tarkistetaan STORY-003:ssa.
 7. Hankitaanko oma domain, vai riittävätkö `samppafin.github.io` ja `workers.dev`?
-8. Käytetäänkö samaa Cloudflare-tiliä kuin BandRockilla, ja onko Workerin nimi `vaihtokaupat` vapaana?
+8. ~~Käytetäänkö samaa Cloudflare-tiliä kuin BandRockilla, ja onko Workerin nimi `vaihtokaupat` vapaana?~~ Ratkaistu 2026-10-05 (päätöstaulukko).
 9. Lisenssi arvioidaan uudelleen, jos palvelusta tulee maksullinen.
