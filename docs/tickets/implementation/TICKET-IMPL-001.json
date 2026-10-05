@@ -1,0 +1,45 @@
+{
+  "id": "TICKET-IMPL-001",
+  "story": "STORY-001",
+  "plan": "PLAN-001",
+  "implemented_by_model": "Claude Opus 5.5",
+  "status": "review",
+  "files_changed": [
+    ".gitignore",
+    "LICENSE",
+    "package.json",
+    "package-lock.json",
+    "wrangler.toml",
+    "playwright.config.js",
+    "public/index.html",
+    "public/404.html",
+    "public/assets/router.js",
+    "worker/src/index.js",
+    "worker/src/code.js",
+    "worker/src/image.js",
+    "test/pages-sim.mjs",
+    "test/pages-sim.test.js",
+    "test/worker.test.js",
+    "test/code.test.js",
+    "test/image.test.js",
+    "test/e2e/routing.spec.js"
+  ],
+  "change_summary": "Runko kopioitiin BandRockista (SamppaFIN/BandRock@7098a01), ja lähde-commit on kirjattu jokaisen kopioidun tiedoston alkuun. Mukaan tulivat 404.html-uudelleenohjaus, router.js (slug-nimi muutettu muotoon id), code.js ilman yleisavaimia 00000/99999 ja ilman slugifya, image.js sellaisenaan sekä niiden testit englanniksi käännettyinä. Worker vastaa vain GET /api -terveystarkistukseen, ja sen CORS-rajaus on kopioitu sellaisenaan. Virhelokiin kirjataan vain virheen nimi, ei viestiä, koska viesti voisi sisältää käyttäjän dataa. index.html on tyylitön kuori, jossa on yksi h1 ja reitin näyttö textContentillä. Repossa on uusi GitHub Pages -simulaattori (test/pages-sim.mjs, npm run dev → http://localhost:8082/Vaihtokaupat/), ja se palauttaa tuntemattomille poluille 404.html:n statuksella 404. Bändikohtaiset osat (keikat, discografia, soittimet, render.js, schema.js, editmode.js, CSS, fontit, seed-skriptit ja ylläpitosivu) jätettiin pois. editmode.js kopioidaan STORY-009:ssä.",
+  "impact_analysis": {
+    "changed_symbols": [
+      "code.js: isMasterCode, MASTER_EDIT_CODE, MASTER_DELETE_CODE ja slugify jätetty pois",
+      "router.js: parseRoute palauttaa { id } eikä { slug }"
+    ],
+    "call_sites_found": [
+      "public/index.html: parseRoute().id"
+    ],
+    "call_sites_updated": [
+      "public/index.html"
+    ],
+    "compile_errors_before": null,
+    "compile_errors_after": 0,
+    "notes": "Uusi repo, joten aiempia kutsupaikkoja ei ole. Turvallisuuteen vaikuttavat: CORS (ALLOWED_ORIGINS = https://samppafin.github.io), muokkauskoodin HMAC, yleisavainten poisto sekä uudet devDependencyt wrangler (MIT/Apache-2.0) ja @playwright/test (Apache-2.0). Simulaattori estää ../-polut, ja testi kattaa %2e%2e-muodon. Workerin nopeusrajoitin jätettiin STORY-007:ään. Huom: BandRockin namespace_id 1001 ei saa toistua, jos tili on sama."
+  },
+  "commit": null,
+  "progress": 100
+}

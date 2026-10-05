@@ -1,0 +1,692 @@
+{
+  "_meta": {
+    "schema_version": "1.1",
+    "generated_at": "2026-10-05T21:00:00Z",
+    "generated_by": "Hermes (Claude Code), STORY-001",
+    "git_commit": null,
+    "git_branch": "main",
+    "language": "fi"
+  },
+  "project": {
+    "name": "Vaihtokaupat",
+    "description": "Vaihtoalusta, jossa jäsenet kertovat mitä tarjoavat ja mitä toivovat tilalle, ja sopivat vaihdon kasvokkain — ilman rahaa.",
+    "version": "0.1.0-MVP",
+    "status": "planning",
+    "license": {
+      "id": "MIT",
+      "note": "Riippuvuuksiksi kelpaavat MIT-, Apache- ja BSD-lisensoidut kirjastot. GPL-kirjastoja ei oteta."
+    },
+    "stack": {
+      "frontend": [
+        "HTML",
+        "CSS (OKLCH-tokenit)",
+        "JavaScript (ES-moduulit, ei build-vaihetta)"
+      ],
+      "backend": [
+        "Cloudflare Workers",
+        "Cloudflare R2",
+        "Workers Rate Limiting",
+        "Cron Triggers"
+      ],
+      "build": [
+        "Ei build-vaihetta",
+        "wrangler (devDependency)"
+      ],
+      "testing": [
+        "node:test",
+        "Playwright",
+        "@axe-core/playwright"
+      ]
+    },
+    "repositories": {
+      "app": "github.com/SamppaFIN/Vaihtokaupat"
+    },
+    "urls": {
+      "dev": "http://localhost:8082",
+      "api": "http://localhost:8797/api"
+    },
+    "branches": {
+      "main": "main",
+      "active": "feature/STORY-NNN"
+    },
+    "has_ui": true
+  },
+  "epics": [
+    {
+      "id": "EPIC-001",
+      "title": "Perusta ja julkaisuputki",
+      "icon": "🏗️",
+      "description": "Runko kopioidaan BandRockista, ja julkaisuputki toimii ennen ensimmäistä ominaisuutta.",
+      "status": "in_progress",
+      "stories": [
+        "STORY-001",
+        "STORY-002",
+        "STORY-003"
+      ],
+      "progress": 0
+    },
+    {
+      "id": "EPIC-002",
+      "title": "Etusivu ja selaus",
+      "icon": "🎸",
+      "description": "Kävijä ymmärtää idean ja löytää kiinnostavan vaihdon.",
+      "status": "todo",
+      "stories": [
+        "STORY-004",
+        "STORY-005",
+        "STORY-006"
+      ],
+      "progress": 0
+    },
+    {
+      "id": "EPIC-003",
+      "title": "Ilmoituksen elinkaari",
+      "icon": "✍️",
+      "description": "Ilmoitus luodaan, muokataan WYSIWYG-tilassa, merkitään vaihdetuksi ja poistetaan, kaikki muokkauskoodilla.",
+      "status": "todo",
+      "stories": [
+        "STORY-007",
+        "STORY-008",
+        "STORY-009",
+        "STORY-010",
+        "STORY-011"
+      ],
+      "progress": 0
+    },
+    {
+      "id": "EPIC-004",
+      "title": "Tietosuoja ja ylläpito",
+      "icon": "🛡️",
+      "description": "Palvelu on GDPR-kunnossa ja moderoitavissa ennen laajempaa jakoa.",
+      "status": "todo",
+      "stories": [
+        "STORY-012",
+        "STORY-013",
+        "STORY-014",
+        "STORY-015"
+      ],
+      "progress": 0
+    }
+  ],
+  "stories": [
+    {
+      "id": "STORY-001",
+      "epic": "EPIC-001",
+      "title": "Projektirunko BandRockista",
+      "type": "chore",
+      "narrative": "Kehittäjänä haluan BandRockin rakenteen (public/, worker/, router.js, 404.html, wrangler.toml) ilman bändikohtaista koodia, jotta ominaisuudet rakentuvat testatulle pohjalle.",
+      "effort": "M",
+      "depends_on": [],
+      "status": "review",
+      "acceptance_criteria": [
+        "Sivu aukeaa alipolulla /Vaihtokaupat/, ja syvälinkki toimii GitHub Pages -simulaattorissa",
+        "Keikat, discografia ja soittimet eivät siirry mukaan, ja npm test menee läpi",
+        "wrangler dev vastaa portissa 8797",
+        "Kopioidun koodin lähde-commit on kirjattu (BandRock 7098a01)"
+      ],
+      "progress": 90,
+      "linked": {
+        "plan": "PLAN-001",
+        "implementation": "TICKET-IMPL-001",
+        "testing": "TICKET-TEST-001"
+      }
+    },
+    {
+      "id": "STORY-002",
+      "epic": "EPIC-001",
+      "title": "CI ja automaattinen julkaisu",
+      "type": "chore",
+      "narrative": "Kehittäjänä haluan, että push main-haaraan ajaa testit, Workerin ja Pagesin tässä järjestyksessä, jotta sivu ja Worker eivät koskaan aja eri versioilla.",
+      "effort": "M",
+      "depends_on": [
+        "STORY-001"
+      ],
+      "status": "todo",
+      "acceptance_criteria": [
+        "Pull request ajaa yksikkö-, integraatio- ja E2E-testit, ja punainen testi estää mergen",
+        "Push main-haaraan julkaisee Workerin ennen Pagesia, ja epäonnistunut Worker-julkaisu jättää sivun edelliseen versioon",
+        "Puuttuva CLOUDFLARE_API_TOKEN tai CLOUDFLARE_ACCOUNT_ID pysäyttää ajon selkeään virheeseen ennen deployta",
+        "Dependabot on päällä npm-paketeille ja GitHub Actionsille"
+      ],
+      "progress": 0,
+      "linked": {
+        "plan": null,
+        "implementation": null,
+        "testing": null
+      }
+    },
+    {
+      "id": "STORY-003",
+      "epic": "EPIC-001",
+      "title": "Arena-designsysteemi",
+      "type": "chore",
+      "narrative": "Kehittäjänä haluan Arenan tokenit :root-muuttujiin OKLCH-muodossa ja itse hostatut fontit, jotta jokainen näkymä käyttää samaa systeemiä.",
+      "effort": "M",
+      "depends_on": [
+        "STORY-001"
+      ],
+      "status": "todo",
+      "acceptance_criteria": [
+        "Arenan fontit Anton, Oswald ja Manrope ladataan omasta kansiosta, eikä Google Fontsiin tehdä pyyntöjä, ja public/fonts/OFL.txt on mukana",
+        "Tekstin kontrasti on vähintään 4,5:1 myös spottivalojen ja liukuvärien päällä (axe-core puhdas)",
+        "prefers-reduced-motion sammuttaa spottivalot ja muut animaatiot"
+      ],
+      "progress": 0,
+      "linked": {
+        "plan": null,
+        "implementation": null,
+        "testing": null
+      }
+    },
+    {
+      "id": "STORY-004",
+      "epic": "EPIC-002",
+      "title": "Etusivu",
+      "type": "story",
+      "narrative": "Kävijänä haluan nähdä mistä on kyse, miten ilmoitus tehdään ja mitkä ovat pelisäännöt, jotta tiedän miten ryhmä toimii.",
+      "effort": "M",
+      "depends_on": [
+        "STORY-003"
+      ],
+      "status": "todo",
+      "acceptance_criteria": [
+        "Etusivulla ovat hero, \"Vaihda, älä myy\", ilmoituksen kolme osaa, kuusi pelisääntöä ja liittymislupaus",
+        "Leveydellä 390 px ei synny vaakavieritystä, ja axe-core on puhdas",
+        "Sivulla on täsmälleen yksi h1"
+      ],
+      "progress": 0,
+      "linked": {
+        "plan": null,
+        "implementation": null,
+        "testing": null
+      }
+    },
+    {
+      "id": "STORY-005",
+      "epic": "EPIC-002",
+      "title": "Ilmoitusruudukko ja suodattimet",
+      "type": "story",
+      "narrative": "Kävijänä haluan selata ilmoituksia keikkalippukortteina ja suodattaa niitä paikkakunnan, tilan ja tekstihaun mukaan, jotta löydän itselleni sopivan vaihdon.",
+      "effort": "M",
+      "depends_on": [
+        "STORY-007"
+      ],
+      "status": "todo",
+      "acceptance_criteria": [
+        "Paikkakunta-, tila- ja tekstihakusuodattimet toimivat yhdessä",
+        "Tyhjä tulos näytetään tyhjänä tilana",
+        "Listarajapinnan vastauksessa ei ole yhteystietoja (testattu)"
+      ],
+      "progress": 0,
+      "linked": {
+        "plan": null,
+        "implementation": null,
+        "testing": null
+      }
+    },
+    {
+      "id": "STORY-006",
+      "epic": "EPIC-002",
+      "title": "Ilmoitussivu ja yhteystiedot napista",
+      "type": "story",
+      "narrative": "Kävijänä haluan avata ilmoituksen ja paljastaa yhteystiedot napista, jotta voin sopia vaihdosta suoraan.",
+      "effort": "M",
+      "depends_on": [
+        "STORY-005"
+      ],
+      "status": "todo",
+      "acceptance_criteria": [
+        "Ilmoitussivulla näkyvät tarjottava, toivottava, noutopaikka, kuva ja tila, ja syvälinkki toimii",
+        "Yhteystiedot haetaan erillisestä päätepisteestä vasta napin painalluksesta, eivätkä ne näy HTML:ssä ennen sitä",
+        "Sähköposti avautuu mailto:-linkkinä, puhelinnumero tel:-linkkinä ja WhatsApp wa.me-linkkinä"
+      ],
+      "progress": 0,
+      "linked": {
+        "plan": null,
+        "implementation": null,
+        "testing": null
+      }
+    },
+    {
+      "id": "STORY-007",
+      "epic": "EPIC-003",
+      "title": "Ilmoituksen luonti",
+      "type": "story",
+      "narrative": "Ilmoittajana haluan kertoa mitä tarjoan, mitä toivon tilalle ja mistä tavaran voi noutaa, jotta vaihto voi alkaa.",
+      "effort": "L",
+      "depends_on": [
+        "STORY-001"
+      ],
+      "status": "todo",
+      "acceptance_criteria": [
+        "Pakollisia ovat tarjoan, toivon, paikkakunta, vähintään yksi yhteystieto ja liittymislupaus, ja jos jokin puuttuu, palvelin palauttaa 400",
+        "WhatsApp-linkki ilman numeroa hylätään, ja puhelinnumerot normalisoidaan muotoon +358",
+        "Muokkauskoodi näytetään kerran, eikä se esiinny ilmoituksen tunnisteessa, URL:ssa eikä yhdessäkään myöhemmässä vastauksessa",
+        "Lomake ohjeistaa merkitsemään noutopaikaksi kaupunginosan, ei katuosoitetta"
+      ],
+      "progress": 0,
+      "linked": {
+        "plan": null,
+        "implementation": null,
+        "testing": null
+      }
+    },
+    {
+      "id": "STORY-008",
+      "epic": "EPIC-003",
+      "title": "Kuvan lataus",
+      "type": "story",
+      "narrative": "Ilmoittajana haluan lisätä kuvan tavarasta, jotta vastapuoli näkee sen kunnon.",
+      "effort": "M",
+      "depends_on": [
+        "STORY-007"
+      ],
+      "status": "todo",
+      "acceptance_criteria": [
+        "Kuva pienennetään selaimessa enintään 1600 pikseliin, ja EXIF puuttuu rakenteellisesti (ei APP1-merkkiä)",
+        "Tiedostotyyppi tunnistetaan alkutavuista, joten .jpg-päätteeksi naamioitu HTML hylätään",
+        "Uuden kuvan tallentuessa vanha kuva poistuu R2:sta"
+      ],
+      "progress": 0,
+      "linked": {
+        "plan": null,
+        "implementation": null,
+        "testing": null
+      }
+    },
+    {
+      "id": "STORY-009",
+      "epic": "EPIC-003",
+      "title": "Klikkaa ja muokkaa koodilla",
+      "type": "story",
+      "narrative": "Ilmoittajana haluan muokata ilmoitusta suoraan sen omalla sivulla, jotta näen lopputuloksen jo muokatessani.",
+      "effort": "L",
+      "depends_on": [
+        "STORY-007",
+        "STORY-008"
+      ],
+      "status": "todo",
+      "acceptance_criteria": [
+        "BandRockin editmode.js toimii alueissa tarjoan, toivon, noutopaikka, kuva ja yhteystiedot",
+        "Muokkaustila näyttää julkaistulta sivulta, ja kohta avautuu vasta klikkauksesta",
+        "Muutokset kertyvät luonnokseen ja tallentuvat yhdellä Tallenna-painalluksella, ja Peruuta ei tallenna mitään",
+        "Väärä koodi avaa koodikyselyn uudelleen, eikä luonnos katoa"
+      ],
+      "progress": 0,
+      "linked": {
+        "plan": null,
+        "implementation": null,
+        "testing": null
+      }
+    },
+    {
+      "id": "STORY-010",
+      "epic": "EPIC-003",
+      "title": "Merkitse vaihdetuksi",
+      "type": "story",
+      "narrative": "Ilmoittajana haluan merkitä vaihdon tehdyksi, jotta minuun ei enää oteta yhteyttä.",
+      "effort": "S",
+      "depends_on": [
+        "STORY-009"
+      ],
+      "status": "todo",
+      "acceptance_criteria": [
+        "Yhteystiedot poistuvat R2:sta heti (todennettu suoralla haulla), ja kortissa lukee \"Vaihdettu\" tekstinä eikä pelkkänä värinä",
+        "Vaihdettu ilmoitus ei näy oletussuodattimella"
+      ],
+      "progress": 0,
+      "linked": {
+        "plan": null,
+        "implementation": null,
+        "testing": null
+      }
+    },
+    {
+      "id": "STORY-011",
+      "epic": "EPIC-003",
+      "title": "Poisto koodilla",
+      "type": "story",
+      "narrative": "Ilmoittajana haluan poistaa ilmoitukseni kokonaan, jotta tietoni eivät jää palveluun.",
+      "effort": "S",
+      "depends_on": [
+        "STORY-008"
+      ],
+      "status": "todo",
+      "acceptance_criteria": [
+        "Poisto vie mukanaan ilmoituksen JSON-tiedoston ja kaikki img/<id>/-polun tiedostot (R2-listaus on tyhjä)",
+        "Poistetun ilmoituksen haku palauttaa 404",
+        "Väärä koodi palauttaa 403, eikä mitään poistu"
+      ],
+      "progress": 0,
+      "linked": {
+        "plan": null,
+        "implementation": null,
+        "testing": null
+      }
+    },
+    {
+      "id": "STORY-012",
+      "epic": "EPIC-004",
+      "title": "Asiaton sisältö ja ylläpitosivu",
+      "type": "story",
+      "narrative": "Ylläpitäjänä haluan piilottaa tai poistaa asiattoman ilmoituksen ilman omistajan koodia, jotta huijaukset ja myynti-ilmoitukset saadaan pois nopeasti.",
+      "effort": "M",
+      "depends_on": [
+        "STORY-006",
+        "STORY-011"
+      ],
+      "status": "todo",
+      "acceptance_criteria": [
+        "\"Ilmoita asiaton\" vain kasvattaa laskuria eikä koskaan piilota ilmoitusta automaattisesti",
+        "/admin tarjoillaan Workerilta ja toimii ADMIN_SECRETillä, ja väärä avain palauttaa 401 kaikilla ylläpitoreiteillä",
+        "Piilotettu ilmoitus palauttaa julkisesti 404 eikä näy listassa",
+        "Ylläpidon poisto vie myös kuvat"
+      ],
+      "progress": 0,
+      "linked": {
+        "plan": null,
+        "implementation": null,
+        "testing": null
+      }
+    },
+    {
+      "id": "STORY-013",
+      "epic": "EPIC-004",
+      "title": "Säilytysajan automaattinen siivous",
+      "type": "story",
+      "narrative": "Ilmoittajana haluan, että vanha ilmoitukseni poistuu itsestään, jotta yhteystietoni eivät jää roikkumaan.",
+      "effort": "M",
+      "depends_on": [
+        "STORY-011"
+      ],
+      "status": "todo",
+      "acceptance_criteria": [
+        "Cron Trigger poistaa kerran vuorokaudessa kuvineen ilmoitukset, joita ei ole muokattu kuuteen kuukauteen",
+        "Toiminta testataan siirretyllä kellolla, eikä tuoreisiin ilmoituksiin kosketa"
+      ],
+      "progress": 0,
+      "linked": {
+        "plan": null,
+        "implementation": null,
+        "testing": null
+      }
+    },
+    {
+      "id": "STORY-014",
+      "epic": "EPIC-004",
+      "title": "Tietosuojaseloste ja käyttöehdot",
+      "type": "story",
+      "narrative": "Kävijänä haluan tietää mitä tiedoistani tehdään ja miten saan ne poistettua, jotta uskallan jättää ilmoituksen.",
+      "effort": "S",
+      "depends_on": [
+        "STORY-004"
+      ],
+      "status": "todo",
+      "acceptance_criteria": [
+        "Seloste kertoo kerättävät tiedot, käyttötarkoituksen, 6 kuukauden säilytysajan ja poistoreitit (koodilla tai ylläpidon kautta)",
+        "Käyttöehdot antavat palvelulle oikeuden näyttää käyttäjän kuvat",
+        "Linkki on alatunnisteessa ja luontilomakkeessa, ja rekisterinpitäjän yhteystieto on Samin antama eikä keksitty"
+      ],
+      "progress": 0,
+      "linked": {
+        "plan": null,
+        "implementation": null,
+        "testing": null
+      }
+    },
+    {
+      "id": "STORY-015",
+      "epic": "EPIC-004",
+      "title": "Turnstile-botintorjunta",
+      "type": "story",
+      "narrative": "Ylläpitäjänä haluan estää botit ilmoitusten luonnista ja yhteystietojen haravoinnista, jotta palvelu pysyy siistinä.",
+      "effort": "M",
+      "depends_on": [
+        "STORY-006",
+        "STORY-007"
+      ],
+      "status": "todo",
+      "acceptance_criteria": [
+        "Ilmoituksen luonti ja yhteystietojen paljastaminen vaativat Turnstile-tokenin, ja ilman kelvollista tokenia palvelin palauttaa 403",
+        "Palvelin varmistaa tokenin Siteverifyllä ennen tallennusta tai paljastamista"
+      ],
+      "progress": 0,
+      "linked": {
+        "plan": null,
+        "implementation": null,
+        "testing": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "PLAN-001",
+      "story": "STORY-001",
+      "author_model": "Claude Opus 5.5",
+      "date": "2026-10-05",
+      "approach": "Kopioidaan BandRockin (SamppaFIN/BandRock@7098a01) runko: 404.html-uudelleenohjaus, router.js, wrangler.toml, package.json, CI:n pohjana toimiva rakenne sekä geneeriset Worker-moduulit code.js ja image.js testeineen. Bändikohtainen koodi (keikat, discografia, soittimet, render.js, schema.js, bandrock.css, seed-skriptit, yleisavaimet 00000/99999, slugify) jää pois. Worker vastaa toistaiseksi vain GET /api -terveystarkistukseen, ja index.html on minimaalinen kuori (yksi h1 ja reittinäyttö), jonka ulkoasu tulee STORY-003:ssa. GitHub Pages -simulaattori kirjoitetaan repoon test/pages-sim.mjs:ään (BandRockissa se oli scratchpadissa ja katosi).",
+      "alternatives_considered": [
+        {
+          "name": "Kopioidaan koko BandRockin Worker ja karsitaan siitä",
+          "pros": "Reitit, CORS, nopeusrajoitin ja ylläpito tulisivat valmiina.",
+          "cons": "Mukaan tulisi satoja rivejä bändilogiikkaa, jota ei ole testattu Vaihtokauppojen datalla. Lisäksi se ennakoisi STORY-007:n, STORY-011:n ja STORY-012:n ratkaisut ilman niiden suunnitelmia.",
+          "rejected_because": "Rikkoo yksinkertaisuussääntöä. Reitit kopioidaan omien storyjensa yhteydessä."
+        },
+        {
+          "name": "code.js ja image.js vasta STORY-007:ssä ja STORY-008:ssa",
+          "pros": "Runko olisi vielä pienempi.",
+          "cons": "Molemmat ovat geneerisiä ja valmiiksi testattuja, ja STORY-001:n tarkoitus on juuri tuoda testattu pohja. Yleisavaimet pitää kuitenkin poistaa heti kopioinnissa (päätös 2026-10-05).",
+          "rejected_because": "Kopiointi ja yleisavainten poisto kerralla on selkeämpää kuin kahdessa storyssa."
+        },
+        {
+          "name": "Pages-simulaattoriksi valmis npm-paketti (esim. serve tai http-server)",
+          "pros": "Ei omaa koodia.",
+          "cons": "Kumpikaan ei palauta 404.html:ää statuksella 404 alipolun alla oletuksena, ja se on reititystempun todentamisen ydin.",
+          "rejected_because": "Noin 40 rivin oma node:http-palvelin vastaa GitHub Pagesia tarkemmin eikä tuo riippuvuutta."
+        }
+      ],
+      "files_to_change": [
+        ".gitignore",
+        "LICENSE",
+        "package.json",
+        "wrangler.toml",
+        "public/index.html",
+        "public/404.html",
+        "public/assets/router.js",
+        "worker/src/index.js",
+        "worker/src/code.js",
+        "worker/src/image.js",
+        "test/pages-sim.mjs",
+        "test/code.test.js",
+        "test/image.test.js",
+        "test/worker.test.js",
+        "test/pages-sim.test.js",
+        "test/e2e/routing.spec.js",
+        "playwright.config.js"
+      ],
+      "open_questions": [],
+      "steps": [
+        {
+          "step": 1,
+          "action": "git init, .gitignore (node_modules, .wrangler, .dev.vars, templates, test-results) ja LICENSE (MIT, Sami)",
+          "verify": "git status näyttää vain projektin tiedostot. templates/ ja node_modules/ puuttuvat listasta."
+        },
+        {
+          "step": 2,
+          "action": "Kopioidaan 404.html ja router.js, nimet ja kommentit muutetaan englanniksi ja lähde-commit kirjataan tiedoston alkuun",
+          "verify": "grep 7098a01 löytää jokaisen kopioidun tiedoston. Bändisanastoa (gig, discograph, keikka, soitin) ei löydy public/:sta eikä worker/:sta."
+        },
+        {
+          "step": 3,
+          "action": "Kopioidaan code.js ilman yleisavaimia ja slugifya sekä image.js sellaisenaan, ja niiden testit",
+          "verify": "npm test: code- ja image-testit läpi. isMasterCode ei ole enää exportattu."
+        },
+        {
+          "step": 4,
+          "action": "Minimaalinen Worker: CORS ALLOWED_ORIGINSista ja GET /api → { ok: true }. Muut polut palauttavat 404 ja virhe 500 ilman sisältöä lokiin.",
+          "verify": "test/worker.test.js kutsuu fetch-käsittelijää suoraan. npm run dev:worker vastaa curlilla http://localhost:8797/api."
+        },
+        {
+          "step": 5,
+          "action": "Pages-simulaattori test/pages-sim.mjs (portti 8082, alipolku /Vaihtokaupat/, tuntematon polku → 404.html statuksella 404) ja index.html-kuori",
+          "verify": "test/pages-sim.test.js: / ohjaa alipolulle, tunnettu tiedosto 200 ja tuntematon polku 404 + 404.html:n sisältö."
+        },
+        {
+          "step": 6,
+          "action": "Playwright-E2E: syvälinkki /Vaihtokaupat/<id>?q#hash palautuu siistiksi osoitteeksi ilman ?p=:tä, sivulla on täsmälleen yksi h1, eikä konsolivirheitä tule. Ajetaan 390 px ja 1440 px leveydellä kuvakaappauksin.",
+          "verify": "npm run test:e2e läpi. Kuvakaappaukset katsotaan molemmilla leveyksillä."
+        },
+        {
+          "step": 7,
+          "action": "TICKET-IMPL-001 ja TICKET-TEST-001 päivitetään tuloksilla, ja backlog.json:n _meta päivitetään",
+          "verify": "Jokaisella STORY-001:n hyväksymiskriteerillä on pass- tai not_run-merkintä perusteluineen."
+        }
+      ],
+      "status": "approved"
+    }
+  ],
+  "implementation_tickets": [
+    {
+      "id": "TICKET-IMPL-001",
+      "story": "STORY-001",
+      "plan": "PLAN-001",
+      "implemented_by_model": "Claude Opus 5.5",
+      "status": "review",
+      "files_changed": [
+        ".gitignore",
+        "LICENSE",
+        "package.json",
+        "package-lock.json",
+        "wrangler.toml",
+        "playwright.config.js",
+        "public/index.html",
+        "public/404.html",
+        "public/assets/router.js",
+        "worker/src/index.js",
+        "worker/src/code.js",
+        "worker/src/image.js",
+        "test/pages-sim.mjs",
+        "test/pages-sim.test.js",
+        "test/worker.test.js",
+        "test/code.test.js",
+        "test/image.test.js",
+        "test/e2e/routing.spec.js"
+      ],
+      "change_summary": "Runko kopioitiin BandRockista (SamppaFIN/BandRock@7098a01), ja lähde-commit on kirjattu jokaisen kopioidun tiedoston alkuun. Mukaan tulivat 404.html-uudelleenohjaus, router.js (slug-nimi muutettu muotoon id), code.js ilman yleisavaimia 00000/99999 ja ilman slugifya, image.js sellaisenaan sekä niiden testit englanniksi käännettyinä. Worker vastaa vain GET /api -terveystarkistukseen, ja sen CORS-rajaus on kopioitu sellaisenaan. Virhelokiin kirjataan vain virheen nimi, ei viestiä, koska viesti voisi sisältää käyttäjän dataa. index.html on tyylitön kuori, jossa on yksi h1 ja reitin näyttö textContentillä. Repossa on uusi GitHub Pages -simulaattori (test/pages-sim.mjs, npm run dev → http://localhost:8082/Vaihtokaupat/), ja se palauttaa tuntemattomille poluille 404.html:n statuksella 404. Bändikohtaiset osat (keikat, discografia, soittimet, render.js, schema.js, editmode.js, CSS, fontit, seed-skriptit ja ylläpitosivu) jätettiin pois. editmode.js kopioidaan STORY-009:ssä.",
+      "impact_analysis": {
+        "changed_symbols": [
+          "code.js: isMasterCode, MASTER_EDIT_CODE, MASTER_DELETE_CODE ja slugify jätetty pois",
+          "router.js: parseRoute palauttaa { id } eikä { slug }"
+        ],
+        "call_sites_found": [
+          "public/index.html: parseRoute().id"
+        ],
+        "call_sites_updated": [
+          "public/index.html"
+        ],
+        "compile_errors_before": null,
+        "compile_errors_after": 0,
+        "notes": "Uusi repo, joten aiempia kutsupaikkoja ei ole. Turvallisuuteen vaikuttavat: CORS (ALLOWED_ORIGINS = https://samppafin.github.io), muokkauskoodin HMAC, yleisavainten poisto sekä uudet devDependencyt wrangler (MIT/Apache-2.0) ja @playwright/test (Apache-2.0). Simulaattori estää ../-polut, ja testi kattaa %2e%2e-muodon. Workerin nopeusrajoitin jätettiin STORY-007:ään. Huom: BandRockin namespace_id 1001 ei saa toistua, jos tili on sama."
+      },
+      "commit": null,
+      "progress": 100
+    }
+  ],
+  "testing_tickets": [
+    {
+      "id": "TICKET-TEST-001",
+      "story": "STORY-001",
+      "implementation_ticket": "TICKET-IMPL-001",
+      "status": "in_progress",
+      "fix_summary": {
+        "problem_and_root_cause": "Uusi ominaisuus, ei korjaus.",
+        "files_changed": [
+          ".gitignore",
+          "LICENSE",
+          "package.json",
+          "package-lock.json",
+          "wrangler.toml",
+          "playwright.config.js",
+          "public/index.html",
+          "public/404.html",
+          "public/assets/router.js",
+          "worker/src/index.js",
+          "worker/src/code.js",
+          "worker/src/image.js",
+          "test/pages-sim.mjs",
+          "test/pages-sim.test.js",
+          "test/worker.test.js",
+          "test/code.test.js",
+          "test/image.test.js",
+          "test/e2e/routing.spec.js"
+        ]
+      },
+      "ai_testing": {
+        "environment": "Pages-simulaattori http://localhost:8082/Vaihtokaupat/ ja wrangler dev http://localhost:8797",
+        "tooling": "node:test, Playwright 1.63 (Chromium), curl/Invoke-WebRequest",
+        "cases": [
+          {
+            "steps": "Avaa http://localhost:8082/Vaihtokaupat/ Pages-simulaattorissa",
+            "expected": "Etusivu latautuu ilman konsolivirheitä",
+            "result": "test/e2e/routing.spec.js: h1 näkyy kerran, reitiksi tulkitaan \"Etusivu\", ei konsolivirheitä (390 px ja 1440 px).",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Avaa syvälinkki /Vaihtokaupat/<tunniste> suoraan simulaattorissa",
+            "expected": "404.html ohjaa index.html:ään, ja siisti osoite palautuu ennen piirtoa ilman ?p=-parametria",
+            "result": "Simulaattori palauttaa osoitteelle /Vaihtokaupat/0142?x=1#yhteys 404.html:n statuksella 404 (test/pages-sim.test.js). Selaimessa osoite palautuu muotoon /Vaihtokaupat/0142?x=1#yhteys ilman ?p=-parametria, ja sivu näyttää \"Ilmoitus 0142\" (390 px ja 1440 px). Reitti-id näytetään tekstinä eikä HTML:nä (XSS-testi).",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Aja npm test",
+            "expected": "Kaikki testit menevät läpi, eikä mukana ole BandRockin keikka-, discografia- tai soitintestejä",
+            "result": "npm test: 22/22 läpi (code, image, worker, pages-sim). grep -rniE \"gig|discograph|keikka|soitin|bandi|poster|isMasterCode\" public worker test: ainoa osuma on code.js:n kommentti, joka kertoo yleisavainten poistosta.",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Käynnistä npm run dev:worker projektin juuresta ja kutsu http://localhost:8797/api",
+            "expected": "Worker vastaa portissa 8797",
+            "result": "npm run dev:worker → GET http://localhost:8797/api = 200 {\"ok\":true}. Prosessit sammutettiin projektin polulla suodattaen.",
+            "outcome": "pass"
+          }
+        ],
+        "console_findings": [
+          "Syvälinkissä selain kirjaa ensimmäisen vastauksen 404-statuksen konsoliin. Se on odotettua, sillä juuri näin GitHub Pages toimii."
+        ],
+        "screenshots": [
+          "test-results/*-mobile-390/front.png",
+          "test-results/*-mobile-390/deep-link.png",
+          "test-results/*-desktop-1440/front.png",
+          "test-results/*-desktop-1440/deep-link.png"
+        ]
+      },
+      "human_acceptance": {
+        "checked_items": [
+          {
+            "item": "Sivu aukeaa alipolulla ja syvälinkki toimii",
+            "checked": false
+          },
+          {
+            "item": "BandRockin bändikohtainen koodi ei siirtynyt",
+            "checked": false
+          },
+          {
+            "item": "npm test läpi",
+            "checked": false
+          },
+          {
+            "item": "wrangler dev vastaa portissa 8797",
+            "checked": false
+          },
+          {
+            "item": "Lähde-commit kirjattu",
+            "checked": false
+          }
+        ],
+        "decision": null,
+        "signed_by": null,
+        "date": null
+      }
+    }
+  ]
+}

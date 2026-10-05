@@ -1,0 +1,95 @@
+{
+  "id": "TICKET-TEST-001",
+  "story": "STORY-001",
+  "implementation_ticket": "TICKET-IMPL-001",
+  "status": "in_progress",
+  "fix_summary": {
+    "problem_and_root_cause": "Uusi ominaisuus, ei korjaus.",
+    "files_changed": [
+      ".gitignore",
+      "LICENSE",
+      "package.json",
+      "package-lock.json",
+      "wrangler.toml",
+      "playwright.config.js",
+      "public/index.html",
+      "public/404.html",
+      "public/assets/router.js",
+      "worker/src/index.js",
+      "worker/src/code.js",
+      "worker/src/image.js",
+      "test/pages-sim.mjs",
+      "test/pages-sim.test.js",
+      "test/worker.test.js",
+      "test/code.test.js",
+      "test/image.test.js",
+      "test/e2e/routing.spec.js"
+    ]
+  },
+  "ai_testing": {
+    "environment": "Pages-simulaattori http://localhost:8082/Vaihtokaupat/ ja wrangler dev http://localhost:8797",
+    "tooling": "node:test, Playwright 1.63 (Chromium), curl/Invoke-WebRequest",
+    "cases": [
+      {
+        "steps": "Avaa http://localhost:8082/Vaihtokaupat/ Pages-simulaattorissa",
+        "expected": "Etusivu latautuu ilman konsolivirheitä",
+        "result": "test/e2e/routing.spec.js: h1 näkyy kerran, reitiksi tulkitaan \"Etusivu\", ei konsolivirheitä (390 px ja 1440 px).",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Avaa syvälinkki /Vaihtokaupat/<tunniste> suoraan simulaattorissa",
+        "expected": "404.html ohjaa index.html:ään, ja siisti osoite palautuu ennen piirtoa ilman ?p=-parametria",
+        "result": "Simulaattori palauttaa osoitteelle /Vaihtokaupat/0142?x=1#yhteys 404.html:n statuksella 404 (test/pages-sim.test.js). Selaimessa osoite palautuu muotoon /Vaihtokaupat/0142?x=1#yhteys ilman ?p=-parametria, ja sivu näyttää \"Ilmoitus 0142\" (390 px ja 1440 px). Reitti-id näytetään tekstinä eikä HTML:nä (XSS-testi).",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Aja npm test",
+        "expected": "Kaikki testit menevät läpi, eikä mukana ole BandRockin keikka-, discografia- tai soitintestejä",
+        "result": "npm test: 22/22 läpi (code, image, worker, pages-sim). grep -rniE \"gig|discograph|keikka|soitin|bandi|poster|isMasterCode\" public worker test: ainoa osuma on code.js:n kommentti, joka kertoo yleisavainten poistosta.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Käynnistä npm run dev:worker projektin juuresta ja kutsu http://localhost:8797/api",
+        "expected": "Worker vastaa portissa 8797",
+        "result": "npm run dev:worker → GET http://localhost:8797/api = 200 {\"ok\":true}. Prosessit sammutettiin projektin polulla suodattaen.",
+        "outcome": "pass"
+      }
+    ],
+    "console_findings": [
+      "Syvälinkissä selain kirjaa ensimmäisen vastauksen 404-statuksen konsoliin. Se on odotettua, sillä juuri näin GitHub Pages toimii."
+    ],
+    "screenshots": [
+      "test-results/*-mobile-390/front.png",
+      "test-results/*-mobile-390/deep-link.png",
+      "test-results/*-desktop-1440/front.png",
+      "test-results/*-desktop-1440/deep-link.png"
+    ]
+  },
+  "human_acceptance": {
+    "checked_items": [
+      {
+        "item": "Sivu aukeaa alipolulla ja syvälinkki toimii",
+        "checked": false
+      },
+      {
+        "item": "BandRockin bändikohtainen koodi ei siirtynyt",
+        "checked": false
+      },
+      {
+        "item": "npm test läpi",
+        "checked": false
+      },
+      {
+        "item": "wrangler dev vastaa portissa 8797",
+        "checked": false
+      },
+      {
+        "item": "Lähde-commit kirjattu",
+        "checked": false
+      }
+    ],
+    "decision": null,
+    "signed_by": null,
+    "date": null
+  }
+}

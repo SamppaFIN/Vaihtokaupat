@@ -1,0 +1,16 @@
+# Vaihtokaupat Worker. Run every wrangler command from the project root (CLAUDE.md §12 rule 5).
+# Secrets (CODE_SECRET, ADMIN_SECRET, TURNSTILE_SECRET) are set with `wrangler secret put`, never here.
+name = "vaihtokaupat"
+main = "worker/src/index.js"
+compatibility_date = "2026-09-08"
+
+[vars]
+# Origins allowed to call the Worker from a browser (comma-separated).
+ALLOWED_ORIGINS = "https://samppafin.github.io"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "vaihtokaupat-listings"
+
+[dev]
+port = 8797

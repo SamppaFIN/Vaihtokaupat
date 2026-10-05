@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vaihtokaupat</title>
+<meta name="description" content="Vaihtokaupat: kerro mitä tarjoat ja mitä toivot tilalle, ja sovi vaihto kasvokkain ilman rahaa.">
+</head>
+<body>
+<main id="app">
+  <h1>Vaihtokaupat</h1>
+  <p id="route"></p>
+</main>
+
+<script type="module">
+import { restoreFromRedirect, parseRoute } from './assets/router.js';
+
+restoreFromRedirect();
+
+// Placeholder until the front page (STORY-004) and listing page (STORY-006) exist:
+// shows which route was parsed. Route ids come from the URL, so textContent only.
+var r = parseRoute();
+document.getElementById('route').textContent = r.id ? 'Ilmoitus ' + r.id : 'Etusivu';
+</script>
+</body>
+</html>

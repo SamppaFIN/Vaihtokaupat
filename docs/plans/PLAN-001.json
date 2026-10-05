@@ -1,0 +1,85 @@
+{
+  "id": "PLAN-001",
+  "story": "STORY-001",
+  "author_model": "Claude Opus 5.5",
+  "date": "2026-10-05",
+  "approach": "Kopioidaan BandRockin (SamppaFIN/BandRock@7098a01) runko: 404.html-uudelleenohjaus, router.js, wrangler.toml, package.json, CI:n pohjana toimiva rakenne sekä geneeriset Worker-moduulit code.js ja image.js testeineen. Bändikohtainen koodi (keikat, discografia, soittimet, render.js, schema.js, bandrock.css, seed-skriptit, yleisavaimet 00000/99999, slugify) jää pois. Worker vastaa toistaiseksi vain GET /api -terveystarkistukseen, ja index.html on minimaalinen kuori (yksi h1 ja reittinäyttö), jonka ulkoasu tulee STORY-003:ssa. GitHub Pages -simulaattori kirjoitetaan repoon test/pages-sim.mjs:ään (BandRockissa se oli scratchpadissa ja katosi).",
+  "alternatives_considered": [
+    {
+      "name": "Kopioidaan koko BandRockin Worker ja karsitaan siitä",
+      "pros": "Reitit, CORS, nopeusrajoitin ja ylläpito tulisivat valmiina.",
+      "cons": "Mukaan tulisi satoja rivejä bändilogiikkaa, jota ei ole testattu Vaihtokauppojen datalla. Lisäksi se ennakoisi STORY-007:n, STORY-011:n ja STORY-012:n ratkaisut ilman niiden suunnitelmia.",
+      "rejected_because": "Rikkoo yksinkertaisuussääntöä. Reitit kopioidaan omien storyjensa yhteydessä."
+    },
+    {
+      "name": "code.js ja image.js vasta STORY-007:ssä ja STORY-008:ssa",
+      "pros": "Runko olisi vielä pienempi.",
+      "cons": "Molemmat ovat geneerisiä ja valmiiksi testattuja, ja STORY-001:n tarkoitus on juuri tuoda testattu pohja. Yleisavaimet pitää kuitenkin poistaa heti kopioinnissa (päätös 2026-10-05).",
+      "rejected_because": "Kopiointi ja yleisavainten poisto kerralla on selkeämpää kuin kahdessa storyssa."
+    },
+    {
+      "name": "Pages-simulaattoriksi valmis npm-paketti (esim. serve tai http-server)",
+      "pros": "Ei omaa koodia.",
+      "cons": "Kumpikaan ei palauta 404.html:ää statuksella 404 alipolun alla oletuksena, ja se on reititystempun todentamisen ydin.",
+      "rejected_because": "Noin 40 rivin oma node:http-palvelin vastaa GitHub Pagesia tarkemmin eikä tuo riippuvuutta."
+    }
+  ],
+  "files_to_change": [
+    ".gitignore",
+    "LICENSE",
+    "package.json",
+    "wrangler.toml",
+    "public/index.html",
+    "public/404.html",
+    "public/assets/router.js",
+    "worker/src/index.js",
+    "worker/src/code.js",
+    "worker/src/image.js",
+    "test/pages-sim.mjs",
+    "test/code.test.js",
+    "test/image.test.js",
+    "test/worker.test.js",
+    "test/pages-sim.test.js",
+    "test/e2e/routing.spec.js",
+    "playwright.config.js"
+  ],
+  "open_questions": [],
+  "steps": [
+    {
+      "step": 1,
+      "action": "git init, .gitignore (node_modules, .wrangler, .dev.vars, templates, test-results) ja LICENSE (MIT, Sami)",
+      "verify": "git status näyttää vain projektin tiedostot. templates/ ja node_modules/ puuttuvat listasta."
+    },
+    {
+      "step": 2,
+      "action": "Kopioidaan 404.html ja router.js, nimet ja kommentit muutetaan englanniksi ja lähde-commit kirjataan tiedoston alkuun",
+      "verify": "grep 7098a01 löytää jokaisen kopioidun tiedoston. Bändisanastoa (gig, discograph, keikka, soitin) ei löydy public/:sta eikä worker/:sta."
+    },
+    {
+      "step": 3,
+      "action": "Kopioidaan code.js ilman yleisavaimia ja slugifya sekä image.js sellaisenaan, ja niiden testit",
+      "verify": "npm test: code- ja image-testit läpi. isMasterCode ei ole enää exportattu."
+    },
+    {
+      "step": 4,
+      "action": "Minimaalinen Worker: CORS ALLOWED_ORIGINSista ja GET /api → { ok: true }. Muut polut palauttavat 404 ja virhe 500 ilman sisältöä lokiin.",
+      "verify": "test/worker.test.js kutsuu fetch-käsittelijää suoraan. npm run dev:worker vastaa curlilla http://localhost:8797/api."
+    },
+    {
+      "step": 5,
+      "action": "Pages-simulaattori test/pages-sim.mjs (portti 8082, alipolku /Vaihtokaupat/, tuntematon polku → 404.html statuksella 404) ja index.html-kuori",
+      "verify": "test/pages-sim.test.js: / ohjaa alipolulle, tunnettu tiedosto 200 ja tuntematon polku 404 + 404.html:n sisältö."
+    },
+    {
+      "step": 6,
+      "action": "Playwright-E2E: syvälinkki /Vaihtokaupat/<id>?q#hash palautuu siistiksi osoitteeksi ilman ?p=:tä, sivulla on täsmälleen yksi h1, eikä konsolivirheitä tule. Ajetaan 390 px ja 1440 px leveydellä kuvakaappauksin.",
+      "verify": "npm run test:e2e läpi. Kuvakaappaukset katsotaan molemmilla leveyksillä."
+    },
+    {
+      "step": 7,
+      "action": "TICKET-IMPL-001 ja TICKET-TEST-001 päivitetään tuloksilla, ja backlog.json:n _meta päivitetään",
+      "verify": "Jokaisella STORY-001:n hyväksymiskriteerillä on pass- tai not_run-merkintä perusteluineen."
+    }
+  ],
+  "status": "approved"
+}

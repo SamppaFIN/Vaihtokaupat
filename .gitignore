@@ -1,0 +1,9 @@
+node_modules/
+.wrangler/
+.dev.vars
+*.log
+test-results/
+playwright-report/
+
+# init-project templates, not part of the app
+templates/
