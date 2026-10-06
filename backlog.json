@@ -1,7 +1,7 @@
 {
   "_meta": {
     "schema_version": "1.1",
-    "generated_at": "2026-10-06T12:00:00Z",
+    "generated_at": "2026-10-06T13:30:00Z",
     "generated_by": "Hermes (Claude Code)",
     "git_commit": "8f3134b",
     "git_branch": "main",
@@ -281,17 +281,17 @@
       "depends_on": [
         "STORY-007"
       ],
-      "status": "todo",
+      "status": "review",
       "acceptance_criteria": [
         "Kuva pienennetään selaimessa enintään 1600 pikseliin, ja EXIF puuttuu rakenteellisesti (ei APP1-merkkiä)",
         "Tiedostotyyppi tunnistetaan alkutavuista, joten .jpg-päätteeksi naamioitu HTML hylätään",
         "Uuden kuvan tallentuessa vanha kuva poistuu R2:sta"
       ],
-      "progress": 0,
+      "progress": 90,
       "linked": {
-        "plan": null,
-        "implementation": null,
-        "testing": null
+        "plan": "PLAN-008",
+        "implementation": "TICKET-IMPL-008",
+        "testing": "TICKET-TEST-008"
       }
     },
     {
@@ -896,6 +896,66 @@
         }
       ],
       "status": "approved"
+    },
+    {
+      "id": "PLAN-008",
+      "story": "STORY-008",
+      "author_model": "Claude Opus 5.5",
+      "date": "2026-10-06",
+      "approach": "Selain pienentää kuvan createImageBitmapilla ja canvasilla enintään 1600 px:n kokoon ja tallentaa sen JPEG-muotoon. Uudelleenkoodaus kirjoittaa vain pikselit, joten EXIF ja GPS eivät säily. Luonnissa kuva pienennetään ennen julkaisua, jotta kelvoton tiedosto pysähtyy jo lomakkeelle, ja se lähetetään muokkauskoodin kanssa heti luonnin jälkeen (POST /api/listings/:id/image, multipart). Palvelin tarkistaa kaiken uudelleen (§12 sääntö 3): JPEG tunnistetaan alkutavuista, segmentit käydään läpi (jpeg.js), APP1–APP15 ja COM poistetaan, mitat luetaan SOF-segmentistä ja yli 1600 px:n kuva hylätään. Kuva tallennetaan avaimella img/<id>/<aikaleima>.jpg, ja kaikki muut img/<id>/-tiedostot poistetaan. GET /img/... tarjoilee kuvan otsakkeilla nosniff ja CSP default-src 'none'.",
+      "alternatives_considered": [
+        {
+          "name": "Vain selain poistaa EXIFin",
+          "pros": "Ei jäsennystä palvelimella.",
+          "cons": "API on julkinen. Lomakkeen ohi lähetetty puhelinkuva tallentuisi sijainteineen.",
+          "rejected_because": "§12 sääntö 3: palvelin validoi aina."
+        },
+        {
+          "name": "PNG ja WebP sellaisinaan",
+          "pros": "Ei uudelleenkoodausta läpinäkyville kuville.",
+          "cons": "Niissäkin voi olla metatietoa (eXIf-, tEXt- ja EXIF-palat), mikä vaatisi kolme jäsennintä.",
+          "rejected_because": "Selain muuntaa kaiken JPEGiksi, joten palvelin hyväksyy vain JPEGin ja tarvitsee yhden jäsentimen."
+        },
+        {
+          "name": "Kuva samassa pyynnössä kuin luonti",
+          "pros": "Yksi pyyntö.",
+          "cons": "Luontirajapinta muuttuisi multipartiksi, ja muokkaus (STORY-009) tarvitsee joka tapauksessa erillisen kuvareitin.",
+          "rejected_because": "Erillinen reitti palvelee sekä luontia että muokkausta."
+        }
+      ],
+      "files_to_change": [
+        "worker/src/jpeg.js",
+        "worker/src/index.js",
+        "public/assets/resize.js",
+        "public/assets/api.js",
+        "public/assets/create.js",
+        "public/assets/listing.js",
+        "public/assets/arena.css",
+        "public/index.html",
+        "test/fixtures.js",
+        "test/jpeg.test.js",
+        "test/api.test.js",
+        "test/e2e/image.spec.js"
+      ],
+      "open_questions": [],
+      "steps": [
+        {
+          "step": 1,
+          "action": "jpeg.js: segmenttien läpikäynti, metatietojen poisto ja mitat",
+          "verify": "jpeg.test.js: Exif-, GPS- ja Canon-tekstit poistuvat, JFIF ja kuvadata säilyvät, rikkinäinen syöte hylätään"
+        },
+        {
+          "step": 2,
+          "action": "POST /image (koodi ja nopeusrajoitin) ja GET /img",
+          "verify": "api.test.js: väärä koodi 403, EXIF ei tallennu R2:een API:n kautta, HTML .jpg-päätteellä ja PNG hylätään, 4000 px hylätään, vanha kuva palauttaa 404, polun ohitus 404"
+        },
+        {
+          "step": 3,
+          "action": "Selain: resize.js, lomakkeen kuvakenttä, lataus luonnin jälkeen ja kuva ilmoitussivulla",
+          "verify": "image.spec.js: 3000×2000 + EXIF → 1600×1067 ilman APP1-merkkiä, naamioitu HTML pysähtyy ennen julkaisua, epäonnistunut lataus kerrotaan käyttäjälle"
+        }
+      ],
+      "status": "draft"
     }
   ],
   "implementation_tickets": [
@@ -1147,6 +1207,43 @@
       },
       "commit": "8f3134b",
       "progress": 100
+    },
+    {
+      "id": "TICKET-IMPL-008",
+      "story": "STORY-008",
+      "plan": "PLAN-008",
+      "implemented_by_model": "Claude Opus 5.5",
+      "status": "review",
+      "files_changed": [
+        "worker/src/jpeg.js",
+        "worker/src/index.js",
+        "public/assets/resize.js",
+        "public/assets/api.js",
+        "public/assets/create.js",
+        "public/assets/listing.js",
+        "public/assets/arena.css",
+        "public/index.html",
+        "test/fixtures.js",
+        "test/jpeg.test.js",
+        "test/api.test.js",
+        "test/e2e/image.spec.js"
+      ],
+      "change_summary": "Kuvan lataus alusta loppuun. Selain: resize.js pienentää kuvan enintään 1600 px:iin ja koodaa sen JPEGiksi canvasilla, jolloin EXIF ei säily. Lomakkeessa on valinnainen Kuva-osio, jonka ohje kertoo, että sijainti- ja kameratiedot poistetaan. Kuva lähetetään muokkauskoodilla heti luonnin jälkeen, ja jos lataus epäonnistuu, siitä kerrotaan onnistumisnäkymässä eikä virhettä nielaista hiljaa. Ilmoitussivu näyttää kuvan alt-tekstillä. Palvelin: POST /api/listings/:id/image vaatii koodin (404 ennen 403:a) ja käyttää nopeusrajoitinta edit:<id>. Se tunnistaa JPEGin alkutavuista, poistaa jpeg.js:n avulla APP1–APP15- ja COM-segmentit, lukee mitat ja hylkää yli 1600 px:n kuvat, tallentaa kuvan avaimella img/<id>/<aikaleima>.jpg ja poistaa kaikki muut ilmoituksen kuvat. GET /img tarjoilee vain kuvamuotoiset avaimet otsakkeilla nosniff ja CSP. Matkan varrelta: unstable_dev:n fetch ei sarjallista FormDataa (testiapuri korjattu), ja fieldsetin oletus min-width: min-content leveni yli 390 px:n.",
+      "impact_analysis": {
+        "changed_symbols": [
+          "worker: loadWithCode() (yhteinen omistajan toiminnoille, STORY-009–011 käyttävät)",
+          "api.js: IMAGE_BASE, postForm"
+        ],
+        "call_sites_found": [
+          "uploadImage"
+        ],
+        "call_sites_updated": [],
+        "compile_errors_before": null,
+        "compile_errors_after": 0,
+        "notes": "TURVALLISUUS, katselmoi: (1) Syötteiden käsittely: kuvaa ei koskaan tallenneta sellaisenaan. JPEG jäsennetään segmentti kerrallaan, metatiedot poistetaan, rikkinäinen rakenne hylätään, ja Content-Typeen ja tiedostopäätteeseen ei luoteta. (2) EXIF ja GPS poistetaan sekä selaimessa että palvelimella. API:n ohitusta on testattu: GPS-teksti ei päädy R2:een. (3) Lataus vaatii muokkauskoodin, ja sitä rajoittaa nopeusrajoitin. (4) Kuvareitti hyväksyy vain mallin img/<5 numeroa>/<numerot>.jpg, joten polun ohitus ei onnistu, ja vastauksen CSP on default-src 'none'. (5) Kuvat poistuvat ilmoituksen mukana vasta STORY-011:ssä, eli poistoreittiä ei vielä ole."
+      },
+      "commit": null,
+      "progress": 90
     }
   ],
   "testing_tickets": [
@@ -1759,6 +1856,95 @@
         "decision": "accepted",
         "signed_by": "Sami",
         "date": "2026-10-06"
+      }
+    },
+    {
+      "id": "TICKET-TEST-008",
+      "story": "STORY-008",
+      "implementation_ticket": "TICKET-IMPL-008",
+      "status": "in_progress",
+      "fix_summary": {
+        "problem_and_root_cause": "Uusi ominaisuus. Matkan varrelta löytyi ja korjattiin fieldsetin ylivuoto 390 px:n leveydellä (tiedostokentän min-content-leveys).",
+        "files_changed": [
+          "worker/src/jpeg.js",
+          "worker/src/index.js",
+          "public/assets/resize.js",
+          "public/assets/api.js",
+          "public/assets/create.js",
+          "public/assets/listing.js",
+          "public/assets/arena.css",
+          "public/index.html",
+          "test/fixtures.js",
+          "test/jpeg.test.js",
+          "test/api.test.js",
+          "test/e2e/image.spec.js"
+        ]
+      },
+      "ai_testing": {
+        "environment": "Pages-simulaattori :8082 ja wrangler dev --env local :8797. Integraatio unstable_dev.",
+        "tooling": "node:test, wrangler unstable_dev, Playwright 1.63 (--workers=1)",
+        "cases": [
+          {
+            "steps": "Selaimen piirtämä 3000×2000 JPEG, johon on lisätty EXIF-segmentti GPS-tekstillä, lähetetään lomakkeella",
+            "expected": "Enintään 1600 px, ei APP1-merkkiä",
+            "result": "Tallentunut kuva on 1600×1067, siinä ei ole APP1-merkkiä eikä GPS-tekstiä, se on pienempi kuin alkuperäinen, ja se näkyy ilmoitussivulla (naturalWidth 1600) alt-tekstillä. Molemmat leveydet.",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Lomakkeen ohi API:in lähetetty JPEG, jossa on EXIF",
+            "expected": "Palvelin poistaa APP1:n",
+            "result": "api.test.js: R2:sta tarjoiltu kuva on ilman APP1:tä ja GPS-tekstiä. jpeg.test.js: Exif-, GPS- ja Canon-kommentit poistuvat, JFIF ja kuvadata säilyvät.",
+            "outcome": "pass"
+          },
+          {
+            "steps": "HTML-tiedosto .jpg-päätteellä",
+            "expected": "Hylätään",
+            "result": "Lomake pysäyttää sen ennen julkaisua (yhtään POST-pyyntöä ei lähde, ja kentän vieressä näkyy virhe). API palauttaa 400 myös suoraan lähetettynä. PNG ja 4000 px:n JPEG palauttavat 400.",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Kaksi peräkkäistä latausta",
+            "expected": "Vanha kuva poistuu R2:sta",
+            "result": "Ensimmäinen kuva-avain palauttaa 404 ja toinen 200 (api.test.js).",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Väärä koodi, tuntematon ilmoitus, polun ohitus ja epäonnistunut lataus",
+            "expected": "403, 404, 404 ja käyttäjälle kerrotaan",
+            "result": "Kaikki toimivat odotetusti. Epäonnistunut lataus näyttää onnistumisnäkymässä tekstin \"kuvan lataus epäonnistui: …\".",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Ulkoasu",
+            "expected": "Ei vaakavieritystä, kuva luettavissa",
+            "result": "Ensimmäinen ajo löysi 30 px:n ylivuodon lomakkeelta (fieldset). Korjauksen jälkeen 68/68 läpi. Kuvakaappaukset lomakkeen kuvakentästä ja kuvallisesta ilmoitussivusta 390 px:n leveydellä on katsottu.",
+            "outcome": "pass"
+          }
+        ],
+        "console_findings": [],
+        "screenshots": [
+          "scratchpad form-image-390.png",
+          "scratchpad listing-image-390.png"
+        ]
+      },
+      "human_acceptance": {
+        "checked_items": [
+          {
+            "item": "Kuva pienennetään enintään 1600 px:iin, eikä siinä ole EXIF-tietoja (kokeile puhelimen kuvalla)",
+            "checked": false
+          },
+          {
+            "item": "Kuvaksi naamioitu muu tiedosto hylätään",
+            "checked": false
+          },
+          {
+            "item": "Uusi kuva korvaa vanhan (todennetaan muokkauksessa, STORY-009)",
+            "checked": false
+          }
+        ],
+        "decision": null,
+        "signed_by": null,
+        "date": null
       }
     }
   ]

@@ -208,6 +208,14 @@
         <p class="error" id="e-area" data-error="area" hidden></p>
       </fieldset>
 
+      <fieldset>
+        <legend>Kuva</legend>
+        <label for="f-image">Kuva tavarasta</label>
+        <p class="hint" id="h-image">Valinnainen. Kuva pienennetään, ja sen sijainti- ja kameratiedot poistetaan ennen lähetystä.</p>
+        <input id="f-image" name="image" type="file" accept="image/*" aria-describedby="h-image e-image">
+        <p class="error" id="e-image" data-error="image" hidden></p>
+      </fieldset>
+
       <fieldset aria-describedby="h-contact e-contact">
         <legend>Yhteystiedot <em>vähintään yksi</em></legend>
         <p class="hint" id="h-contact">Yhteystiedot näytetään vasta, kun kävijä painaa Näytä yhteystiedot -nappia. Ne poistetaan, kun merkitset ilmoituksen vaihdetuksi.</p>
@@ -255,6 +263,7 @@
     <p>Tarvitset koodia, kun muokkaat ilmoitusta, merkitset sen vaihdetuksi tai poistat sen.</p>
     <p class="code" aria-label="Muokkauskoodi"></p>
     <button class="button ghost copy" type="button">Kopioi koodi</button>
+    <p class="form-summary image-warning" role="alert" hidden></p>
     <p class="warning"><strong>Koodia ei voi palauttaa.</strong> Se näytetään vain tämän kerran, eikä sitä tallenneta mihinkään selkokielisenä.</p>
     <a class="listing-link"></a>
   </div>
@@ -268,6 +277,7 @@
     <p class="label listing-number"></p>
     <h1 class="gold-text listing-title"></h1>
     <p class="ticket-meta listing-who"></p>
+    <figure class="listing-image" hidden><img alt=""></figure>
     <div class="ticket"><article class="ticket-inner">
       <dl>
         <div><dt>Tarjoan</dt><dd class="listing-offer"></dd></div>

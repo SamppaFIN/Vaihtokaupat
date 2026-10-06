@@ -3,7 +3,7 @@
 // All listing text is set with textContent (§12 rule 2).
 'use strict';
 
-import { API_URL } from './api.js';
+import { API_URL, IMAGE_BASE } from './api.js';
 
 const STATUS_TEXT = { open: 'Avoin', traded: 'Vaihdettu' };
 const LINK_PREFIX = { email: 'Sähköposti: ', phone: 'Puhelin: ', whatsapp: '' };
@@ -97,6 +97,15 @@ export async function mountListing(app, id) {
   fill(view, '.listing-offer', l.offer);
   fill(view, '.listing-want', l.want);
   fill(view, '.listing-place', [l.city, l.area].filter(Boolean).join(', '));
+  if (l.image && /^img\/\d{5}\/\d+\.jpg$/.test(l.image.src)) {
+    const figure = view.querySelector('.listing-image');
+    const img = figure.querySelector('img');
+    img.src = `${IMAGE_BASE}/${l.image.src}`;
+    img.width = l.image.width;
+    img.height = l.image.height;
+    img.alt = 'Kuva: ' + title;
+    figure.hidden = false;
+  }
   const status = view.querySelector('.status');
   status.textContent = STATUS_TEXT[l.status] || l.status;
   status.classList.add(l.status);

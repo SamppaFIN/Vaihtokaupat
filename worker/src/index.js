@@ -7,12 +7,18 @@
  *   POST   /api/listings         new listing; returns the edit code ONCE
  *   GET    /api/listings/:id     public view (never the code hash, never contacts)
  *   POST   /api/listings/:id/contact   contact links, revealed on a button press only
+ *   POST   /api/listings/:id/image     image upload with the edit code (multipart: code, image)
+ *   GET    /img/<id>/<timestamp>.jpg   uploaded image
  *
  * No personal data or IP addresses are written to logs (CLAUDE.md §9 rule 6).
  */
 import { validateCreate } from './schema.js';
-import { generateCode, hashCode } from './code.js';
+import { generateCode, hashCode, verifyCode } from './code.js';
 import { contactLinks } from './contact.js';
+import { detectImageType, MAX_IMAGE_BYTES } from './image.js';
+import { cleanJpeg } from './jpeg.js';
+
+const MAX_IMAGE_SIDE = 1600;
 
 const MAX_BODY = 8192; // two 600-character texts in UTF-8 plus the short fields fit easily
 
@@ -157,6 +163,69 @@ async function listListings(env, cors) {
   return json({ listings }, 200, { ...cors, 'cache-control': 'no-store' });
 }
 
+// Loads a listing for an owner action. 404 before 403, so a wrong code never tells
+// more than an unknown id would.
+async function loadWithCode(env, id, code) {
+  if (!/^\d{5}$/.test(id)) return { status: 404, error: 'not_found' };
+  const obj = await env.BUCKET.get(keyOf(id));
+  if (!obj) return { status: 404, error: 'not_found' };
+  const listing = await obj.json();
+  if (!(await verifyCode(code, listing.codeHash, env.CODE_SECRET))) return { status: 403, error: 'forbidden' };
+  return { listing };
+}
+
+// Image upload with the edit code. The browser already resized the image to a JPEG
+// without EXIF, but the server checks everything again (§12 rule 3): JPEG by its own
+// bytes, metadata segments removed, at most 1600 px. Every other file of the listing
+// under img/<id>/ is removed, so an old image never stays behind.
+async function uploadImage(request, env, id, cors) {
+  if (!env.CODE_SECRET) return json({ error: 'server_misconfigured' }, 500, cors);
+  if (await rateLimited(env, `edit:${id}`)) return json({ error: 'busy' }, 429, cors);
+
+  let form;
+  try {
+    form = await request.formData();
+  } catch {
+    return json({ error: 'bad_form' }, 400, cors);
+  }
+  const loaded = await loadWithCode(env, id, String(form.get('code') || ''));
+  if (loaded.error) return json({ error: loaded.error }, loaded.status, cors);
+
+  const invalid = (message) => json({ error: 'invalid', fields: { image: message } }, 400, cors);
+  const file = form.get('image');
+  if (!(file instanceof File) || file.size === 0) return invalid('Valitse kuva.');
+  if (file.size > MAX_IMAGE_BYTES) return invalid('Kuva on liian suuri.');
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const type = detectImageType(bytes);
+  const clean = type && type.ext === 'jpg' ? cleanJpeg(bytes) : null;
+  if (!clean) return invalid('Tiedosto ei ole tunnistettu kuva.');
+  if (clean.width > MAX_IMAGE_SIDE || clean.height > MAX_IMAGE_SIDE) return invalid(`Kuva on liian suuri, enintään ${MAX_IMAGE_SIDE} px.`);
+
+  const key = `img/${id}/${Date.now()}.jpg`;
+  await env.BUCKET.put(key, clean.bytes, { httpMetadata: { contentType: 'image/jpeg' } });
+  const old = await env.BUCKET.list({ prefix: `img/${id}/` });
+  for (const o of old.objects) if (o.key !== key) await env.BUCKET.delete(o.key);
+
+  const image = { src: key, width: clean.width, height: clean.height };
+  const updated = { ...loaded.listing, image, updated: Date.now() };
+  await env.BUCKET.put(keyOf(id), JSON.stringify(updated), { customMetadata: customMetaFor(updated) });
+  return json({ ok: true, image }, 201, cors);
+}
+
+async function serveImage(env, key) {
+  if (!/^img\/\d{5}\/\d+\.jpg$/.test(key)) return json({ error: 'not_found' }, 404);
+  const obj = await env.BUCKET.get(key);
+  if (!obj) return json({ error: 'not_found' }, 404);
+  return new Response(obj.body, {
+    headers: {
+      'content-type': 'image/jpeg',
+      'cache-control': 'public, max-age=31536000, immutable', // timestamp in the name: a key never changes content
+      'x-content-type-options': 'nosniff',
+      'content-security-policy': "default-src 'none'",
+    },
+  });
+}
+
 // Contacts are revealed only through this POST, never in the list or the public view
 // (§9 rule 7). POST keeps them out of caches and crawlers; STORY-015 adds Turnstile here.
 async function revealContact(env, id, cors) {
@@ -186,6 +255,11 @@ export default {
 
       const parts = new URL(request.url).pathname.split('/').filter(Boolean);
 
+      if (parts[0] === 'img') {
+        if (request.method !== 'GET') return json({ error: 'method_not_allowed' }, 405, cors);
+        return await serveImage(env, parts.join('/'));
+      }
+
       if (parts[0] === 'api' && parts.length === 1) {
         if (request.method !== 'GET') return json({ error: 'method_not_allowed' }, 405, cors);
         return json({ ok: true }, 200, cors);
@@ -197,6 +271,9 @@ export default {
         if (parts.length === 3 && request.method === 'GET') return await getListing(env, decodeURIComponent(parts[2]), cors);
         if (parts.length === 4 && parts[3] === 'contact' && request.method === 'POST') {
           return await revealContact(env, decodeURIComponent(parts[2]), cors);
+        }
+        if (parts.length === 4 && parts[3] === 'image' && request.method === 'POST') {
+          return await uploadImage(request, env, decodeURIComponent(parts[2]), cors);
         }
         return json({ error: 'method_not_allowed' }, 405, cors);
       }

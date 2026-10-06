@@ -416,6 +416,9 @@ strong { color: var(--c-accent-hi); font-weight: 700; }
 .listing-page h1 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: var(--fs-h2); line-height: 0.95; text-transform: uppercase; overflow-wrap: anywhere; }
 .listing-page .listing-who { margin: 12px 0 24px; justify-content: flex-start; }
 .listing-page .ticket:hover { transform: none; box-shadow: none; }
+.listing-image { margin: 0 0 24px; padding: 1px; border-radius: 10px; background: linear-gradient(135deg, var(--c-accent-hi), var(--c-accent-deep) 35%, var(--c-accent) 65%, var(--c-accent-hi)); }
+.listing-image img { display: block; width: 100%; height: auto; border-radius: 9px; background: var(--c-surface); }
+input[type="file"] { padding: 8px; }
 .listing-page .ticket dl { padding-top: 24px; }
 .listing-page .ticket dd { font-size: var(--fs-body); white-space: pre-line; }
 .contact-box { margin-top: 32px; padding: 24px; border: 1px solid color-mix(in oklch, var(--c-accent) 45%, transparent); border-radius: 8px; background: var(--c-surface); }
@@ -477,6 +480,7 @@ strong { color: var(--c-accent-hi); font-weight: 700; }
 .form-page .hint { margin: 4px 0 8px; font-size: 0.9375rem; color: var(--c-text-muted); }
 .form-page form { margin-top: 24px; display: flex; flex-direction: column; gap: 24px; }
 fieldset {
+  min-width: 0; /* default min-content let the file input widen the fieldset past 390 px */
   margin: 0;
   padding: 20px 20px 24px;
   border: 1px solid color-mix(in oklch, var(--c-accent) 45%, transparent);

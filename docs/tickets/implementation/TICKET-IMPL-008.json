@@ -1,0 +1,37 @@
+{
+  "id": "TICKET-IMPL-008",
+  "story": "STORY-008",
+  "plan": "PLAN-008",
+  "implemented_by_model": "Claude Opus 5.5",
+  "status": "review",
+  "files_changed": [
+    "worker/src/jpeg.js",
+    "worker/src/index.js",
+    "public/assets/resize.js",
+    "public/assets/api.js",
+    "public/assets/create.js",
+    "public/assets/listing.js",
+    "public/assets/arena.css",
+    "public/index.html",
+    "test/fixtures.js",
+    "test/jpeg.test.js",
+    "test/api.test.js",
+    "test/e2e/image.spec.js"
+  ],
+  "change_summary": "Kuvan lataus alusta loppuun. Selain: resize.js pienentää kuvan enintään 1600 px:iin ja koodaa sen JPEGiksi canvasilla, jolloin EXIF ei säily. Lomakkeessa on valinnainen Kuva-osio, jonka ohje kertoo, että sijainti- ja kameratiedot poistetaan. Kuva lähetetään muokkauskoodilla heti luonnin jälkeen, ja jos lataus epäonnistuu, siitä kerrotaan onnistumisnäkymässä eikä virhettä nielaista hiljaa. Ilmoitussivu näyttää kuvan alt-tekstillä. Palvelin: POST /api/listings/:id/image vaatii koodin (404 ennen 403:a) ja käyttää nopeusrajoitinta edit:<id>. Se tunnistaa JPEGin alkutavuista, poistaa jpeg.js:n avulla APP1–APP15- ja COM-segmentit, lukee mitat ja hylkää yli 1600 px:n kuvat, tallentaa kuvan avaimella img/<id>/<aikaleima>.jpg ja poistaa kaikki muut ilmoituksen kuvat. GET /img tarjoilee vain kuvamuotoiset avaimet otsakkeilla nosniff ja CSP. Matkan varrelta: unstable_dev:n fetch ei sarjallista FormDataa (testiapuri korjattu), ja fieldsetin oletus min-width: min-content leveni yli 390 px:n.",
+  "impact_analysis": {
+    "changed_symbols": [
+      "worker: loadWithCode() (yhteinen omistajan toiminnoille, STORY-009–011 käyttävät)",
+      "api.js: IMAGE_BASE, postForm"
+    ],
+    "call_sites_found": [
+      "uploadImage"
+    ],
+    "call_sites_updated": [],
+    "compile_errors_before": null,
+    "compile_errors_after": 0,
+    "notes": "TURVALLISUUS, katselmoi: (1) Syötteiden käsittely: kuvaa ei koskaan tallenneta sellaisenaan. JPEG jäsennetään segmentti kerrallaan, metatiedot poistetaan, rikkinäinen rakenne hylätään, ja Content-Typeen ja tiedostopäätteeseen ei luoteta. (2) EXIF ja GPS poistetaan sekä selaimessa että palvelimella. API:n ohitusta on testattu: GPS-teksti ei päädy R2:een. (3) Lataus vaatii muokkauskoodin, ja sitä rajoittaa nopeusrajoitin. (4) Kuvareitti hyväksyy vain mallin img/<5 numeroa>/<numerot>.jpg, joten polun ohitus ei onnistu, ja vastauksen CSP on default-src 'none'. (5) Kuvat poistuvat ilmoituksen mukana vasta STORY-011:ssä, eli poistoreittiä ei vielä ole."
+  },
+  "commit": null,
+  "progress": 90
+}

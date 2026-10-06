@@ -3,10 +3,11 @@
 // The server validates everything again; this check is only a convenience.
 'use strict';
 
-import { postJson } from './api.js';
+import { postJson, postForm } from './api.js';
+import { resizeToJpeg } from './resize.js';
 import { pathFor } from './router.js';
 
-const FIELDS = ['title', 'name', 'offer', 'want', 'city', 'area', 'email', 'phone', 'whatsapp', 'pledge', 'contact'];
+const FIELDS = ['title', 'name', 'offer', 'want', 'city', 'area', 'image', 'email', 'phone', 'whatsapp', 'pledge', 'contact'];
 
 function setError(form, field, message) {
   const slot = form.querySelector(`[data-error="${field}"]`);
@@ -45,7 +46,7 @@ function showErrors(form, errors) {
   }
 }
 
-function showSuccess(app, id, code) {
+function showSuccess(app, id, code, imageError) {
   const view = document.getElementById('create-success').content.cloneNode(true);
   view.querySelector('.code').textContent = code;
   const link = view.querySelector('.listing-link');
@@ -60,6 +61,9 @@ function showSuccess(app, id, code) {
       copy.textContent = 'Kopioi käsin';
     }
   });
+  const warning = view.querySelector('.image-warning');
+  warning.textContent = imageError ? 'Ilmoitus julkaistiin, mutta kuvan lataus epäonnistui: ' + imageError + ' Voit lisätä kuvan myöhemmin muokkaamalla ilmoitusta.' : '';
+  warning.hidden = !imageError;
   app.replaceChildren(view);
   app.querySelector('h1').focus();
   window.scrollTo(0, 0);
@@ -80,6 +84,17 @@ export function mountCreate(app) {
     for (const f of ['title', 'name', 'offer', 'want', 'city', 'area', 'email', 'phone', 'whatsapp', 'website']) data[f] = form.elements[f].value;
     data.pledge = form.elements.pledge.checked;
 
+    // Resize before publishing, so an unreadable file stops here and not after the listing exists.
+    let image = null;
+    const file = form.elements.image.files[0];
+    if (file) {
+      try {
+        image = await resizeToJpeg(file);
+      } catch {
+        return showErrors(form, { image: 'Tiedosto ei ole kuva, jota voisi käyttää. Valitse JPEG-, PNG- tai WebP-kuva.' });
+      }
+    }
+
     submit.disabled = true;
     submit.textContent = 'Julkaistaan…';
     let res;
@@ -91,7 +106,22 @@ export function mountCreate(app) {
     submit.disabled = false;
     submit.textContent = 'Julkaise ilmoitus';
 
-    if (res.status === 201) return showSuccess(app, res.body.id, res.body.code);
+    if (res.status === 201) {
+      const { id, code } = res.body;
+      let imageError = null;
+      if (image) {
+        submit.disabled = true;
+        submit.textContent = 'Ladataan kuvaa…';
+        const fd = new FormData();
+        fd.set('code', code);
+        fd.set('image', image, 'kuva.jpg');
+        let up;
+        try { up = await postForm(`/listings/${id}/image`, fd); } catch { up = { status: 0, body: null }; }
+        // Never swallowed silently (BandRock lesson): the user is told the image is missing.
+        if (up.status !== 201) imageError = (up.body && up.body.fields && up.body.fields.image) || 'tarkista verkkoyhteys.';
+      }
+      return showSuccess(app, id, code, imageError);
+    }
     if (res.status === 400 && res.body && res.body.fields) return showErrors(form, res.body.fields);
     const summary = form.querySelector('.form-summary');
     summary.textContent = res.status === 429

@@ -6,6 +6,17 @@ export const API_URL = location.hostname === 'localhost' || location.hostname ==
   ? 'http://localhost:8797/api'
   : 'https://vaihtokaupat.es3-world-worker.workers.dev/api';
 
+// Uploaded images are served by the Worker itself: <origin>/img/<id>/<file>.jpg
+export const IMAGE_BASE = API_URL.replace(/\/api$/, '');
+
+/** POST multipart form data; same contract as postJson. */
+export async function postForm(path, form) {
+  const res = await fetch(API_URL + path, { method: 'POST', body: form });
+  let body = null;
+  try { body = await res.json(); } catch {}
+  return { status: res.status, body };
+}
+
 /** POST JSON; resolves to { status, body } and never throws on HTTP errors. */
 export async function postJson(path, data) {
   const res = await fetch(API_URL + path, {

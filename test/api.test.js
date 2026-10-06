@@ -6,6 +6,8 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { unstable_dev } from 'wrangler';
+import { makeJpeg } from './fixtures.js';
+import { hasApp1 } from '../worker/src/jpeg.js';
 
 let worker, persistTo;
 before(async () => {
@@ -116,6 +118,69 @@ test('contact links come from their own POST endpoint, built by the server', asy
   ]);
   assert.equal((await worker.fetch(`/api/listings/${id}/contact`)).status, 405, 'GET is not allowed');
   assert.equal((await worker.fetch('/api/listings/99999/contact', { method: 'POST' })).status, 404);
+});
+
+// unstable_dev's fetch does not serialise a FormData body (the boundary is lost), so the
+// multipart body is built with Request first, as a browser would send it.
+const upload = async (id, code, bytes, name = 'kuva.jpg', type = 'image/jpeg') => {
+  const form = new FormData();
+  form.set('code', code);
+  form.set('image', new File([bytes], name, { type }));
+  const req = new Request('http://localhost/', { method: 'POST', body: form });
+  return worker.fetch(`/api/listings/${id}/image`, {
+    method: 'POST',
+    headers: { 'content-type': req.headers.get('content-type') },
+    body: await req.arrayBuffer(),
+  });
+};
+
+test('image upload: needs the right code, and EXIF never reaches R2 even around the form', async () => {
+  const { id, code } = await (await post(valid())).json();
+  assert.equal((await upload(id, 'WRONG', makeJpeg())).status, 403);
+  assert.equal((await upload('99999', code, makeJpeg())).status, 404);
+
+  const res = await upload(id, code, makeJpeg({ w: 1200, h: 900 }));
+  assert.equal(res.status, 201);
+  const { image } = await res.json();
+  assert.match(image.src, new RegExp(`^img/${id}/\\d+\\.jpg$`));
+  assert.deepEqual([image.width, image.height], [1200, 900]);
+
+  const served = await worker.fetch('/' + image.src);
+  assert.equal(served.status, 200);
+  assert.equal(served.headers.get('content-type'), 'image/jpeg');
+  assert.equal(served.headers.get('x-content-type-options'), 'nosniff');
+  const bytes = new Uint8Array(await served.arrayBuffer());
+  assert.equal(hasApp1(bytes), false, 'no APP1 marker');
+  assert.equal(new TextDecoder('latin1').decode(bytes).includes('GPS'), false);
+
+  const pub = await (await worker.fetch(`/api/listings/${id}`)).json();
+  assert.deepEqual(pub.image, image);
+});
+
+test('image upload: HTML named .jpg, PNG and too large images are rejected', async () => {
+  const { id, code } = await (await post(valid())).json();
+  const html = new TextEncoder().encode('<html><script>alert(1)</script></html>');
+  const fake = await upload(id, code, html, 'kuva.jpg', 'image/jpeg');
+  assert.equal(fake.status, 400);
+  assert.ok((await fake.json()).fields.image);
+  const png = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0]);
+  assert.equal((await upload(id, code, png, 'kuva.png', 'image/png')).status, 400);
+  assert.equal((await upload(id, code, makeJpeg({ w: 4000, h: 3000 }))).status, 400);
+});
+
+test('image upload: the old image is removed from R2 when a new one is saved', async () => {
+  const { id, code } = await (await post(valid())).json();
+  const first = (await (await upload(id, code, makeJpeg())).json()).image.src;
+  await new Promise((r) => setTimeout(r, 5)); // distinct timestamp in the key
+  const second = (await (await upload(id, code, makeJpeg())).json()).image.src;
+  assert.notEqual(first, second);
+  assert.equal((await worker.fetch('/' + first)).status, 404);
+  assert.equal((await worker.fetch('/' + second)).status, 200);
+});
+
+test('image route only serves image keys', async () => {
+  assert.equal((await worker.fetch('/img/12345/../../listings/12345.json')).status, 404);
+  assert.equal((await worker.fetch('/img/listings/12345.json')).status, 404);
 });
 
 test('unknown or malformed id answers 404', async () => {

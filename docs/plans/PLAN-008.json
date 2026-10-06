@@ -1,0 +1,33 @@
+{
+  "id": "PLAN-008",
+  "story": "STORY-008",
+  "author_model": "Claude Opus 5.5",
+  "date": "2026-10-06",
+  "approach": "Selain pienentää kuvan createImageBitmapilla ja canvasilla enintään 1600 px:n kokoon ja tallentaa sen JPEG-muotoon. Uudelleenkoodaus kirjoittaa vain pikselit, joten EXIF ja GPS eivät säily. Luonnissa kuva pienennetään ennen julkaisua, jotta kelvoton tiedosto pysähtyy jo lomakkeelle, ja se lähetetään muokkauskoodin kanssa heti luonnin jälkeen (POST /api/listings/:id/image, multipart). Palvelin tarkistaa kaiken uudelleen (§12 sääntö 3): JPEG tunnistetaan alkutavuista, segmentit käydään läpi (jpeg.js), APP1–APP15 ja COM poistetaan, mitat luetaan SOF-segmentistä ja yli 1600 px:n kuva hylätään. Kuva tallennetaan avaimella img/<id>/<aikaleima>.jpg, ja kaikki muut img/<id>/-tiedostot poistetaan. GET /img/... tarjoilee kuvan otsakkeilla nosniff ja CSP default-src 'none'.",
+  "alternatives_considered": [
+    { "name": "Vain selain poistaa EXIFin", "pros": "Ei jäsennystä palvelimella.", "cons": "API on julkinen. Lomakkeen ohi lähetetty puhelinkuva tallentuisi sijainteineen.", "rejected_because": "§12 sääntö 3: palvelin validoi aina." },
+    { "name": "PNG ja WebP sellaisinaan", "pros": "Ei uudelleenkoodausta läpinäkyville kuville.", "cons": "Niissäkin voi olla metatietoa (eXIf-, tEXt- ja EXIF-palat), mikä vaatisi kolme jäsennintä.", "rejected_because": "Selain muuntaa kaiken JPEGiksi, joten palvelin hyväksyy vain JPEGin ja tarvitsee yhden jäsentimen." },
+    { "name": "Kuva samassa pyynnössä kuin luonti", "pros": "Yksi pyyntö.", "cons": "Luontirajapinta muuttuisi multipartiksi, ja muokkaus (STORY-009) tarvitsee joka tapauksessa erillisen kuvareitin.", "rejected_because": "Erillinen reitti palvelee sekä luontia että muokkausta." }
+  ],
+  "files_to_change": [
+    "worker/src/jpeg.js",
+    "worker/src/index.js",
+    "public/assets/resize.js",
+    "public/assets/api.js",
+    "public/assets/create.js",
+    "public/assets/listing.js",
+    "public/assets/arena.css",
+    "public/index.html",
+    "test/fixtures.js",
+    "test/jpeg.test.js",
+    "test/api.test.js",
+    "test/e2e/image.spec.js"
+  ],
+  "open_questions": [],
+  "steps": [
+    { "step": 1, "action": "jpeg.js: segmenttien läpikäynti, metatietojen poisto ja mitat", "verify": "jpeg.test.js: Exif-, GPS- ja Canon-tekstit poistuvat, JFIF ja kuvadata säilyvät, rikkinäinen syöte hylätään" },
+    { "step": 2, "action": "POST /image (koodi ja nopeusrajoitin) ja GET /img", "verify": "api.test.js: väärä koodi 403, EXIF ei tallennu R2:een API:n kautta, HTML .jpg-päätteellä ja PNG hylätään, 4000 px hylätään, vanha kuva palauttaa 404, polun ohitus 404" },
+    { "step": 3, "action": "Selain: resize.js, lomakkeen kuvakenttä, lataus luonnin jälkeen ja kuva ilmoitussivulla", "verify": "image.spec.js: 3000×2000 + EXIF → 1600×1067 ilman APP1-merkkiä, naamioitu HTML pysähtyy ennen julkaisua, epäonnistunut lataus kerrotaan käyttäjälle" }
+  ],
+  "status": "draft"
+}
