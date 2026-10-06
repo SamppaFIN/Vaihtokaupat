@@ -1,7 +1,7 @@
 {
   "_meta": {
     "schema_version": "1.1",
-    "generated_at": "2026-10-06T01:50:00Z",
+    "generated_at": "2026-10-06T05:10:00Z",
     "generated_by": "Hermes (Claude Code)",
     "git_commit": "c508da8",
     "git_branch": "main",
@@ -165,17 +165,17 @@
       "depends_on": [
         "STORY-001"
       ],
-      "status": "todo",
+      "status": "review",
       "acceptance_criteria": [
         "Arenan fontit Anton, Oswald ja Manrope ladataan omasta kansiosta, eikä Google Fontsiin tehdä pyyntöjä, ja public/fonts/OFL.txt on mukana",
         "Tekstin kontrasti on vähintään 4,5:1 myös spottivalojen ja liukuvärien päällä (axe-core puhdas)",
         "prefers-reduced-motion sammuttaa spottivalot ja muut animaatiot"
       ],
-      "progress": 0,
+      "progress": 90,
       "linked": {
-        "plan": null,
-        "implementation": null,
-        "testing": null
+        "plan": "PLAN-003",
+        "implementation": "TICKET-IMPL-003",
+        "testing": "TICKET-TEST-003"
       }
     },
     {
@@ -597,6 +597,78 @@
         }
       ],
       "status": "approved"
+    },
+    {
+      "id": "PLAN-003",
+      "story": "STORY-003",
+      "author_model": "Claude Opus 5.5",
+      "date": "2026-10-06",
+      "approach": "public/assets/arena.css sisältää design-brief.md:n tokenit sellaisinaan :root-muuttujina, itse hostattujen fonttien @font-face-määrittelyt, perustyylit (tausta, teksti, linkit, :focus-visible ja 44 px kosketusalue) sekä Arenan animaatiot ja prefers-reduced-motion-säännön. public/assets/stage.js porttaa Arenan spottivalotaustan (tähdet, keilat, lamput ja savu) Reactista kevyeksi DOM-moduuliksi, jonka värit tulevat tokeneista color-mixillä. Tausta on aria-hidden ja pointer-events: none. index.html-kuori saa Arena-ilmeen, jotta kriteerit voi testata oikeasta näkymästä. Varsinainen etusivun sisältö tulee STORY-004:ssä.",
+      "alternatives_considered": [
+        {
+          "name": "Fontit Google Fontsista linkillä, kuten Arena-suunnitelmassa",
+          "pros": "Ei tiedostoja repoon.",
+          "cons": "Jokainen sivulataus tekisi pyynnön Googlelle ja paljastaisi kävijän IP-osoitteen kolmannelle osapuolelle.",
+          "rejected_because": "Rikkoo hyväksymiskriteerin 1 ja GDPR-linjauksen."
+        },
+        {
+          "name": "Fontteihin myös latin-ext-osajoukko",
+          "pros": "Esimerkiksi š, ž ja ő näkyisivät Arena-fontilla.",
+          "cons": "Kolme tiedostoa lisää. Suomen ä, ö ja å kuuluvat jo latin-osajoukkoon (U+0000–00FF).",
+          "rejected_because": "Harvinaiset merkit näkyvät varafontilla, ja osajoukko on helppo lisätä myöhemmin."
+        },
+        {
+          "name": "Kontrastin todentaminen pelkällä axe-corella",
+          "pros": "Valmis työkalu.",
+          "cons": "axe ei laske kontrastia liukuvärien ja taustakuvien päällä, vaan merkitsee ne tarkistamattomiksi (incomplete). Spottivalot jäisivät tarkistamatta.",
+          "rejected_because": "Lisäksi tarvitaan kuvakaappaukseen perustuva testi, joka mittaa tekstin kontrastin taustan kirkkainta pikseliä vastaan."
+        }
+      ],
+      "files_to_change": [
+        "public/assets/arena.css",
+        "public/assets/stage.js",
+        "public/fonts/anton-400-latin.woff2",
+        "public/fonts/oswald-var-latin.woff2",
+        "public/fonts/manrope-var-latin.woff2",
+        "public/fonts/OFL.txt",
+        "public/index.html",
+        "test/e2e/arena.spec.js",
+        "package.json"
+      ],
+      "open_questions": [],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Fontit fonts.gstatic.comista (latin-osajoukko; Oswald ja Manrope muuttuvapainoisina 400–700) ja OFL.txt google/fonts-reposta, kolmen fontin tekijänoikeusrivit ja yksi lisenssiteksti",
+          "verify": "E2E: document.fonts.check() on tosi kaikille kolmelle, eikä yhtään pyyntöä lähde Googlen domaineihin. OFL.txt vastaa 200."
+        },
+        {
+          "step": 2,
+          "action": "arena.css: tokenit design-brief.md:stä sellaisinaan, perustyylit, keyframet ja reduced-motion",
+          "verify": "grep: komponenttisäännöissä ei ole hex- tai rgb-arvoja tokenien ulkopuolella."
+        },
+        {
+          "step": 3,
+          "action": "stage.js: spottivalotausta DOM-moduulina, värit tokeneista",
+          "verify": "Kuvakaappaukset 390 px ja 1440 px leveydellä. Tausta on aria-hidden."
+        },
+        {
+          "step": 4,
+          "action": "Kontrastitesti: piilotetaan teksti, otetaan kuvakaappaus ja lasketaan kirkkain taustapikseli jokaisen tekstielementin alta. Kontrastin pitää olla vähintään 4,5:1 (isolla tekstillä 3:1).",
+          "verify": "E2E läpi. Jos jokin raja ei täyty, se on löydös, joka korjataan tokeneilla tai taustan himmennyksellä, ei testiä muuttamalla."
+        },
+        {
+          "step": 5,
+          "action": "Reduced motion: emuloidaan prefers-reduced-motion: reduce",
+          "verify": "E2E: document.getAnimations() on tyhjä reduce-tilassa ja ei-tyhjä ilman sitä."
+        },
+        {
+          "step": 6,
+          "action": "axe-core (@axe-core/playwright) WCAG 2.1 AA -tageilla",
+          "verify": "violations = []"
+        }
+      ],
+      "status": "draft"
     }
   ],
   "implementation_tickets": [
@@ -666,6 +738,36 @@
       },
       "commit": "b206733",
       "progress": 100
+    },
+    {
+      "id": "TICKET-IMPL-003",
+      "story": "STORY-003",
+      "plan": "PLAN-003",
+      "implemented_by_model": "Claude Opus 5.5",
+      "status": "review",
+      "files_changed": [
+        "public/assets/arena.css",
+        "public/assets/stage.js",
+        "public/index.html",
+        "public/fonts/anton-400-latin.woff2",
+        "public/fonts/oswald-var-latin.woff2",
+        "public/fonts/manrope-var-latin.woff2",
+        "public/fonts/OFL.txt",
+        "test/e2e/arena.spec.js",
+        "package.json",
+        "package-lock.json"
+      ],
+      "change_summary": "arena.css sisältää design-brief.md:n tokenit sellaisinaan sekä uuden tokenin --space-page (Arenan oma reunaväli). Siinä ovat myös itse hostattujen fonttien @font-face-määrittelyt (Anton 400, Oswald ja Manrope muuttuvapainoisina 400–700, latin-osajoukko fonts.gstatic.comista), perustyylit, spottivalotaustan tyylit, keyframet ja prefers-reduced-motion, joka sammuttaa kaikki animaatiot (animation: none, kuten Arena-suunnitelmassa). stage.js porttaa Arenan Reactilla tehdyn buildFx():n DOM-moduuliksi samalla siemenluvulla, ja värit tulevat tokeneista color-mixillä. Valkoisen tähden väriksi tuli --c-text, koska puhdas valkoinen ei ole token. Valaisinrima (truss) jätettiin pois, koska se on koriste ja koostuu kovakoodatuista liukuväreistä. OFL.txt koottiin google/fonts-repon kolmesta tiedostosta: tekijänoikeusrivit kolmesta, lisenssiteksti yhdestä (tekstit ovat identtiset lukuun ottamatta http/https-eroa yhdessä URL:ssa). index.html sai Arena-kuoren.",
+      "impact_analysis": {
+        "changed_symbols": [],
+        "call_sites_found": [],
+        "call_sites_updated": [],
+        "compile_errors_before": null,
+        "compile_errors_after": 0,
+        "notes": "Uusi devDependency @axe-core/playwright (MPL-2.0), sallittu kehitysaikaisena päätöksellä 2026-10-05. Sivu ei enää tee ulkoisia pyyntöjä fonteille. Tunnettu poikkeama: meta theme-color on kovakoodattu #0A0A0C, koska meta-tagi ei voi käyttää CSS-muuttujaa."
+      },
+      "commit": null,
+      "progress": 90
     }
   ],
   "testing_tickets": [
@@ -844,6 +946,91 @@
         "decision": "accepted",
         "signed_by": "Sami",
         "date": "2026-10-06"
+      }
+    },
+    {
+      "id": "TICKET-TEST-003",
+      "story": "STORY-003",
+      "implementation_ticket": "TICKET-IMPL-003",
+      "status": "in_progress",
+      "fix_summary": {
+        "problem_and_root_cause": "Uusi ominaisuus, ei korjaus.",
+        "files_changed": [
+          "public/assets/arena.css",
+          "public/assets/stage.js",
+          "public/index.html",
+          "public/fonts/anton-400-latin.woff2",
+          "public/fonts/oswald-var-latin.woff2",
+          "public/fonts/manrope-var-latin.woff2",
+          "public/fonts/OFL.txt",
+          "test/e2e/arena.spec.js",
+          "package.json",
+          "package-lock.json"
+        ]
+      },
+      "ai_testing": {
+        "environment": "Pages-simulaattori http://localhost:8082/Vaihtokaupat/, 390 px ja 1440 px",
+        "tooling": "Playwright 1.63 (Chromium), @axe-core/playwright 4.13",
+        "cases": [
+          {
+            "steps": "Lataa sivu, lataa kaikki FontFacet ja kirjaa pyyntöjen hostit",
+            "expected": "Anton, Oswald ja Manrope tilassa loaded, kaikki pyynnöt localhostiin ja OFL.txt vastaa 200",
+            "result": "Kolme fonttia loaded, ainoa host on localhost, woff2-tiedostot tulevat /Vaihtokaupat/fonts/-kansiosta, ja OFL.txt sisältää OFL 1.1 -tekstin (390 px ja 1440 px).",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Tekstin kontrasti spottivalojen päällä: teksti piilotetaan, tausta näytteistetään jokaisen tekstielementin alta 8 kohdasta animaatiosykliä, ja kirkkainta pikseliä verrataan tekstin väriin",
+            "expected": "Vähintään 4,5:1 jokaiselle tekstille",
+            "result": "Pahimmat arvot 1440 px / 390 px: .label (--c-accent) 4,97 / 5,12, h1 (--c-accent-hi) 8,64 / 9,24, leipäteksti (--c-text) 10,41 / 11,1. Testin toimivuus varmistettiin mutaatiolla: .label värillä --c-text-faint testi kaatui (3,41).",
+            "outcome": "pass"
+          },
+          {
+            "steps": "axe-core WCAG 2.1 A- ja AA-tageilla",
+            "expected": "violations = []",
+            "result": "0 rikkomusta (390 px ja 1440 px). axe ei laske kontrastia liukuvärien päällä, joten se katetaan yllä olevalla pikselitestillä.",
+            "outcome": "pass"
+          },
+          {
+            "steps": "document.getAnimations() ilman reduced motionia ja emuloidulla prefers-reduced-motion: reduce -asetuksella",
+            "expected": "Ilman: > 0. Reduce-tilassa: 0.",
+            "result": "Ilman reduced motionia animaatioita on käynnissä, ja reduce-tilassa niitä on 0 (390 px ja 1440 px).",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Kuvakaappaukset 390 px ja 1440 px",
+            "expected": "Arena-ilme, ei vaakavieritystä, teksti luettavissa",
+            "result": "Katsottu: spottivalot, tähdet, Anton-otsikko ja Oswald-label näkyvät oikein, eikä vaakavieritystä synny.",
+            "outcome": "pass"
+          }
+        ],
+        "console_findings": [],
+        "screenshots": [
+          "test-results/arena-screenshot-of-the-Arena-stage-mobile-390/arena.png",
+          "test-results/arena-screenshot-of-the-Arena-stage-desktop-1440/arena.png"
+        ]
+      },
+      "human_acceptance": {
+        "checked_items": [
+          {
+            "item": "Fontit omasta kansiosta, ei pyyntöjä Googlelle, OFL.txt mukana",
+            "checked": false
+          },
+          {
+            "item": "Kontrasti vähintään 4,5:1 myös spottivalojen päällä",
+            "checked": false
+          },
+          {
+            "item": "Reduced motion sammuttaa animaatiot",
+            "checked": false
+          },
+          {
+            "item": "Ilme näyttää Arenalta 390 px ja 1440 px leveydellä",
+            "checked": false
+          }
+        ],
+        "decision": null,
+        "signed_by": null,
+        "date": null
       }
     }
   ]

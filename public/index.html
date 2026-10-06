@@ -5,17 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Vaihtokaupat</title>
 <meta name="description" content="Vaihtokaupat: kerro mitä tarjoat ja mitä toivot tilalle, ja sovi vaihto kasvokkain ilman rahaa.">
+<meta name="theme-color" content="#0A0A0C">
+<link rel="preload" as="font" type="font/woff2" href="fonts/anton-400-latin.woff2" crossorigin>
+<link rel="stylesheet" href="assets/arena.css">
 </head>
 <body>
+<div class="page">
 <main id="app">
-  <h1>Vaihtokaupat</h1>
-  <p id="route"></p>
+  <section class="hero" id="hero">
+    <p class="label">Vaihdetaan tavaraa</p>
+    <h1>Vaihtokaupat</h1>
+    <p id="route"></p>
+  </section>
 </main>
+</div>
 
 <script type="module">
 import { restoreFromRedirect, parseRoute } from './assets/router.js';
+import { mountStage } from './assets/stage.js';
 
 restoreFromRedirect();
+mountStage(document.getElementById('hero'));
 
 // Placeholder until the front page (STORY-004) and listing page (STORY-006) exist:
 // shows which route was parsed. Route ids come from the URL, so textContent only.

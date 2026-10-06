@@ -1,0 +1,85 @@
+{
+  "id": "TICKET-TEST-003",
+  "story": "STORY-003",
+  "implementation_ticket": "TICKET-IMPL-003",
+  "status": "in_progress",
+  "fix_summary": {
+    "problem_and_root_cause": "Uusi ominaisuus, ei korjaus.",
+    "files_changed": [
+      "public/assets/arena.css",
+      "public/assets/stage.js",
+      "public/index.html",
+      "public/fonts/anton-400-latin.woff2",
+      "public/fonts/oswald-var-latin.woff2",
+      "public/fonts/manrope-var-latin.woff2",
+      "public/fonts/OFL.txt",
+      "test/e2e/arena.spec.js",
+      "package.json",
+      "package-lock.json"
+    ]
+  },
+  "ai_testing": {
+    "environment": "Pages-simulaattori http://localhost:8082/Vaihtokaupat/, 390 px ja 1440 px",
+    "tooling": "Playwright 1.63 (Chromium), @axe-core/playwright 4.13",
+    "cases": [
+      {
+        "steps": "Lataa sivu, lataa kaikki FontFacet ja kirjaa pyyntöjen hostit",
+        "expected": "Anton, Oswald ja Manrope tilassa loaded, kaikki pyynnöt localhostiin ja OFL.txt vastaa 200",
+        "result": "Kolme fonttia loaded, ainoa host on localhost, woff2-tiedostot tulevat /Vaihtokaupat/fonts/-kansiosta, ja OFL.txt sisältää OFL 1.1 -tekstin (390 px ja 1440 px).",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Tekstin kontrasti spottivalojen päällä: teksti piilotetaan, tausta näytteistetään jokaisen tekstielementin alta 8 kohdasta animaatiosykliä, ja kirkkainta pikseliä verrataan tekstin väriin",
+        "expected": "Vähintään 4,5:1 jokaiselle tekstille",
+        "result": "Pahimmat arvot 1440 px / 390 px: .label (--c-accent) 4,97 / 5,12, h1 (--c-accent-hi) 8,64 / 9,24, leipäteksti (--c-text) 10,41 / 11,1. Testin toimivuus varmistettiin mutaatiolla: .label värillä --c-text-faint testi kaatui (3,41).",
+        "outcome": "pass"
+      },
+      {
+        "steps": "axe-core WCAG 2.1 A- ja AA-tageilla",
+        "expected": "violations = []",
+        "result": "0 rikkomusta (390 px ja 1440 px). axe ei laske kontrastia liukuvärien päällä, joten se katetaan yllä olevalla pikselitestillä.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "document.getAnimations() ilman reduced motionia ja emuloidulla prefers-reduced-motion: reduce -asetuksella",
+        "expected": "Ilman: > 0. Reduce-tilassa: 0.",
+        "result": "Ilman reduced motionia animaatioita on käynnissä, ja reduce-tilassa niitä on 0 (390 px ja 1440 px).",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Kuvakaappaukset 390 px ja 1440 px",
+        "expected": "Arena-ilme, ei vaakavieritystä, teksti luettavissa",
+        "result": "Katsottu: spottivalot, tähdet, Anton-otsikko ja Oswald-label näkyvät oikein, eikä vaakavieritystä synny.",
+        "outcome": "pass"
+      }
+    ],
+    "console_findings": [],
+    "screenshots": [
+      "test-results/arena-screenshot-of-the-Arena-stage-mobile-390/arena.png",
+      "test-results/arena-screenshot-of-the-Arena-stage-desktop-1440/arena.png"
+    ]
+  },
+  "human_acceptance": {
+    "checked_items": [
+      {
+        "item": "Fontit omasta kansiosta, ei pyyntöjä Googlelle, OFL.txt mukana",
+        "checked": false
+      },
+      {
+        "item": "Kontrasti vähintään 4,5:1 myös spottivalojen päällä",
+        "checked": false
+      },
+      {
+        "item": "Reduced motion sammuttaa animaatiot",
+        "checked": false
+      },
+      {
+        "item": "Ilme näyttää Arenalta 390 px ja 1440 px leveydellä",
+        "checked": false
+      }
+    ],
+    "decision": null,
+    "signed_by": null,
+    "date": null
+  }
+}

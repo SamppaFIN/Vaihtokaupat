@@ -1,0 +1,30 @@
+{
+  "id": "TICKET-IMPL-003",
+  "story": "STORY-003",
+  "plan": "PLAN-003",
+  "implemented_by_model": "Claude Opus 5.5",
+  "status": "review",
+  "files_changed": [
+    "public/assets/arena.css",
+    "public/assets/stage.js",
+    "public/index.html",
+    "public/fonts/anton-400-latin.woff2",
+    "public/fonts/oswald-var-latin.woff2",
+    "public/fonts/manrope-var-latin.woff2",
+    "public/fonts/OFL.txt",
+    "test/e2e/arena.spec.js",
+    "package.json",
+    "package-lock.json"
+  ],
+  "change_summary": "arena.css sisältää design-brief.md:n tokenit sellaisinaan sekä uuden tokenin --space-page (Arenan oma reunaväli). Siinä ovat myös itse hostattujen fonttien @font-face-määrittelyt (Anton 400, Oswald ja Manrope muuttuvapainoisina 400–700, latin-osajoukko fonts.gstatic.comista), perustyylit, spottivalotaustan tyylit, keyframet ja prefers-reduced-motion, joka sammuttaa kaikki animaatiot (animation: none, kuten Arena-suunnitelmassa). stage.js porttaa Arenan Reactilla tehdyn buildFx():n DOM-moduuliksi samalla siemenluvulla, ja värit tulevat tokeneista color-mixillä. Valkoisen tähden väriksi tuli --c-text, koska puhdas valkoinen ei ole token. Valaisinrima (truss) jätettiin pois, koska se on koriste ja koostuu kovakoodatuista liukuväreistä. OFL.txt koottiin google/fonts-repon kolmesta tiedostosta: tekijänoikeusrivit kolmesta, lisenssiteksti yhdestä (tekstit ovat identtiset lukuun ottamatta http/https-eroa yhdessä URL:ssa). index.html sai Arena-kuoren.",
+  "impact_analysis": {
+    "changed_symbols": [],
+    "call_sites_found": [],
+    "call_sites_updated": [],
+    "compile_errors_before": null,
+    "compile_errors_after": 0,
+    "notes": "Uusi devDependency @axe-core/playwright (MPL-2.0), sallittu kehitysaikaisena päätöksellä 2026-10-05. Sivu ei enää tee ulkoisia pyyntöjä fonteille. Tunnettu poikkeama: meta theme-color on kovakoodattu #0A0A0C, koska meta-tagi ei voi käyttää CSS-muuttujaa."
+  },
+  "commit": null,
+  "progress": 90
+}

@@ -374,7 +374,7 @@ docs/tickets/testing/TICKET-TEST-NNN.json
 3. Rekisterinpitäjän yhteystieto tietosuojaselosteeseen ja selosteen juridinen tarkistus (STORY-014).
 4. Käyttöehtojen sanamuoto palvelun oikeudesta näyttää käyttäjän kuvat (STORY-014).
 5. Mitä kautta kadonneen koodin poistopyynnöt tulevat ylläpidolle (esim. sähköpostiosoite)?
-6. Täyttävätkö Arena-ilmeen kontrastit WCAG AA -vaatimuksen spottivalojen ja liukuvärien päällä? Tarkistetaan STORY-003:ssa.
+6. ~~Täyttävätkö Arena-ilmeen kontrastit WCAG AA -vaatimuksen spottivalojen ja liukuvärien päällä?~~ Ratkaistu 2026-10-06: täyttävät --c-text-, --c-accent-hi- ja --c-accent-väreillä (tiukin --c-accent, 4,97:1). --c-text-faint ei kelpaa spottivalojen päälle (3,41:1). Arenan liukuväriotsikko (kultaväri #6E5210 kohdassa 51 %) mitataan erikseen STORY-004:ssä.
 7. Hankitaanko oma domain, vai riittävätkö `samppafin.github.io` ja `workers.dev`?
 8. ~~Käytetäänkö samaa Cloudflare-tiliä kuin BandRockilla, ja onko Workerin nimi `vaihtokaupat` vapaana?~~ Ratkaistu 2026-10-05 (päätöstaulukko).
 9. Lisenssi arvioidaan uudelleen, jos palvelusta tulee maksullinen.
