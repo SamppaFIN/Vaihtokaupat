@@ -22,15 +22,33 @@
     ".github/workflows/deploy.yml",
     ".github/dependabot.yml"
   ],
-  "open_questions": [
-    "Integraatiotestejä (API wrangler deviä ja paikallista R2:ta vasten) ei vielä ole, koska Workerissa ei ole reittejä. CI ajaa ne samalla npm test -komennolla, kun ne tulevat STORY-007:ssä. Riittääkö tämä hyväksymiskriteeriin 1 tässä vaiheessa?"
-  ],
+  "open_questions": [],
   "steps": [
-    { "step": 1, "action": "deploy.yml BandRockin pohjalta: verify ajaa npm ci, npm test ja Playwright-E2E:n. worker ja pages ajetaan vain mainissa, ja pages riippuu verifystä ja workerista.", "verify": "Pull requestin CI-ajossa verify menee läpi, ja worker sekä pages näkyvät ohitettuina." },
-    { "step": 2, "action": "Salaisuustarkistus ennen wrangler deploytä", "verify": "Sama shell-pätkä ajetaan paikallisesti tyhjillä muuttujilla: exit 1 ja ::error::-rivi." },
-    { "step": 3, "action": "dependabot.yml npm-paketeille ja GitHub Actionsille", "verify": "Repon Insights → Dependency graph → Dependabot näyttää kaksi ekosysteemiä mergen jälkeen." },
-    { "step": 4, "action": "Haaran suojaus: mainiin pääsee vain pull requestilla, kun verify on vihreä", "verify": "GET /repos/.../branches/main/protection näyttää required_status_checks: verify." },
-    { "step": 5, "action": "Merge mainiin (Sami) → ensimmäinen oikea julkaisu", "verify": "Actions-ajossa järjestys verify → worker → pages. curl tuotanto-/api palauttaa 200, ja https://samppafin.github.io/Vaihtokaupat/0142 avautuu syvälinkkinä." }
+    {
+      "step": 1,
+      "action": "deploy.yml BandRockin pohjalta: verify ajaa npm ci, npm test ja Playwright-E2E:n. worker ja pages ajetaan vain mainissa, ja pages riippuu verifystä ja workerista.",
+      "verify": "Pull requestin CI-ajossa verify menee läpi, ja worker sekä pages näkyvät ohitettuina."
+    },
+    {
+      "step": 2,
+      "action": "Salaisuustarkistus ennen wrangler deploytä",
+      "verify": "Sama shell-pätkä ajetaan paikallisesti tyhjillä muuttujilla: exit 1 ja ::error::-rivi."
+    },
+    {
+      "step": 3,
+      "action": "dependabot.yml npm-paketeille ja GitHub Actionsille",
+      "verify": "Repon Insights → Dependency graph → Dependabot näyttää kaksi ekosysteemiä mergen jälkeen."
+    },
+    {
+      "step": 4,
+      "action": "Haaran suojaus: mainiin pääsee vain pull requestilla, kun verify on vihreä",
+      "verify": "GET /repos/.../branches/main/protection näyttää required_status_checks: verify."
+    },
+    {
+      "step": 5,
+      "action": "Merge mainiin (Sami) → ensimmäinen oikea julkaisu",
+      "verify": "Actions-ajossa järjestys verify → worker → pages. curl tuotanto-/api palauttaa 200, ja https://samppafin.github.io/Vaihtokaupat/0142 avautuu syvälinkkinä."
+    }
   ],
-  "status": "draft"
+  "status": "approved"
 }

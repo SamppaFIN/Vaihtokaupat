@@ -1,10 +1,10 @@
 {
   "_meta": {
     "schema_version": "1.1",
-    "generated_at": "2026-10-06T01:20:00Z",
-    "generated_by": "Hermes (Claude Code), STORY-002",
-    "git_commit": "b206733",
-    "git_branch": "feature/STORY-002",
+    "generated_at": "2026-10-06T01:40:00Z",
+    "generated_by": "Hermes (Claude Code)",
+    "git_commit": "4e01cf4",
+    "git_branch": "main",
     "language": "fi"
   },
   "project": {
@@ -568,9 +568,7 @@
         ".github/workflows/deploy.yml",
         ".github/dependabot.yml"
       ],
-      "open_questions": [
-        "Integraatiotestejä (API wrangler deviä ja paikallista R2:ta vasten) ei vielä ole, koska Workerissa ei ole reittejä. CI ajaa ne samalla npm test -komennolla, kun ne tulevat STORY-007:ssä. Riittääkö tämä hyväksymiskriteeriin 1 tässä vaiheessa?"
-      ],
+      "open_questions": [],
       "steps": [
         {
           "step": 1,
@@ -598,7 +596,7 @@
           "verify": "Actions-ajossa järjestys verify → worker → pages. curl tuotanto-/api palauttaa 200, ja https://samppafin.github.io/Vaihtokaupat/0142 avautuu syvälinkkinä."
         }
       ],
-      "status": "draft"
+      "status": "approved"
     }
   ],
   "implementation_tickets": [

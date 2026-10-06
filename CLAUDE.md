@@ -1,6 +1,6 @@
 # CLAUDE.md — Vaihtokaupat
 
-> Generoitu `init-project`-alustuksella 2026-10-05T19:23:00Z · päivitetty 2026-10-05
+> Generoitu `init-project`-alustuksella 2026-10-05T19:23:00Z · päivitetty 2026-10-06
 > Lue tämä kokonaan ennen ensimmäistä vastausta jokaisessa uudessa keskustelussa.
 > Osiot 1–11 syntyivät haastattelusta. Osiot 12 ja 13 kasvavat projektin mukana —
 > päivitä päivämäärä aina, kun muutat tiedostoa.
@@ -363,6 +363,8 @@ docs/tickets/testing/TICKET-TEST-NNN.json
 | 2026-10-05 | Suunnitelmien "ehdotukset"-laskuri jätetään MVP:n ulkopuolelle | Ehdotuksille ei ole kanavaa ilman viestejä | Sami |
 | 2026-10-05 | PLAN-001 hyväksyttiin, ja R2-ämpärin nimeksi tulee `vaihtokaupat-listings` | Hermeksen ehdotus STORY-001:n suunnitelmasta | Sami |
 | 2026-10-05 | Käytetään samaa Cloudflare-tiliä kuin BandRockilla. Worker-nimi `vaihtokaupat` oli vapaa, ja R2-ämpäri `vaihtokaupat-listings` luotiin. | Ratkaisee avoimen kysymyksen 8 | Sami |
+| 2026-10-06 | PLAN-002 hyväksyttiin PR #1:n mergellä. Integraatiotestit tulevat STORY-007:ssä ensimmäisten reittien mukana, ja `npm test` ajaa ne CI:ssä. | Workerissa ei vielä ole testattavia reittejä | Sami |
+| 2026-10-06 | Kehityksen ensimmäisessä vaiheessa mainin haaran suojaus on poistettu, ja Hermes pushaa suoraan mainiin. CI:n verify estää silti rikkinäisen julkaisun (testit → Worker → Pages). | Nopeus: Samin ei tarvitse käydä GitHubissa jokaisella kierroksella | Sami |
 | 2026-10-05 | `@axe-core/playwright` (MPL-2.0) sallitaan kehitysaikaisena testityökaluna, vaikka lisenssilinjaus sallii muuten vain MIT-, Apache- ja BSD-lisenssit | Työkalu ei päädy julkaisuun, ja saavutettavuustestaus on osa testausstackia | Sami |
 
 ### Avoimet kysymykset
@@ -376,3 +378,4 @@ docs/tickets/testing/TICKET-TEST-NNN.json
 7. Hankitaanko oma domain, vai riittävätkö `samppafin.github.io` ja `workers.dev`?
 8. ~~Käytetäänkö samaa Cloudflare-tiliä kuin BandRockilla, ja onko Workerin nimi `vaihtokaupat` vapaana?~~ Ratkaistu 2026-10-05 (päätöstaulukko).
 9. Lisenssi arvioidaan uudelleen, jos palvelusta tulee maksullinen.
+10. Milloin mainin haaran suojaus (verify pakollinen ennen mergeä) palautetaan? Ehdotus: viimeistään ennen kuin palvelu jaetaan muille.
