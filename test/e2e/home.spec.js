@@ -8,7 +8,7 @@ test('front page has the hero, "Vaihda, älä myy", three listing parts, six rul
   await expect(page.locator('.lead')).toHaveText('Tavara vaihtaa omistajaa ilman rahaa. Ei myyntiä, ei ostamista – vain aitoja vaihtoja.');
 
   const h2 = page.getByRole('heading', { level: 2 });
-  await expect(h2).toHaveText(['Vaihda,älä myy', 'Miten ilmoitus tehdään', 'Ryhmän säännöt']);
+  await expect(h2).toHaveText(['Vaihda,älä myy', 'Miten ilmoitus tehdään', 'Ryhmän säännöt', 'Valmiina vaihtamaan?']);
 
   const parts = page.getByRole('region', { name: 'Miten ilmoitus tehdään' }).getByRole('listitem');
   await expect(parts).toHaveCount(3);

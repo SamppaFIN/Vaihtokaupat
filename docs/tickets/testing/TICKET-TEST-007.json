@@ -1,0 +1,96 @@
+{
+  "id": "TICKET-TEST-007",
+  "story": "STORY-007",
+  "implementation_ticket": "TICKET-IMPL-007",
+  "status": "in_progress",
+  "fix_summary": {
+    "problem_and_root_cause": "Uusi ominaisuus, ei korjaus.",
+    "files_changed": [
+      "worker/src/schema.js",
+      "worker/src/index.js",
+      "wrangler.toml",
+      "package.json",
+      "public/index.html",
+      "public/assets/api.js",
+      "public/assets/create.js",
+      "public/assets/arena.css",
+      "playwright.config.js",
+      "test/schema.test.js",
+      "test/api.test.js",
+      "test/worker.test.js",
+      "test/e2e/create.spec.js",
+      "test/e2e/home.spec.js"
+    ]
+  },
+  "ai_testing": {
+    "environment": "Pages-simulaattori :8082 ja wrangler dev --env local :8797 (paikallinen R2). Integraatiotestit unstable_dev, oma väliaikainen R2.",
+    "tooling": "node:test, wrangler unstable_dev, Playwright 1.63, @axe-core/playwright",
+    "cases": [
+      {
+        "steps": "POST ilman offer-, want- tai city-kenttää, ilman yhteystietoa tai ilman lupausta",
+        "expected": "400 ja virhe kyseiselle kentälle",
+        "result": "Kaikki viisi tapausta palauttivat 400 ja oikean kentän (api.test.js). Lomake näyttää samat virheet tekstinä kenttien vieressä ja aria-invalid-merkinnällä (create.spec.js).",
+        "outcome": "pass"
+      },
+      {
+        "steps": "WhatsApp-linkki ilman numeroa, puhelinnumeroiden normalisointi",
+        "expected": "400 linkille ilman numeroa, muoto +358…",
+        "result": "API: 400. Lomakkeella palvelimen virhe näkyy WhatsApp-kentän vieressä. Yksikkötestit: 040 123 4567, 040-1234567, +358 (0)40…, 00358… ja 358… → +358401234567. wa.me- ja api.whatsapp.com-linkit numeron kanssa hyväksytään, ilman numeroa hylätään.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Koodi näytetään kerran eikä esiinny myöhemmin",
+        "expected": "Ei tunnisteessa, URL:ssa, myöhemmässä vastauksessa eikä selaimen tallennustiloissa",
+        "result": "Koodi on 5 merkkiä, tunniste 5 numeroa, eikä koodi esiinny tunnisteessa, linkissä, URL:ssa, GET-vastauksessa (runko ja otsakkeet), localStoragessa, sessionStoragessa eikä evästeissä. R2:ssa on vain tiiviste (worker.test.js).",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Lomake ohjeistaa noutopaikasta",
+        "expected": "Kaupunginosa, ei katuosoitetta",
+        "result": "\"Kirjoita kaupunginosa, älä katuosoitetta. Esim. Leppävaara.\" on näkyvissä ja kytketty kenttään aria-describedbyllä.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Hunajapurkki, liian iso runko, rikkinäinen JSON, CORS, nopeusrajoitin ja puuttuva CODE_SECRET",
+        "expected": "Botti saa näennäisen onnistumisen, 413, 400, vain sallittu origin, 429 ja 500",
+        "result": "Kaikki toimivat odotetusti, eikä yhdessäkään tapauksessa tallentunut mitään.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Lomakesivu: h1, vaakavieritys ja axe",
+        "expected": "Yksi h1, ylivuoto 0 ja 0 rikkomusta",
+        "result": "Läpi 390 px ja 1440 px leveydellä. Kuvakaappaukset lomakkeesta ja koodinäkymästä on katsottu.",
+        "outcome": "pass"
+      }
+    ],
+    "console_findings": [],
+    "screenshots": [
+      "test-results/create-screenshots-of-the-form-and-the-code-view-mobile-390/form.png",
+      "test-results/create-screenshots-of-the-form-and-the-code-view-mobile-390/code.png",
+      "test-results/create-screenshots-of-the-form-and-the-code-view-desktop-1440/form.png"
+    ]
+  },
+  "human_acceptance": {
+    "checked_items": [
+      {
+        "item": "Pakolliset kentät ja 400-vastaus",
+        "checked": false
+      },
+      {
+        "item": "WhatsApp-linkki ilman numeroa hylätään, ja puhelinnumerot ovat +358-muodossa",
+        "checked": false
+      },
+      {
+        "item": "Koodi näytetään kerran, eikä sitä löydy mistään myöhemmin",
+        "checked": false
+      },
+      {
+        "item": "Lomake ohjeistaa kaupunginosasta",
+        "checked": false
+      }
+    ],
+    "decision": null,
+    "signed_by": null,
+    "date": null
+  }
+}

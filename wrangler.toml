@@ -12,5 +12,22 @@ ALLOWED_ORIGINS = "https://samppafin.github.io"
 binding = "BUCKET"
 bucket_name = "vaihtokaupat-listings"
 
+# Per-key limiter for creating and editing. Slows down spam and code guessing; Cloudflare
+# describes it as permissive and eventually consistent, which is enough here.
+# namespace_id must differ from BandRock's 1001: both Workers live on the same account.
+[[ratelimits]]
+name = "RATE_LIMITER"
+namespace_id = "1002"
+simple = { limit = 20, period = 60 }
+
 [dev]
 port = 8797
+
+# Local development and tests: `wrangler dev --env local`. Local R2 only, no rate limiter
+# (tests create many listings), and a dummy secret that is not used anywhere else.
+[env.local]
+r2_buckets = [{ binding = "BUCKET", bucket_name = "vaihtokaupat-listings" }]
+
+[env.local.vars]
+ALLOWED_ORIGINS = "http://localhost:8082"
+CODE_SECRET = "local-dev-only-not-a-secret"

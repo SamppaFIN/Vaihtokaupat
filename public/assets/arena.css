@@ -178,7 +178,8 @@ button, a.button { min-height: var(--touch-target); min-width: var(--touch-targe
   text-align: center;
   padding: clamp(48px, 7cqi, 96px) var(--space-page) clamp(96px, 10cqi, 150px);
 }
-.hero-body .label { margin-bottom: clamp(14px, 2cqi, 24px); }
+/* --c-accent measured 4.48:1 under the brightest beam here; the lighter gold keeps 4.5:1. */
+.hero-body .label { margin-bottom: clamp(14px, 2cqi, 24px); color: var(--c-accent-hi); }
 .lead { margin: clamp(20px, 2.6cqi, 32px) 0 0; max-width: 620px; color: var(--c-text); text-wrap: pretty; }
 
 /* ── Sections ─────────────────────────────────────────────────────────── */
@@ -344,6 +345,109 @@ strong { color: var(--c-accent-hi); font-weight: 700; }
 .corner { position: absolute; width: 12px; height: 12px; background: var(--c-accent-hi); transform: rotate(45deg); }
 .corner.tl { left: 4px; top: 4px; } .corner.tr { right: 4px; top: 4px; }
 .corner.bl { left: 4px; bottom: 4px; } .corner.br { right: 4px; bottom: 4px; }
+
+/* ── Buttons ──────────────────────────────────────────────────────────── */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  border-radius: 4px;
+  font-family: var(--font-head);
+  font-weight: 500;
+  font-size: var(--fs-label);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+.button.ghost {
+  border: 1px solid var(--c-accent);
+  background: color-mix(in oklch, var(--c-bg) 55%, transparent);
+  color: var(--c-accent-hi);
+}
+.button.ghost:hover { background: color-mix(in oklch, var(--c-accent) 14%, transparent); }
+.button.gold {
+  min-height: 58px;
+  padding: 0 36px;
+  border: 1px solid var(--c-accent-deep);
+  font-weight: 600;
+  font-size: 1.125rem;
+  letter-spacing: 0.14em;
+  color: var(--c-on-accent);
+  background: linear-gradient(180deg, var(--c-accent-hi) 0%, var(--c-accent) 50%, var(--c-accent-hi) 100%);
+  box-shadow: 0 10px 28px color-mix(in oklch, var(--c-accent) 28%, transparent);
+}
+.button.gold:hover { box-shadow: 0 0 40px color-mix(in oklch, var(--c-accent-hi) 50%, transparent); }
+.button:disabled { cursor: progress; opacity: 0.7; }
+.site-header .button { margin-left: auto; }
+.hero-body .button { margin-top: clamp(28px, 3.4cqi, 44px); }
+
+.cta {
+  text-align: center;
+  background: radial-gradient(60% 70% at 50% 100%, color-mix(in oklch, var(--c-accent) 18%, transparent), transparent 70%);
+}
+.cta h2 { font-size: clamp(2.75rem, 7.4cqi, 6.5rem); }
+.cta p { margin: 22px auto 36px; max-width: 560px; }
+
+/* ── Form ─────────────────────────────────────────────────────────────── */
+.narrow { max-width: 720px; }
+.back { display: inline-flex; align-items: center; min-height: var(--touch-target); margin-bottom: 16px; }
+.form-page h1 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: var(--fs-h2); line-height: 0.95; text-transform: uppercase; }
+.form-page .hint { margin: 4px 0 8px; font-size: 0.9375rem; color: var(--c-text-muted); }
+.form-page form { margin-top: 24px; display: flex; flex-direction: column; gap: 24px; }
+fieldset {
+  margin: 0;
+  padding: 20px 20px 24px;
+  border: 1px solid color-mix(in oklch, var(--c-accent) 45%, transparent);
+  border-radius: 8px;
+  background: var(--c-surface);
+  display: flex;
+  flex-direction: column;
+}
+legend {
+  padding: 0 8px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: var(--fs-h3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--c-accent-hi);
+}
+legend .card-num { font-size: 1.5em; vertical-align: middle; }
+.form-page label { margin-top: 16px; font-weight: 600; color: var(--c-text); }
+.form-page label em, legend em, .form-page .hint em { font-style: normal; font-family: var(--font-body); font-size: 0.8125rem; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--c-text-muted); }
+input:not([type="checkbox"]), textarea {
+  min-height: var(--touch-target);
+  padding: 10px 12px;
+  border: 1px solid var(--c-text-faint);
+  border-radius: 4px;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font: inherit;
+  font-size: 1rem;
+}
+textarea { resize: vertical; }
+input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--c-danger); }
+.error { margin: 6px 0 0; font-weight: 600; color: var(--c-danger); }
+.form-summary { margin: 0; padding: 12px 16px; border: 1px solid var(--c-danger); border-radius: 4px; font-weight: 600; color: var(--c-danger); }
+.hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.pledge-check { display: grid; grid-template-columns: auto 1fr; gap: 0 12px; align-items: start; }
+.pledge-check input { width: 24px; height: 24px; margin: 18px 0 0; accent-color: var(--c-accent); }
+.pledge-check .error { grid-column: 2; }
+.form-page form > .button { align-self: flex-start; }
+
+.success p { max-width: 560px; }
+.code {
+  margin: 24px 0 12px;
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 14cqi, 6rem);
+  letter-spacing: 0.2em;
+  color: var(--c-accent-hi);
+  user-select: all;
+}
+.warning { padding: 12px 16px; border-left: 3px solid var(--c-accent); background: var(--c-surface); }
+.listing-link { display: inline-block; margin-top: 16px; min-height: var(--touch-target); padding-top: 10px; }
 
 /* ── Footer ───────────────────────────────────────────────────────────── */
 .site-footer {

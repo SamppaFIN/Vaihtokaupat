@@ -8,9 +8,18 @@ export default defineConfig({
     { name: 'mobile-390', use: { viewport: { width: 390, height: 844 } } },
     { name: 'desktop-1440', use: { viewport: { width: 1440, height: 900 } } },
   ],
-  webServer: {
-    command: 'node test/pages-sim.mjs',
-    url: 'http://localhost:8082/Vaihtokaupat/',
-    reuseExistingServer: true,
-  },
+  webServer: [
+    {
+      command: 'node test/pages-sim.mjs',
+      url: 'http://localhost:8082/Vaihtokaupat/',
+      reuseExistingServer: true,
+    },
+    {
+      // Local Worker with local R2 (wrangler.toml env.local), the site's API on localhost.
+      command: 'npx wrangler dev --env local --persist-to .wrangler/e2e',
+      url: 'http://localhost:8797/api',
+      reuseExistingServer: true,
+      timeout: 120_000,
+    },
+  ],
 });

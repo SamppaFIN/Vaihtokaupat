@@ -365,6 +365,9 @@ docs/tickets/testing/TICKET-TEST-NNN.json
 | 2026-10-05 | Käytetään samaa Cloudflare-tiliä kuin BandRockilla. Worker-nimi `vaihtokaupat` oli vapaa, ja R2-ämpäri `vaihtokaupat-listings` luotiin. | Ratkaisee avoimen kysymyksen 8 | Sami |
 | 2026-10-06 | PLAN-002 hyväksyttiin PR #1:n mergellä. Integraatiotestit tulevat STORY-007:ssä ensimmäisten reittien mukana, ja `npm test` ajaa ne CI:ssä. | Workerissa ei vielä ole testattavia reittejä | Sami |
 | 2026-10-06 | Kehityksen ensimmäisessä vaiheessa mainin haaran suojaus on poistettu, ja Hermes pushaa suoraan mainiin. CI:n verify estää silti rikkinäisen julkaisun (testit → Worker → Pages). | Nopeus: Samin ei tarvitse käydä GitHubissa jokaisella kierroksella | Sami |
+| 2026-10-06 | Säännön 6 "yksityisviestillä" tarkoittaa puhelinta, WhatsAppia ja sähköpostia, ja teksti pysyy ennallaan. Alustalle ei rakenneta omaa viestijärjestelmää. | Yhteystiedot paljastetaan napista (STORY-006) | Sami |
+| 2026-10-06 | Ilmoituksen tunniste on satunnainen 5-numeroinen luku (esim. #40291), ja törmäykset tarkistetaan | R2:ssa ei ole atomista laskuria juoksevalle numerolle. Ilmoitukset ovat julkisia, joten tunniste ei ole salaisuus. | Hermes |
+| 2026-10-06 | Nopeusrajoittimen namespace_id on 1002, ja `wrangler dev --env local` ajaa ilman rajoitinta paikallista R2:ta vasten | BandRock käyttää samalla tilillä arvoa 1001. Testit luovat paljon ilmoituksia. | Hermes |
 | 2026-10-05 | `@axe-core/playwright` (MPL-2.0) sallitaan kehitysaikaisena testityökaluna, vaikka lisenssilinjaus sallii muuten vain MIT-, Apache- ja BSD-lisenssit | Työkalu ei päädy julkaisuun, ja saavutettavuustestaus on osa testausstackia | Sami |
 
 ### Avoimet kysymykset

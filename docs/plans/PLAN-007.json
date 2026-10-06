@@ -1,0 +1,62 @@
+{
+  "id": "PLAN-007",
+  "story": "STORY-007",
+  "author_model": "Claude Opus 5.5",
+  "date": "2026-10-06",
+  "approach": "POST /api/listings validoi kaikki kentät schema.js:ssä, normalisoi yhteystiedot (puhelin ja WhatsApp E.164-muotoon, sähköposti pienaakkosiksi) ja tallentaa ilmoituksen R2:een avaimella listings/<id>.json. Muokkauskoodista tallennetaan vain HMAC-tiiviste. Koodi palautetaan kerran. GET /api/listings/:id palauttaa julkisen näkymän ilman tiivistettä ja yhteystietoja. Lomake on staattinen template, jonka create.js kytkee, ja käyttäjän data käsitellään vain textContentillä tai valuella. Integraatiotestit ajetaan wranglerin unstable_dev-rajapinnalla omaa paikallista R2:ta vasten.",
+  "alternatives_considered": [
+    {
+      "name": "Juokseva tunniste (#0142)",
+      "pros": "Vastaa suunnitelman lippunumeroa.",
+      "cons": "R2:ssa ei ole atomista laskuria, joten samanaikaiset luonnit voisivat saada saman numeron.",
+      "rejected_because": "Satunnainen 5-numeroinen tunniste (törmäystarkistus head()-kutsulla) näyttää samalta ilman kilpatilannetta."
+    },
+    {
+      "name": "Liian pitkä teksti katkaistaan hiljaa",
+      "pros": "Ei virheitä käyttäjälle.",
+      "cons": "Käyttäjä ei huomaa, että osa tekstistä katosi.",
+      "rejected_because": "Palvelin palauttaa 400, ja lomakkeen maxlength estää tilanteen jo selaimessa."
+    },
+    {
+      "name": "Integraatiotestit vain mock-R2:ta vasten",
+      "pros": "Nopeampi.",
+      "cons": "Ei testaa oikeaa Workers-ajoympäristöä eikä wrangler.toml:ia (CLAUDE.md §10).",
+      "rejected_because": "unstable_dev käynnistää oikean Workerin paikallisella R2:lla parissa sekunnissa."
+    }
+  ],
+  "files_to_change": [
+    "worker/src/schema.js",
+    "worker/src/index.js",
+    "wrangler.toml",
+    "package.json",
+    "public/index.html",
+    "public/assets/api.js",
+    "public/assets/create.js",
+    "public/assets/arena.css",
+    "playwright.config.js",
+    "test/schema.test.js",
+    "test/api.test.js",
+    "test/worker.test.js",
+    "test/e2e/create.spec.js",
+    "test/e2e/home.spec.js"
+  ],
+  "open_questions": [],
+  "steps": [
+    {
+      "step": 1,
+      "action": "schema.js: validointi ja normalisointi",
+      "verify": "schema.test.js: puhelinmuodot, WhatsApp-linkit, sähköposti, ohjausmerkit, pakolliset kentät ja ylimääräisten kenttien ohitus."
+    },
+    {
+      "step": 2,
+      "action": "Worker: POST ja GET, hunajapurkki, nopeusrajoitin ja CODE_SECRET-vahti",
+      "verify": "api.test.js (unstable_dev) ja worker.test.js (429, 500 ilman salaisuutta, tallennettu tiiviste)."
+    },
+    {
+      "step": 3,
+      "action": "Lomake, virheet tekstinä kentän vieressä, onnistumisnäkymä ja CTA-napit",
+      "verify": "create.spec.js 390 px ja 1440 px leveydellä sekä kuvakaappaukset."
+    }
+  ],
+  "status": "draft"
+}

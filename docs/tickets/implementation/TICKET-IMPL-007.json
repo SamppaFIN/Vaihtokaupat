@@ -1,0 +1,41 @@
+{
+  "id": "TICKET-IMPL-007",
+  "story": "STORY-007",
+  "plan": "PLAN-007",
+  "implemented_by_model": "Claude Opus 5.5",
+  "status": "review",
+  "files_changed": [
+    "worker/src/schema.js",
+    "worker/src/index.js",
+    "wrangler.toml",
+    "package.json",
+    "public/index.html",
+    "public/assets/api.js",
+    "public/assets/create.js",
+    "public/assets/arena.css",
+    "playwright.config.js",
+    "test/schema.test.js",
+    "test/api.test.js",
+    "test/worker.test.js",
+    "test/e2e/create.spec.js",
+    "test/e2e/home.spec.js"
+  ],
+  "change_summary": "Ilmoituksen luonti alusta loppuun. Worker: POST /api/listings ja GET /api/listings/:id, validointi schema.js:ssä, hunajapurkki, nopeusrajoitin (namespace 1002, avain create) ja vahti, joka palauttaa 500 eikä luo mitään, jos CODE_SECRET puuttuu. Tunniste on satunnainen 5-numeroinen. wrangler.toml sai env.localin (paikallinen R2, ei rajoitinta, testisalaisuus), ja npm run dev:worker käyttää sitä. Selain: lomake /uusi, jossa kolme osaa, yhteystiedot (vähintään yksi), lupaus, kaupunginosaohje ja virheet tekstinä kentän vieressä. Onnistumisnäkymä näyttää koodin kerran ja varoittaa, ettei koodia voi palauttaa. Etusivun \"Liity\"- ja \"Liity vaihtamaan\" -napit sekä CTA-osio johtavat lomakkeeseen. Heron label vaihtui väriin --c-accent-hi, koska CTA-nappi siirsi sen kirkkaamman keilan alle (4,48:1).",
+  "impact_analysis": {
+    "changed_symbols": [
+      "wrangler.toml: [[ratelimits]] ja [env.local]",
+      "package.json: dev:worker → wrangler dev --env local"
+    ],
+    "call_sites_found": [
+      "playwright.config.js (webServer)"
+    ],
+    "call_sites_updated": [
+      "playwright.config.js"
+    ],
+    "compile_errors_before": null,
+    "compile_errors_after": 0,
+    "notes": "TURVALLISUUS, katselmoi: (1) syötteiden käsittely: kaikki kentät siivotaan palvelimella (ohjausmerkit, bidi-ohitukset ja pituusrajat), ja tuntemattomat kentät ohitetaan. (2) Muokkauskoodista tallennetaan vain HMAC-SHA256-tiiviste, eikä koodi esiinny tunnisteessa, URL:ssa, julkisessa näkymässä eikä selaimen tallennustiloissa (testattu). (3) Julkinen GET ei palauta yhteystietoja eikä tiivistettä. (4) CODE_SECRET-vahti estää tiivistyksen arvolla \"undefined\". (5) Nopeusrajoittimen avain on \"create\", ei IP-osoite (§9 sääntö 6). (6) env.local sisältää selvästi nimetyn testiarvon \"local-dev-only-not-a-secret\", jota ei käytetä tuotannossa."
+  },
+  "commit": null,
+  "progress": 90
+}

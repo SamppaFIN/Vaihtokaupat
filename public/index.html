@@ -47,11 +47,13 @@
   <header class="site-header">
     <svg viewBox="0 0 100 100" width="48" height="48" aria-hidden="true"><use href="#vkLogoA"></use></svg>
     <span class="brand">Vaihtokaupat</span>
+    <a class="button ghost" href="uusi">Liity</a>
   </header>
   <div class="hero-body">
     <p class="label twin">Vaihdetaan tavaraa</p>
     <h1 class="gold-text shine">Vaihtokaupat</h1>
     <p class="lead">Tavara vaihtaa omistajaa ilman rahaa. Ei myyntiä, ei ostamista – vain aitoja vaihtoja.</p>
+    <a class="button gold" href="uusi">Liity vaihtamaan</a>
   </div>
 </section>
 
@@ -121,6 +123,12 @@
   </div>
 </section>
 
+<section class="section cta" aria-labelledby="cta">
+  <h2 id="cta" class="gold-text">Valmiina vaihtamaan?</h2>
+  <p>Liity ryhmään, jätä ilmoitus ja sovi vaihto suoraan toisen jäsenen kanssa.</p>
+  <a class="button gold" href="uusi">Liity vaihtamaan</a>
+</section>
+
 </main>
 
 <footer class="site-footer">
@@ -134,16 +142,115 @@
 </footer>
 </div>
 
+<template id="create-form">
+<section class="section form-page">
+  <div class="inner narrow">
+    <a class="back" href="./">← Etusivulle</a>
+    <p class="label">Uusi ilmoitus</p>
+    <h1 class="chrome-text">Jätä ilmoitus</h1>
+    <p class="hint">Pakolliset kohdat on merkitty sanalla <em>pakollinen</em>.</p>
+    <form novalidate>
+      <p class="form-summary" role="alert" tabindex="-1" hidden></p>
+
+      <fieldset>
+        <legend><span class="card-num" aria-hidden="true">01</span> Mitä tarjotaan</legend>
+        <label for="f-title">Otsikko</label>
+        <p class="hint" id="h-title">Esim. Vauvanvaatteet 74–80</p>
+        <input id="f-title" name="title" maxlength="80" aria-describedby="h-title e-title">
+        <p class="error" id="e-title" data-error="title" hidden></p>
+
+        <label for="f-offer">Tarjoan <em>pakollinen</em></label>
+        <p class="hint" id="h-offer">Kuvaile tavara ja sen kunto rehellisesti.</p>
+        <textarea id="f-offer" name="offer" rows="4" maxlength="600" aria-describedby="h-offer e-offer"></textarea>
+        <p class="error" id="e-offer" data-error="offer" hidden></p>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="card-num" aria-hidden="true">02</span> Mitä toivotaan tilalle</legend>
+        <label for="f-want">Toivon tilalle <em>pakollinen</em></label>
+        <p class="hint" id="h-want">Kerro mitä etsit vastineeksi – tai avoimet ehdotukset.</p>
+        <textarea id="f-want" name="want" rows="3" maxlength="600" aria-describedby="h-want e-want"></textarea>
+        <p class="error" id="e-want" data-error="want" hidden></p>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="card-num" aria-hidden="true">03</span> Paikkakunta ja noutoalue</legend>
+        <label for="f-city">Paikkakunta <em>pakollinen</em></label>
+        <input id="f-city" name="city" maxlength="60" autocomplete="address-level2" aria-describedby="e-city">
+        <p class="error" id="e-city" data-error="city" hidden></p>
+
+        <label for="f-area">Noutoalue</label>
+        <p class="hint" id="h-area">Kirjoita kaupunginosa, älä katuosoitetta. Esim. Leppävaara.</p>
+        <input id="f-area" name="area" maxlength="60" aria-describedby="h-area e-area">
+        <p class="error" id="e-area" data-error="area" hidden></p>
+      </fieldset>
+
+      <fieldset aria-describedby="h-contact e-contact">
+        <legend>Yhteystiedot <em>vähintään yksi</em></legend>
+        <p class="hint" id="h-contact">Yhteystiedot näytetään vasta, kun kävijä painaa Näytä yhteystiedot -nappia. Ne poistetaan, kun merkitset ilmoituksen vaihdetuksi.</p>
+        <p class="error" id="e-contact" data-error="contact" hidden></p>
+
+        <label for="f-name">Etunimi tai nimimerkki</label>
+        <input id="f-name" name="name" maxlength="40" autocomplete="given-name">
+
+        <label for="f-email">Sähköposti</label>
+        <input id="f-email" name="email" type="email" maxlength="254" autocomplete="email" aria-describedby="e-email">
+        <p class="error" id="e-email" data-error="email" hidden></p>
+
+        <label for="f-phone">Puhelin</label>
+        <input id="f-phone" name="phone" type="tel" maxlength="30" autocomplete="tel" aria-describedby="e-phone">
+        <p class="error" id="e-phone" data-error="phone" hidden></p>
+
+        <label for="f-whatsapp">WhatsApp-numero</label>
+        <p class="hint" id="h-whatsapp">Numero, tai wa.me-linkki, jossa on numero.</p>
+        <input id="f-whatsapp" name="whatsapp" type="tel" maxlength="80" aria-describedby="h-whatsapp e-whatsapp">
+        <p class="error" id="e-whatsapp" data-error="whatsapp" hidden></p>
+      </fieldset>
+
+      <div class="hp" aria-hidden="true">
+        <label for="f-website">Älä täytä tätä kenttää</label>
+        <input id="f-website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="pledge-check">
+        <input id="f-pledge" name="pledge" type="checkbox" aria-describedby="e-pledge">
+        <label for="f-pledge">Lupaan, että en myy enkä osta tässä ryhmässä – vain vaihdan. <em>pakollinen</em></label>
+        <p class="error" id="e-pledge" data-error="pledge" hidden></p>
+      </div>
+
+      <button class="button gold" type="submit">Julkaise ilmoitus</button>
+    </form>
+  </div>
+</section>
+</template>
+
+<template id="create-success">
+<section class="section form-page">
+  <div class="inner narrow success">
+    <p class="label">Ilmoitus julkaistu</p>
+    <h1 class="chrome-text" tabindex="-1">Tallenna muokkauskoodi</h1>
+    <p>Tarvitset koodia, kun muokkaat ilmoitusta, merkitset sen vaihdetuksi tai poistat sen.</p>
+    <p class="code" aria-label="Muokkauskoodi"></p>
+    <button class="button ghost copy" type="button">Kopioi koodi</button>
+    <p class="warning"><strong>Koodia ei voi palauttaa.</strong> Se näytetään vain tämän kerran, eikä sitä tallenneta mihinkään selkokielisenä.</p>
+    <a class="listing-link"></a>
+  </div>
+</section>
+</template>
+
 <script type="module">
 import { restoreFromRedirect, parseRoute } from './assets/router.js';
 import { mountStage } from './assets/stage.js';
+import { mountCreate } from './assets/create.js';
 
 restoreFromRedirect();
 
 // Listing page placeholder until STORY-006: replaces the front page with the parsed id.
 // Route ids come from the URL, so textContent only.
 var r = parseRoute();
-if (r.id) {
+if (r.id === 'uusi') {
+  mountCreate(document.getElementById('app'));
+} else if (r.id) {
   var hero = document.createElement('section');
   hero.className = 'hero';
   var body = document.createElement('div');
