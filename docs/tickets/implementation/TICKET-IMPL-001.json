@@ -3,7 +3,7 @@
   "story": "STORY-001",
   "plan": "PLAN-001",
   "implemented_by_model": "Claude Opus 5.5",
-  "status": "review",
+  "status": "done",
   "files_changed": [
     ".gitignore",
     "LICENSE",
@@ -40,6 +40,6 @@
     "compile_errors_after": 0,
     "notes": "Uusi repo, joten aiempia kutsupaikkoja ei ole. Turvallisuuteen vaikuttavat: CORS (ALLOWED_ORIGINS = https://samppafin.github.io), muokkauskoodin HMAC, yleisavainten poisto sekä uudet devDependencyt wrangler (MIT/Apache-2.0) ja @playwright/test (Apache-2.0). Simulaattori estää ../-polut, ja testi kattaa %2e%2e-muodon. Workerin nopeusrajoitin jätettiin STORY-007:ään. Huom: BandRockin namespace_id 1001 ei saa toistua, jos tili on sama."
   },
-  "commit": null,
+  "commit": "d95b515",
   "progress": 100
 }

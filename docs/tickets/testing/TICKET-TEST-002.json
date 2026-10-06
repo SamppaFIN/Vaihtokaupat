@@ -1,0 +1,82 @@
+{
+  "id": "TICKET-TEST-002",
+  "story": "STORY-002",
+  "implementation_ticket": "TICKET-IMPL-002",
+  "status": "done",
+  "fix_summary": {
+    "problem_and_root_cause": "Uusi ominaisuus, ei korjaus.",
+    "files_changed": [
+      ".github/workflows/deploy.yml",
+      ".github/dependabot.yml"
+    ]
+  },
+  "ai_testing": {
+    "environment": "GitHub Actions (SamppaFIN/Vaihtokaupat) ja tuotanto: https://samppafin.github.io/Vaihtokaupat/, https://vaihtokaupat.es3-world-worker.workers.dev/api",
+    "tooling": "GitHub Actions API, curl, Playwright (Chromium)",
+    "cases": [
+      {
+        "steps": "Avaa PR #1 (feature/STORY-002)",
+        "expected": "verify ajaa npm testin ja E2E:n, ja worker sekä pages ohitetaan",
+        "result": "Ajo 37368782199 attempt 2: verify success (kaikki askeleet), worker ja pages skipped. Attempt 1 peruuntui GitHubin runner-häiriöön ennen yhtäkään askelta. Commitin 964393b ajo: success.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Punainen verify estää mergen",
+        "expected": "Haaran suojaus vaatii verify-tarkistuksen",
+        "result": "Suojaus oli voimassa PR #1:n ajan (API: required_status_checks = verify, strict, enforce_admins). Sami poisti säännön 2026-10-06 ensimmäisen kehitysvaiheen ajaksi (CLAUDE.md §13). Punainen verify estää nyt julkaisun mutta ei mergeä.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Push main-haaraan (merge 4e01cf4 ja suora push c508da8)",
+        "expected": "Järjestys verify → worker → pages, ja tuotanto vastaa",
+        "result": "Ajot 37398352558 ja 37400140980: verify → worker → pages, kaikki success. Tuotannossa /api palauttaa 200 {\"ok\":true}, etusivu 200 ja /0142 404 + 404.html. Selaimessa syvälinkki palautuu siistiksi osoitteeksi 390 px ja 1440 px leveydellä ilman virheitä.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Epäonnistunut Worker-julkaisu jättää sivun edelliseen versioon",
+        "expected": "pages ei aja, jos worker kaatuu",
+        "result": "Todennettu workflown rakenteesta (pages: needs [verify, worker]). Vikaa ei aiheutettu tuotannossa tarkoituksella.",
+        "outcome": "not_run"
+      },
+      {
+        "steps": "Aja Check Cloudflare secrets -pätkä paikallisesti neljällä yhdistelmällä",
+        "expected": "Vain molemmat arvot → exit 0. Muuten ::error:: ja exit 1.",
+        "result": "Tyhjät, pelkkä token ja pelkkä account → exit 1 ja ::error::. Molemmat → exit 0.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Tarkista .github/dependabot.yml",
+        "expected": "npm ja github-actions viikoittain",
+        "result": "Tiedosto on mainissa ja sisältää molemmat ekosysteemit. Dependabotin ensimmäistä ajoa ei ole vielä nähty.",
+        "outcome": "pass"
+      }
+    ],
+    "console_findings": [],
+    "screenshots": [
+      "GitHub Actions -artifakti e2e-results (ajo 37398352558)"
+    ]
+  },
+  "human_acceptance": {
+    "checked_items": [
+      {
+        "item": "PR ajaa testit, ja punainen testi estää julkaisun",
+        "checked": true
+      },
+      {
+        "item": "Push mainiin julkaisee Workerin ennen Pagesia",
+        "checked": true
+      },
+      {
+        "item": "Puuttuva salaisuus pysäyttää ajon ennen deploytä",
+        "checked": true
+      },
+      {
+        "item": "Dependabot päällä npm:lle ja GitHub Actionsille",
+        "checked": true
+      }
+    ],
+    "decision": "accepted",
+    "signed_by": "Sami",
+    "date": "2026-10-06"
+  }
+}

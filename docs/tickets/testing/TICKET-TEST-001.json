@@ -2,7 +2,7 @@
   "id": "TICKET-TEST-001",
   "story": "STORY-001",
   "implementation_ticket": "TICKET-IMPL-001",
-  "status": "in_progress",
+  "status": "done",
   "fix_summary": {
     "problem_and_root_cause": "Uusi ominaisuus, ei korjaus.",
     "files_changed": [
@@ -69,27 +69,27 @@
     "checked_items": [
       {
         "item": "Sivu aukeaa alipolulla ja syvälinkki toimii",
-        "checked": false
+        "checked": true
       },
       {
         "item": "BandRockin bändikohtainen koodi ei siirtynyt",
-        "checked": false
+        "checked": true
       },
       {
         "item": "npm test läpi",
-        "checked": false
+        "checked": true
       },
       {
         "item": "wrangler dev vastaa portissa 8797",
-        "checked": false
+        "checked": true
       },
       {
         "item": "Lähde-commit kirjattu",
-        "checked": false
+        "checked": true
       }
     ],
-    "decision": null,
-    "signed_by": null,
-    "date": null
+    "decision": "accepted",
+    "signed_by": "Sami",
+    "date": "2026-10-06"
   }
 }

@@ -3,7 +3,7 @@
   "story": "STORY-002",
   "plan": "PLAN-002",
   "implemented_by_model": "Claude Opus 5.5",
-  "status": "review",
+  "status": "done",
   "files_changed": [
     ".github/workflows/deploy.yml",
     ".github/dependabot.yml"
@@ -18,5 +18,5 @@
     "notes": "Turvallisuuteen vaikuttavat: CI käyttää salaisuuksia CLOUDFLARE_API_TOKEN ja CLOUDFLARE_ACCOUNT_ID vain worker-jobissa, joka ei aja pull requesteissa, joten forkin PR ei pääse niihin. Workflown oikeudet ovat contents: read, pages: write ja id-token: write. Haaran suojaus estää force pushin ja haaran poiston. Ensimmäinen CI-ajo peruuntui GitHubin runner-häiriön takia ennen yhtäkään askelta. Uudelleenajo (attempt 2) meni läpi 2026-10-06."
   },
   "commit": "b206733",
-  "progress": 90
+  "progress": 100
 }
