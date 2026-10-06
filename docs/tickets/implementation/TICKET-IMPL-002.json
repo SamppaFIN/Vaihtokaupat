@@ -1,0 +1,22 @@
+{
+  "id": "TICKET-IMPL-002",
+  "story": "STORY-002",
+  "plan": "PLAN-002",
+  "implemented_by_model": "Claude Opus 5.5",
+  "status": "review",
+  "files_changed": [
+    ".github/workflows/deploy.yml",
+    ".github/dependabot.yml"
+  ],
+  "change_summary": "GitHub Actions -workflow kopioitiin BandRockista (SamppaFIN/BandRock@7098a01, pages.yml), ja siinä on ketju verify → worker → pages. verify ajaa npm ci:n, npm testin ja Playwright-E2E:n Chromiumilla, ja kuvakaappaukset tallentuvat artifaktiksi. worker ja pages ajetaan vain mainissa, ja pages riippuu workerista. Salaisuustarkistus pysäyttää ajon ennen wrangler deploytä. Dependabot tarkistaa npm-paketit ja GitHub Actionsit viikoittain. Mainin haaran suojaus vaatii verify-tarkistuksen (strict, koskee myös ylläpitäjiä). Pages-actionit pidettiin BandRockin todetuissa versioissa, ja uudet pääversiot tulevat Dependabotin kautta.",
+  "impact_analysis": {
+    "changed_symbols": [],
+    "call_sites_found": [],
+    "call_sites_updated": [],
+    "compile_errors_before": null,
+    "compile_errors_after": null,
+    "notes": "Turvallisuuteen vaikuttavat: CI käyttää salaisuuksia CLOUDFLARE_API_TOKEN ja CLOUDFLARE_ACCOUNT_ID vain worker-jobissa, joka ei aja pull requesteissa, joten forkin PR ei pääse niihin. Workflown oikeudet ovat contents: read, pages: write ja id-token: write. Haaran suojaus estää force pushin ja haaran poiston. Ensimmäinen CI-ajo peruuntui GitHubin runner-häiriön takia ennen yhtäkään askelta. Uudelleenajo (attempt 2) meni läpi 2026-10-06."
+  },
+  "commit": "b206733",
+  "progress": 90
+}
