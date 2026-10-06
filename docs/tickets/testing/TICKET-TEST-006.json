@@ -1,0 +1,88 @@
+{
+  "id": "TICKET-TEST-006",
+  "story": "STORY-006",
+  "implementation_ticket": "TICKET-IMPL-006",
+  "status": "in_progress",
+  "fix_summary": {
+    "problem_and_root_cause": "Uusi ominaisuus. Toteutuksen aikana testit löysivät bugin: hidden-attribuutti ei piilottanut .button-elementtejä, koska luokan display: inline-flex voitti selaimen oletussäännön.",
+    "files_changed": [
+      "worker/src/contact.js",
+      "worker/src/index.js",
+      "public/assets/listing.js",
+      "public/index.html",
+      "public/assets/arena.css",
+      "test/contact.test.js",
+      "test/worker.test.js",
+      "test/api.test.js",
+      "test/e2e/listing.spec.js",
+      "test/e2e/routing.spec.js"
+    ]
+  },
+  "ai_testing": {
+    "environment": "Pages-simulaattori :8082 ja wrangler dev --env local :8797. Integraatio unstable_dev.",
+    "tooling": "node:test, wrangler unstable_dev, Playwright 1.63 (--workers=1 kuormitetulla koneella), axe-core",
+    "cases": [
+      {
+        "steps": "Syvälinkki /<id>",
+        "expected": "Tarjoan, toivon, noutopaikka ja tila näkyvät",
+        "result": "Otsikko, Ilmoitus #id, tarjoan (rivinvaihtoineen), toivon, \"Tampere, Hervanta\" ja \"Avoin\" näkyvät, ja sivun otsikko on \"<otsikko> – Vaihtokaupat\" (390 px ja 1440 px).",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Kuva ilmoitussivulla",
+        "expected": "Kuva näkyy",
+        "result": "Ei ajettu: kuvan lataus tulee STORY-008:ssa, eikä yhdelläkään ilmoituksella ole vielä kuvaa.",
+        "outcome": "not_run"
+      },
+      {
+        "steps": "Yhteystiedot vasta napista",
+        "expected": "Ei HTML:ssä ennen klikkausta, haku erillisestä päätepisteestä",
+        "result": "Ennen klikkausta sähköpostia ja numeroita ei ole sivun HTML:ssä, eikä yhtään /contact-pyyntöä ole lähtenyt. Klikkaus tekee täsmälleen yhden POSTin. GET /contact palauttaa 405.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Linkkimuodot",
+        "expected": "mailto:, tel: ja wa.me",
+        "result": "mailto:<osoite>, tel:+358401112233 ja https://wa.me/358405556677. Yksikkötesti kattaa CLAUDE.md:n esimerkin 040 123 4567 → https://wa.me/358401234567. Normalisoimattomasta arvosta ei tule linkkiä, eikä selain näytä javascript:-linkkiä.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Tilat",
+        "expected": "Ei löydy, latausvirhe ja yhteystiedot poistettu",
+        "result": "Kaikki kolme näkyvät tekstinä, ja latausvirheessä on toimiva Yritä uudelleen -nappi. Piilotettu ilmoitus ja nopeusrajoitus eivät paljasta mitään (worker.test.js).",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Saavutettavuus",
+        "expected": "Yksi h1, ei vaakavieritystä, axe 0 ennen ja jälkeen paljastuksen",
+        "result": "Läpi molemmilla leveyksillä myös erittäin pitkällä otsikolla. Kuvakaappaukset ennen ja jälkeen on katsottu.",
+        "outcome": "pass"
+      }
+    ],
+    "console_findings": [],
+    "screenshots": [
+      "test-results/listing-listing-page-*-mobile-390/listing.png",
+      "test-results/listing-listing-page-*-mobile-390/listing-revealed.png",
+      "test-results/listing-listing-page-*-desktop-1440/listing-revealed.png"
+    ]
+  },
+  "human_acceptance": {
+    "checked_items": [
+      {
+        "item": "Ilmoitussivulla tarjoan, toivon, noutopaikka ja tila, ja syvälinkki toimii (kuva STORY-008:ssa)",
+        "checked": false
+      },
+      {
+        "item": "Yhteystiedot haetaan vasta napista, eivätkä ne ole HTML:ssä ennen sitä",
+        "checked": false
+      },
+      {
+        "item": "mailto:, tel: ja wa.me-linkit toimivat puhelimessa",
+        "checked": false
+      }
+    ],
+    "decision": null,
+    "signed_by": null,
+    "date": null
+  }
+}

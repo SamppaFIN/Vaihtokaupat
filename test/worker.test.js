@@ -115,6 +115,32 @@ test('create writes v1 metadata with the card fields and no contacts', async () 
   assert.ok(new TextEncoder().encode(JSON.stringify(meta)).length < 2048);
 });
 
+const reveal = (env, id = '11111') => worker.fetch(new Request(`http://localhost:8797/api/listings/${id}/contact`, { method: 'POST' }), env);
+
+test('contact: a hidden listing reveals nothing (404)', async () => {
+  const bucket = fakeBucket();
+  bucket.store.set('listings/11111.json', JSON.stringify(stored({ status: 'hidden' })));
+  const res = await reveal({ BUCKET: bucket });
+  assert.equal(res.status, 404);
+  assert.equal((await res.text()).includes('jenni@example.fi'), false);
+});
+
+test('contact: rate limited per listing, nothing revealed when limited', async () => {
+  const bucket = fakeBucket();
+  bucket.store.set('listings/11111.json', JSON.stringify(stored()));
+  const keys = [];
+  const res = await reveal({ BUCKET: bucket, RATE_LIMITER: { limit: async ({ key }) => { keys.push(key); return { success: false }; } } });
+  assert.equal(res.status, 429);
+  assert.deepEqual(keys, ['contact:11111']);
+  assert.equal((await res.text()).includes('jenni@example.fi'), false);
+});
+
+test('contact: a traded listing without contacts returns an empty list', async () => {
+  const bucket = fakeBucket();
+  bucket.store.set('listings/11111.json', JSON.stringify(stored({ status: 'traded', contact: null })));
+  assert.deepEqual(await (await reveal({ BUCKET: bucket })).json(), { links: [] });
+});
+
 test('OPTIONS preflight answers 204', async () => {
   const res = await call('/api', { method: 'OPTIONS', headers: { origin: 'https://samppafin.github.io' } });
   assert.equal(res.status, 204);

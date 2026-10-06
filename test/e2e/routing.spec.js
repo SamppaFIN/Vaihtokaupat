@@ -20,7 +20,8 @@ test('front page opens on the sub-path without console errors', async ({ page },
 test('deep link restores the clean URL without ?p= and shows the route', async ({ page }, info) => {
   const errors = collectErrors(page);
   await page.goto('0142?x=1#yhteys');
-  await expect(page.locator('#route')).toHaveText('Ilmoitus 0142');
+  await expect(page.locator('h1')).toHaveText('Ilmoitusta ei löytynyt');
+  await expect(page.locator('.missing-text')).toContainText('Tunnisteella 0142');
   const url = new URL(page.url());
   expect(url.pathname).toBe('/Vaihtokaupat/0142');
   expect(url.search).toBe('?x=1');
@@ -33,6 +34,6 @@ test('deep link restores the clean URL without ?p= and shows the route', async (
 
 test('route id from the URL is shown as text, never as HTML', async ({ page }) => {
   await page.goto('%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E');
-  await expect(page.locator('#route')).toHaveText('Ilmoitus <img src=x onerror=alert(1)>');
-  await expect(page.locator('#route img')).toHaveCount(0);
+  await expect(page.locator('.missing-text')).toContainText('Tunnisteella <img src=x onerror=alert(1)> ei löydy');
+  await expect(page.locator('main img')).toHaveCount(0);
 });

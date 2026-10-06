@@ -67,6 +67,9 @@
 /* ── Base ─────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
+/* The hidden attribute must win over component display values (e.g. .button's inline-flex). */
+[hidden] { display: none !important; }
+
 html { color-scheme: dark; }
 
 body {
@@ -407,8 +410,21 @@ strong { color: var(--c-accent-hi); font-weight: 700; }
 
 .empty, .load-error { margin-top: 24px; padding: 24px; border: 1px dashed color-mix(in oklch, var(--c-text-muted) 35%, transparent); border-radius: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
 .empty p, .load-error p { margin: 0; flex-basis: 100%; }
-.empty[hidden], .load-error[hidden], .empty .clear[hidden] { display: none; }
 .load-error p { font-weight: 600; color: var(--c-danger); }
+
+/* ── Listing page ─────────────────────────────────────────────────────── */
+.listing-page h1 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: var(--fs-h2); line-height: 0.95; text-transform: uppercase; overflow-wrap: anywhere; }
+.listing-page .listing-who { margin: 12px 0 24px; justify-content: flex-start; }
+.listing-page .ticket:hover { transform: none; box-shadow: none; }
+.listing-page .ticket dl { padding-top: 24px; }
+.listing-page .ticket dd { font-size: var(--fs-body); white-space: pre-line; }
+.contact-box { margin-top: 32px; padding: 24px; border: 1px solid color-mix(in oklch, var(--c-accent) 45%, transparent); border-radius: 8px; background: var(--c-surface); }
+.contact-box h2 { margin: 0 0 16px; font-family: var(--font-head); font-weight: 600; font-size: var(--fs-h3); letter-spacing: 0.04em; text-transform: uppercase; color: var(--c-accent-hi); }
+.contact-links { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.contact-links a { display: inline-flex; align-items: center; min-height: var(--touch-target); font-size: var(--fs-body); font-weight: 600; overflow-wrap: anywhere; }
+.contact-msg { margin: 12px 0 0; color: var(--c-text-muted); }
+.contact-msg:empty { display: none; }
+.missing-text { margin: 16px 0 24px; }
 
 /* ── Buttons ──────────────────────────────────────────────────────────── */
 .button {

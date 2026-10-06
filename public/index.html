@@ -261,31 +261,58 @@
 </section>
 </template>
 
+<template id="listing-page">
+<section class="section listing-page">
+  <div class="inner narrow">
+    <a class="back" href="./">← Etusivulle</a>
+    <p class="label listing-number"></p>
+    <h1 class="gold-text listing-title"></h1>
+    <p class="ticket-meta listing-who"></p>
+    <div class="ticket"><article class="ticket-inner">
+      <dl>
+        <div><dt>Tarjoan</dt><dd class="listing-offer"></dd></div>
+        <div><dt>Toivon tilalle</dt><dd class="listing-want"></dd></div>
+        <div><dt>Noutopaikka</dt><dd class="listing-place"></dd></div>
+      </dl>
+      <div class="perf" aria-hidden="true"></div>
+      <div class="ticket-foot"><span class="status"></span></div>
+    </article></div>
+    <section class="contact-box" aria-labelledby="yhteys">
+      <h2 id="yhteys">Yhteystiedot</h2>
+      <button class="button gold reveal" type="button">Näytä yhteystiedot</button>
+      <ul class="contact-links" hidden></ul>
+      <p class="contact-msg" role="status"></p>
+    </section>
+  </div>
+</section>
+</template>
+
+<template id="listing-missing">
+<section class="section listing-page">
+  <div class="inner narrow">
+    <a class="back" href="./">← Etusivulle</a>
+    <h1 class="chrome-text">Ilmoitusta ei löytynyt</h1>
+    <p class="missing-text"></p>
+    <a class="button ghost" href="uusi">Jätä ilmoitus</a>
+  </div>
+</section>
+</template>
+
 <script type="module">
 import { restoreFromRedirect, parseRoute } from './assets/router.js';
 import { mountStage } from './assets/stage.js';
 import { mountCreate } from './assets/create.js';
 import { mountGrid } from './assets/grid.js';
+import { mountListing } from './assets/listing.js';
 
 restoreFromRedirect();
 
-// Listing page placeholder until STORY-006: replaces the front page with the parsed id.
-// Route ids come from the URL, so textContent only.
+// /uusi = create form, /<id> = listing page, otherwise the front page.
 var r = parseRoute();
 if (r.id === 'uusi') {
   mountCreate(document.getElementById('app'));
 } else if (r.id) {
-  var hero = document.createElement('section');
-  hero.className = 'hero';
-  var body = document.createElement('div');
-  body.className = 'hero-body';
-  var h1 = document.createElement('h1');
-  h1.id = 'route';
-  h1.textContent = 'Ilmoitus ' + r.id;
-  body.append(h1);
-  hero.append(body);
-  document.getElementById('app').replaceChildren(hero);
-  mountStage(hero);
+  mountListing(document.getElementById('app'), r.id);
 } else {
   mountStage(document.getElementById('hero'));
   mountGrid(document.getElementById('ilmoitukset'));

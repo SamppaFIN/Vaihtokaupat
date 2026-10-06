@@ -1,0 +1,36 @@
+{
+  "id": "TICKET-IMPL-006",
+  "story": "STORY-006",
+  "plan": "PLAN-006",
+  "implemented_by_model": "Claude Opus 5.5",
+  "status": "review",
+  "files_changed": [
+    "worker/src/contact.js",
+    "worker/src/index.js",
+    "public/assets/listing.js",
+    "public/index.html",
+    "public/assets/arena.css",
+    "test/contact.test.js",
+    "test/worker.test.js",
+    "test/api.test.js",
+    "test/e2e/listing.spec.js",
+    "test/e2e/routing.spec.js"
+  ],
+  "change_summary": "Ilmoitussivu korvasi paikkamerkin. /<5-numeroinen tunniste> näyttää lippunumeron, otsikon, nimen ja paikkakunnan sekä lippukortissa tarjoan-, toivon- ja noutopaikkatiedot ja tilan tekstinä. Yhteystiedot tulevat vasta napista: POST /api/listings/:id/contact palauttaa palvelimella contact.js:ssä rakennetut linkit (mailto:, tel:+ ja https://wa.me/). Päätepisteellä on nopeusrajoitin contact:<id>, piilotettu ilmoitus palauttaa 404, ja cache-control on no-store. Sivulla on omat tilat latausvirheelle, tuntemattomalle ilmoitukselle ja ilmoitukselle, jolla ei ole yhteystietoja. Testit löysivät bugin: .button-luokan display-arvo ohitti hidden-attribuutin, joten nappi jäi näkyviin. Korjaus on yleinen [hidden] { display: none !important }, ja sen myötä poistui aiempi paikkaus tyhjennysnapille.",
+  "impact_analysis": {
+    "changed_symbols": [
+      "index.html: #route-paikkamerkki poistettu, /<id> → mountListing"
+    ],
+    "call_sites_found": [
+      "test/e2e/routing.spec.js (#route)"
+    ],
+    "call_sites_updated": [
+      "test/e2e/routing.spec.js"
+    ],
+    "compile_errors_before": null,
+    "compile_errors_after": 0,
+    "notes": "TURVALLISUUS, katselmoi: (1) Yhteystiedot paljastetaan vain POST-pyynnöllä. Ne eivät ole sivun HTML:ssä ennen napin painallusta, mikä on testattu, eivätkä listassa tai julkisessa näkymässä. (2) Linkit rakentaa palvelin vain normalisoiduista arvoista (§12 sääntö 4), ja selain hyväksyy lisäksi vain alut mailto:, tel:+ ja https://wa.me/ (testattu javascript:-linkillä). (3) Nopeusrajoittimen avain on ilmoituskohtainen eikä IP-osoite. (4) Botit voivat vielä haravoida yhteystietoja kutsumalla päätepistettä suoraan. Turnstile (STORY-015) on tarkoitettu juuri tähän."
+  },
+  "commit": null,
+  "progress": 90
+}

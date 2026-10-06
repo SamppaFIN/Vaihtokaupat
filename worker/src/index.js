@@ -6,11 +6,13 @@
  *   GET    /api/listings         cards for the grid (no contacts, no hidden listings)
  *   POST   /api/listings         new listing; returns the edit code ONCE
  *   GET    /api/listings/:id     public view (never the code hash, never contacts)
+ *   POST   /api/listings/:id/contact   contact links, revealed on a button press only
  *
  * No personal data or IP addresses are written to logs (CLAUDE.md §9 rule 6).
  */
 import { validateCreate } from './schema.js';
 import { generateCode, hashCode } from './code.js';
+import { contactLinks } from './contact.js';
 
 const MAX_BODY = 8192; // two 600-character texts in UTF-8 plus the short fields fit easily
 
@@ -155,6 +157,18 @@ async function listListings(env, cors) {
   return json({ listings }, 200, { ...cors, 'cache-control': 'no-store' });
 }
 
+// Contacts are revealed only through this POST, never in the list or the public view
+// (§9 rule 7). POST keeps them out of caches and crawlers; STORY-015 adds Turnstile here.
+async function revealContact(env, id, cors) {
+  if (!/^\d{5}$/.test(id)) return json({ error: 'not_found' }, 404, cors);
+  if (await rateLimited(env, `contact:${id}`)) return json({ error: 'busy' }, 429, cors);
+  const obj = await env.BUCKET.get(keyOf(id));
+  if (!obj) return json({ error: 'not_found' }, 404, cors);
+  const listing = await obj.json();
+  if (listing.status === 'hidden') return json({ error: 'not_found' }, 404, cors);
+  return json({ links: contactLinks(listing.contact) }, 200, { ...cors, 'cache-control': 'no-store' });
+}
+
 async function getListing(env, id, cors) {
   if (!/^\d{5}$/.test(id)) return json({ error: 'not_found' }, 404, cors);
   const obj = await env.BUCKET.get(keyOf(id));
@@ -181,6 +195,9 @@ export default {
         if (parts.length === 2 && request.method === 'GET') return await listListings(env, cors);
         if (parts.length === 2 && request.method === 'POST') return await createListing(request, env, cors);
         if (parts.length === 3 && request.method === 'GET') return await getListing(env, decodeURIComponent(parts[2]), cors);
+        if (parts.length === 4 && parts[3] === 'contact' && request.method === 'POST') {
+          return await revealContact(env, decodeURIComponent(parts[2]), cors);
+        }
         return json({ error: 'method_not_allowed' }, 405, cors);
       }
 

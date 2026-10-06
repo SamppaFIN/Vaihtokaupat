@@ -1,7 +1,7 @@
 {
   "_meta": {
     "schema_version": "1.1",
-    "generated_at": "2026-10-06T10:30:00Z",
+    "generated_at": "2026-10-06T11:30:00Z",
     "generated_by": "Hermes (Claude Code)",
     "git_commit": "fe3f7ea",
     "git_branch": "main",
@@ -234,17 +234,17 @@
       "depends_on": [
         "STORY-005"
       ],
-      "status": "todo",
+      "status": "review",
       "acceptance_criteria": [
         "Ilmoitussivulla näkyvät tarjottava, toivottava, noutopaikka, kuva ja tila, ja syvälinkki toimii",
         "Yhteystiedot haetaan erillisestä päätepisteestä vasta napin painalluksesta, eivätkä ne näy HTML:ssä ennen sitä",
         "Sähköposti avautuu mailto:-linkkinä, puhelinnumero tel:-linkkinä ja WhatsApp wa.me-linkkinä"
       ],
-      "progress": 0,
+      "progress": 90,
       "linked": {
-        "plan": null,
-        "implementation": null,
-        "testing": null
+        "plan": "PLAN-006",
+        "implementation": "TICKET-IMPL-006",
+        "testing": "TICKET-TEST-006"
       }
     },
     {
@@ -844,6 +844,58 @@
         }
       ],
       "status": "approved"
+    },
+    {
+      "id": "PLAN-006",
+      "story": "STORY-006",
+      "author_model": "Claude Opus 5.5",
+      "date": "2026-10-06",
+      "approach": "Ilmoitussivu /<5-numeroinen tunniste> hakee julkisen näkymän osoitteesta GET /api/listings/:id ja näyttää otsikon, lippunumeron, nimen ja paikkakunnan sekä lippukortissa tarjoan-, toivon- ja noutopaikkatiedot ja tilan. Yhteystiedot haetaan vasta Näytä yhteystiedot -napista erillisestä päätepisteestä POST /api/listings/:id/contact, jonka linkit palvelin rakentaa normalisoiduista arvoista (contact.js: mailto:, tel:+ ja https://wa.me/). Selain hyväksyy lisävarmistuksena vain nämä kolme alkua. Päätepisteellä on ilmoituskohtainen nopeusrajoitin (contact:<id>), ja piilotettu ilmoitus palauttaa 404.",
+      "alternatives_considered": [
+        {
+          "name": "GET /api/listings/:id/contact",
+          "pros": "Yksinkertaisempi.",
+          "cons": "GET voi päätyä välimuisteihin ja hakurobottien seuraamaksi linkiksi, ja Turnstile-token (STORY-015) kulkee luontevammin POSTin rungossa.",
+          "rejected_because": "POST pitää yhteystiedot poissa välimuisteista ja valmistaa STORY-015:een."
+        },
+        {
+          "name": "Yhteystiedot julkisessa näkymässä, piilotettuina CSS:llä",
+          "pros": "Ei toista pyyntöä.",
+          "cons": "Ne olisivat HTML:ssä ja kenen tahansa haravoitavissa.",
+          "rejected_because": "Rikkoo hyväksymiskriteerin 2 ja §9 sääntö 7:n."
+        }
+      ],
+      "files_to_change": [
+        "worker/src/contact.js",
+        "worker/src/index.js",
+        "public/assets/listing.js",
+        "public/index.html",
+        "public/assets/arena.css",
+        "test/contact.test.js",
+        "test/worker.test.js",
+        "test/api.test.js",
+        "test/e2e/listing.spec.js",
+        "test/e2e/routing.spec.js"
+      ],
+      "open_questions": [],
+      "steps": [
+        {
+          "step": 1,
+          "action": "contact.js: linkit normalisoiduista arvoista",
+          "verify": "contact.test.js: CLAUDE.md:n esimerkki 040 123 4567 → https://wa.me/358401234567, ja normalisoimattomasta arvosta ei tule linkkiä"
+        },
+        {
+          "step": 2,
+          "action": "POST /api/listings/:id/contact, nopeusrajoitin ja piilotettu 404",
+          "verify": "api.test.js ja worker.test.js"
+        },
+        {
+          "step": 3,
+          "action": "Ilmoitussivu, nappi ja tilat (lataus, ei löydy, virhe ja yhteystiedot poistettu)",
+          "verify": "listing.spec.js: ei yhteystietoja HTML:ssä ennen klikkausta, tasan yksi POST, linkkien href:t sekä axe ennen ja jälkeen"
+        }
+      ],
+      "status": "draft"
     }
   ],
   "implementation_tickets": [
@@ -1059,6 +1111,42 @@
       },
       "commit": "fe3f7ea",
       "progress": 100
+    },
+    {
+      "id": "TICKET-IMPL-006",
+      "story": "STORY-006",
+      "plan": "PLAN-006",
+      "implemented_by_model": "Claude Opus 5.5",
+      "status": "review",
+      "files_changed": [
+        "worker/src/contact.js",
+        "worker/src/index.js",
+        "public/assets/listing.js",
+        "public/index.html",
+        "public/assets/arena.css",
+        "test/contact.test.js",
+        "test/worker.test.js",
+        "test/api.test.js",
+        "test/e2e/listing.spec.js",
+        "test/e2e/routing.spec.js"
+      ],
+      "change_summary": "Ilmoitussivu korvasi paikkamerkin. /<5-numeroinen tunniste> näyttää lippunumeron, otsikon, nimen ja paikkakunnan sekä lippukortissa tarjoan-, toivon- ja noutopaikkatiedot ja tilan tekstinä. Yhteystiedot tulevat vasta napista: POST /api/listings/:id/contact palauttaa palvelimella contact.js:ssä rakennetut linkit (mailto:, tel:+ ja https://wa.me/). Päätepisteellä on nopeusrajoitin contact:<id>, piilotettu ilmoitus palauttaa 404, ja cache-control on no-store. Sivulla on omat tilat latausvirheelle, tuntemattomalle ilmoitukselle ja ilmoitukselle, jolla ei ole yhteystietoja. Testit löysivät bugin: .button-luokan display-arvo ohitti hidden-attribuutin, joten nappi jäi näkyviin. Korjaus on yleinen [hidden] { display: none !important }, ja sen myötä poistui aiempi paikkaus tyhjennysnapille.",
+      "impact_analysis": {
+        "changed_symbols": [
+          "index.html: #route-paikkamerkki poistettu, /<id> → mountListing"
+        ],
+        "call_sites_found": [
+          "test/e2e/routing.spec.js (#route)"
+        ],
+        "call_sites_updated": [
+          "test/e2e/routing.spec.js"
+        ],
+        "compile_errors_before": null,
+        "compile_errors_after": 0,
+        "notes": "TURVALLISUUS, katselmoi: (1) Yhteystiedot paljastetaan vain POST-pyynnöllä. Ne eivät ole sivun HTML:ssä ennen napin painallusta, mikä on testattu, eivätkä listassa tai julkisessa näkymässä. (2) Linkit rakentaa palvelin vain normalisoiduista arvoista (§12 sääntö 4), ja selain hyväksyy lisäksi vain alut mailto:, tel:+ ja https://wa.me/ (testattu javascript:-linkillä). (3) Nopeusrajoittimen avain on ilmoituskohtainen eikä IP-osoite. (4) Botit voivat vielä haravoida yhteystietoja kutsumalla päätepistettä suoraan. Turnstile (STORY-015) on tarkoitettu juuri tähän."
+      },
+      "commit": null,
+      "progress": 90
     }
   ],
   "testing_tickets": [
@@ -1583,6 +1671,94 @@
         "decision": "accepted",
         "signed_by": "Sami",
         "date": "2026-10-06"
+      }
+    },
+    {
+      "id": "TICKET-TEST-006",
+      "story": "STORY-006",
+      "implementation_ticket": "TICKET-IMPL-006",
+      "status": "in_progress",
+      "fix_summary": {
+        "problem_and_root_cause": "Uusi ominaisuus. Toteutuksen aikana testit löysivät bugin: hidden-attribuutti ei piilottanut .button-elementtejä, koska luokan display: inline-flex voitti selaimen oletussäännön.",
+        "files_changed": [
+          "worker/src/contact.js",
+          "worker/src/index.js",
+          "public/assets/listing.js",
+          "public/index.html",
+          "public/assets/arena.css",
+          "test/contact.test.js",
+          "test/worker.test.js",
+          "test/api.test.js",
+          "test/e2e/listing.spec.js",
+          "test/e2e/routing.spec.js"
+        ]
+      },
+      "ai_testing": {
+        "environment": "Pages-simulaattori :8082 ja wrangler dev --env local :8797. Integraatio unstable_dev.",
+        "tooling": "node:test, wrangler unstable_dev, Playwright 1.63 (--workers=1 kuormitetulla koneella), axe-core",
+        "cases": [
+          {
+            "steps": "Syvälinkki /<id>",
+            "expected": "Tarjoan, toivon, noutopaikka ja tila näkyvät",
+            "result": "Otsikko, Ilmoitus #id, tarjoan (rivinvaihtoineen), toivon, \"Tampere, Hervanta\" ja \"Avoin\" näkyvät, ja sivun otsikko on \"<otsikko> – Vaihtokaupat\" (390 px ja 1440 px).",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Kuva ilmoitussivulla",
+            "expected": "Kuva näkyy",
+            "result": "Ei ajettu: kuvan lataus tulee STORY-008:ssa, eikä yhdelläkään ilmoituksella ole vielä kuvaa.",
+            "outcome": "not_run"
+          },
+          {
+            "steps": "Yhteystiedot vasta napista",
+            "expected": "Ei HTML:ssä ennen klikkausta, haku erillisestä päätepisteestä",
+            "result": "Ennen klikkausta sähköpostia ja numeroita ei ole sivun HTML:ssä, eikä yhtään /contact-pyyntöä ole lähtenyt. Klikkaus tekee täsmälleen yhden POSTin. GET /contact palauttaa 405.",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Linkkimuodot",
+            "expected": "mailto:, tel: ja wa.me",
+            "result": "mailto:<osoite>, tel:+358401112233 ja https://wa.me/358405556677. Yksikkötesti kattaa CLAUDE.md:n esimerkin 040 123 4567 → https://wa.me/358401234567. Normalisoimattomasta arvosta ei tule linkkiä, eikä selain näytä javascript:-linkkiä.",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Tilat",
+            "expected": "Ei löydy, latausvirhe ja yhteystiedot poistettu",
+            "result": "Kaikki kolme näkyvät tekstinä, ja latausvirheessä on toimiva Yritä uudelleen -nappi. Piilotettu ilmoitus ja nopeusrajoitus eivät paljasta mitään (worker.test.js).",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Saavutettavuus",
+            "expected": "Yksi h1, ei vaakavieritystä, axe 0 ennen ja jälkeen paljastuksen",
+            "result": "Läpi molemmilla leveyksillä myös erittäin pitkällä otsikolla. Kuvakaappaukset ennen ja jälkeen on katsottu.",
+            "outcome": "pass"
+          }
+        ],
+        "console_findings": [],
+        "screenshots": [
+          "test-results/listing-listing-page-*-mobile-390/listing.png",
+          "test-results/listing-listing-page-*-mobile-390/listing-revealed.png",
+          "test-results/listing-listing-page-*-desktop-1440/listing-revealed.png"
+        ]
+      },
+      "human_acceptance": {
+        "checked_items": [
+          {
+            "item": "Ilmoitussivulla tarjoan, toivon, noutopaikka ja tila, ja syvälinkki toimii (kuva STORY-008:ssa)",
+            "checked": false
+          },
+          {
+            "item": "Yhteystiedot haetaan vasta napista, eivätkä ne ole HTML:ssä ennen sitä",
+            "checked": false
+          },
+          {
+            "item": "mailto:, tel: ja wa.me-linkit toimivat puhelimessa",
+            "checked": false
+          }
+        ],
+        "decision": null,
+        "signed_by": null,
+        "date": null
       }
     }
   ]

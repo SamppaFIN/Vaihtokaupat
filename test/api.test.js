@@ -104,6 +104,20 @@ test('list returns the new listing as a card without contacts', async () => {
   for (const secret of ['testi@example.fi', '401234567', 'codeHash', 'contact']) assert.equal(text.includes(secret), false, secret);
 });
 
+test('contact links come from their own POST endpoint, built by the server', async () => {
+  const { id } = await (await post({ ...valid(), whatsapp: 'https://wa.me/358401112222' })).json();
+  const res = await worker.fetch(`/api/listings/${id}/contact`, { method: 'POST' });
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get('cache-control'), 'no-store');
+  assert.deepEqual((await res.json()).links, [
+    { type: 'email', label: 'testi@example.fi', href: 'mailto:testi@example.fi' },
+    { type: 'phone', label: '0401234567', href: 'tel:+358401234567' },
+    { type: 'whatsapp', label: 'WhatsApp 0401112222', href: 'https://wa.me/358401112222' },
+  ]);
+  assert.equal((await worker.fetch(`/api/listings/${id}/contact`)).status, 405, 'GET is not allowed');
+  assert.equal((await worker.fetch('/api/listings/99999/contact', { method: 'POST' })).status, 404);
+});
+
 test('unknown or malformed id answers 404', async () => {
   assert.equal((await worker.fetch('/api/listings/99999x')).status, 404);
   assert.equal((await worker.fetch('/api/listings/..%2F..%2Fsecret')).status, 404);
