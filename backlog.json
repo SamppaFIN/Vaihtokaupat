@@ -1,9 +1,9 @@
 {
   "_meta": {
     "schema_version": "1.1",
-    "generated_at": "2026-10-06T05:10:00Z",
+    "generated_at": "2026-10-06T05:30:00Z",
     "generated_by": "Hermes (Claude Code)",
-    "git_commit": "c508da8",
+    "git_commit": "42cad48",
     "git_branch": "main",
     "language": "fi"
   },
@@ -57,13 +57,13 @@
       "title": "Perusta ja julkaisuputki",
       "icon": "🏗️",
       "description": "Runko kopioidaan BandRockista, ja julkaisuputki toimii ennen ensimmäistä ominaisuutta.",
-      "status": "in_progress",
+      "status": "done",
       "stories": [
         "STORY-001",
         "STORY-002",
         "STORY-003"
       ],
-      "progress": 67
+      "progress": 100
     },
     {
       "id": "EPIC-002",
@@ -165,13 +165,13 @@
       "depends_on": [
         "STORY-001"
       ],
-      "status": "review",
+      "status": "done",
       "acceptance_criteria": [
         "Arenan fontit Anton, Oswald ja Manrope ladataan omasta kansiosta, eikä Google Fontsiin tehdä pyyntöjä, ja public/fonts/OFL.txt on mukana",
         "Tekstin kontrasti on vähintään 4,5:1 myös spottivalojen ja liukuvärien päällä (axe-core puhdas)",
         "prefers-reduced-motion sammuttaa spottivalot ja muut animaatiot"
       ],
-      "progress": 90,
+      "progress": 100,
       "linked": {
         "plan": "PLAN-003",
         "implementation": "TICKET-IMPL-003",
@@ -668,7 +668,7 @@
           "verify": "violations = []"
         }
       ],
-      "status": "draft"
+      "status": "approved"
     }
   ],
   "implementation_tickets": [
@@ -744,7 +744,7 @@
       "story": "STORY-003",
       "plan": "PLAN-003",
       "implemented_by_model": "Claude Opus 5.5",
-      "status": "review",
+      "status": "done",
       "files_changed": [
         "public/assets/arena.css",
         "public/assets/stage.js",
@@ -766,8 +766,8 @@
         "compile_errors_after": 0,
         "notes": "Uusi devDependency @axe-core/playwright (MPL-2.0), sallittu kehitysaikaisena päätöksellä 2026-10-05. Sivu ei enää tee ulkoisia pyyntöjä fonteille. Tunnettu poikkeama: meta theme-color on kovakoodattu #0A0A0C, koska meta-tagi ei voi käyttää CSS-muuttujaa."
       },
-      "commit": null,
-      "progress": 90
+      "commit": "42cad48",
+      "progress": 100
     }
   ],
   "testing_tickets": [
@@ -952,7 +952,7 @@
       "id": "TICKET-TEST-003",
       "story": "STORY-003",
       "implementation_ticket": "TICKET-IMPL-003",
-      "status": "in_progress",
+      "status": "done",
       "fix_summary": {
         "problem_and_root_cause": "Uusi ominaisuus, ei korjaus.",
         "files_changed": [
@@ -1013,24 +1013,24 @@
         "checked_items": [
           {
             "item": "Fontit omasta kansiosta, ei pyyntöjä Googlelle, OFL.txt mukana",
-            "checked": false
+            "checked": true
           },
           {
             "item": "Kontrasti vähintään 4,5:1 myös spottivalojen päällä",
-            "checked": false
+            "checked": true
           },
           {
             "item": "Reduced motion sammuttaa animaatiot",
-            "checked": false
+            "checked": true
           },
           {
             "item": "Ilme näyttää Arenalta 390 px ja 1440 px leveydellä",
-            "checked": false
+            "checked": true
           }
         ],
-        "decision": null,
-        "signed_by": null,
-        "date": null
+        "decision": "accepted",
+        "signed_by": "Sami",
+        "date": "2026-10-06"
       }
     }
   ]

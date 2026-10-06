@@ -37,12 +37,36 @@
   ],
   "open_questions": [],
   "steps": [
-    { "step": 1, "action": "Fontit fonts.gstatic.comista (latin-osajoukko; Oswald ja Manrope muuttuvapainoisina 400–700) ja OFL.txt google/fonts-reposta, kolmen fontin tekijänoikeusrivit ja yksi lisenssiteksti", "verify": "E2E: document.fonts.check() on tosi kaikille kolmelle, eikä yhtään pyyntöä lähde Googlen domaineihin. OFL.txt vastaa 200." },
-    { "step": 2, "action": "arena.css: tokenit design-brief.md:stä sellaisinaan, perustyylit, keyframet ja reduced-motion", "verify": "grep: komponenttisäännöissä ei ole hex- tai rgb-arvoja tokenien ulkopuolella." },
-    { "step": 3, "action": "stage.js: spottivalotausta DOM-moduulina, värit tokeneista", "verify": "Kuvakaappaukset 390 px ja 1440 px leveydellä. Tausta on aria-hidden." },
-    { "step": 4, "action": "Kontrastitesti: piilotetaan teksti, otetaan kuvakaappaus ja lasketaan kirkkain taustapikseli jokaisen tekstielementin alta. Kontrastin pitää olla vähintään 4,5:1 (isolla tekstillä 3:1).", "verify": "E2E läpi. Jos jokin raja ei täyty, se on löydös, joka korjataan tokeneilla tai taustan himmennyksellä, ei testiä muuttamalla." },
-    { "step": 5, "action": "Reduced motion: emuloidaan prefers-reduced-motion: reduce", "verify": "E2E: document.getAnimations() on tyhjä reduce-tilassa ja ei-tyhjä ilman sitä." },
-    { "step": 6, "action": "axe-core (@axe-core/playwright) WCAG 2.1 AA -tageilla", "verify": "violations = []" }
+    {
+      "step": 1,
+      "action": "Fontit fonts.gstatic.comista (latin-osajoukko; Oswald ja Manrope muuttuvapainoisina 400–700) ja OFL.txt google/fonts-reposta, kolmen fontin tekijänoikeusrivit ja yksi lisenssiteksti",
+      "verify": "E2E: document.fonts.check() on tosi kaikille kolmelle, eikä yhtään pyyntöä lähde Googlen domaineihin. OFL.txt vastaa 200."
+    },
+    {
+      "step": 2,
+      "action": "arena.css: tokenit design-brief.md:stä sellaisinaan, perustyylit, keyframet ja reduced-motion",
+      "verify": "grep: komponenttisäännöissä ei ole hex- tai rgb-arvoja tokenien ulkopuolella."
+    },
+    {
+      "step": 3,
+      "action": "stage.js: spottivalotausta DOM-moduulina, värit tokeneista",
+      "verify": "Kuvakaappaukset 390 px ja 1440 px leveydellä. Tausta on aria-hidden."
+    },
+    {
+      "step": 4,
+      "action": "Kontrastitesti: piilotetaan teksti, otetaan kuvakaappaus ja lasketaan kirkkain taustapikseli jokaisen tekstielementin alta. Kontrastin pitää olla vähintään 4,5:1 (isolla tekstillä 3:1).",
+      "verify": "E2E läpi. Jos jokin raja ei täyty, se on löydös, joka korjataan tokeneilla tai taustan himmennyksellä, ei testiä muuttamalla."
+    },
+    {
+      "step": 5,
+      "action": "Reduced motion: emuloidaan prefers-reduced-motion: reduce",
+      "verify": "E2E: document.getAnimations() on tyhjä reduce-tilassa ja ei-tyhjä ilman sitä."
+    },
+    {
+      "step": 6,
+      "action": "axe-core (@axe-core/playwright) WCAG 2.1 AA -tageilla",
+      "verify": "violations = []"
+    }
   ],
-  "status": "draft"
+  "status": "approved"
 }

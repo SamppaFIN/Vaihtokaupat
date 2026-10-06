@@ -3,7 +3,7 @@
   "story": "STORY-003",
   "plan": "PLAN-003",
   "implemented_by_model": "Claude Opus 5.5",
-  "status": "review",
+  "status": "done",
   "files_changed": [
     "public/assets/arena.css",
     "public/assets/stage.js",
@@ -25,6 +25,6 @@
     "compile_errors_after": 0,
     "notes": "Uusi devDependency @axe-core/playwright (MPL-2.0), sallittu kehitysaikaisena päätöksellä 2026-10-05. Sivu ei enää tee ulkoisia pyyntöjä fonteille. Tunnettu poikkeama: meta theme-color on kovakoodattu #0A0A0C, koska meta-tagi ei voi käyttää CSS-muuttujaa."
   },
-  "commit": null,
-  "progress": 90
+  "commit": "42cad48",
+  "progress": 100
 }
