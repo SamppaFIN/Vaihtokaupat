@@ -1,9 +1,9 @@
 {
   "_meta": {
     "schema_version": "1.1",
-    "generated_at": "2026-10-06T08:00:00Z",
+    "generated_at": "2026-10-06T08:30:00Z",
     "generated_by": "Hermes (Claude Code)",
-    "git_commit": "42cad48",
+    "git_commit": "719ed6a",
     "git_branch": "main",
     "language": "fi"
   },
@@ -76,7 +76,7 @@
         "STORY-005",
         "STORY-006"
       ],
-      "progress": 0
+      "progress": 33
     },
     {
       "id": "EPIC-003",
@@ -91,7 +91,7 @@
         "STORY-010",
         "STORY-011"
       ],
-      "progress": 0
+      "progress": 20
     },
     {
       "id": "EPIC-004",
@@ -188,13 +188,13 @@
       "depends_on": [
         "STORY-003"
       ],
-      "status": "review",
+      "status": "done",
       "acceptance_criteria": [
         "Etusivulla ovat hero, \"Vaihda, älä myy\", ilmoituksen kolme osaa, kuusi pelisääntöä ja liittymislupaus",
         "Leveydellä 390 px ei synny vaakavieritystä, ja axe-core on puhdas",
         "Sivulla on täsmälleen yksi h1"
       ],
-      "progress": 90,
+      "progress": 100,
       "linked": {
         "plan": "PLAN-004",
         "implementation": "TICKET-IMPL-004",
@@ -257,14 +257,14 @@
       "depends_on": [
         "STORY-001"
       ],
-      "status": "review",
+      "status": "done",
       "acceptance_criteria": [
         "Pakollisia ovat tarjoan, toivon, paikkakunta, vähintään yksi yhteystieto ja liittymislupaus, ja jos jokin puuttuu, palvelin palauttaa 400",
         "WhatsApp-linkki ilman numeroa hylätään, ja puhelinnumerot normalisoidaan muotoon +358",
         "Muokkauskoodi näytetään kerran, eikä se esiinny ilmoituksen tunnisteessa, URL:ssa eikä yhdessäkään myöhemmässä vastauksessa",
         "Lomake ohjeistaa merkitsemään noutopaikaksi kaupunginosan, ei katuosoitetta"
       ],
-      "progress": 90,
+      "progress": 100,
       "linked": {
         "plan": "PLAN-007",
         "implementation": "TICKET-IMPL-007",
@@ -704,9 +704,7 @@
         "test/e2e/routing.spec.js",
         "test/pages-sim.test.js"
       ],
-      "open_questions": [
-        "Säännön 6 sanamuoto \"Sopikaa vaihdon yksityiskohdat yksityisviestillä\" on Arenasta, mutta alustalla ei ole viestejä. Pidetäänkö se?"
-      ],
+      "open_questions": [],
       "steps": [
         {
           "step": 1,
@@ -724,7 +722,7 @@
           "verify": "arena.spec.js: axe 0 rikkomusta. Pikselitesti 33 tekstielementille, kontrasti vähintään 4,5:1."
         }
       ],
-      "status": "draft"
+      "status": "approved"
     },
     {
       "id": "PLAN-007",
@@ -786,7 +784,7 @@
           "verify": "create.spec.js 390 px ja 1440 px leveydellä sekä kuvakaappaukset."
         }
       ],
-      "status": "draft"
+      "status": "approved"
     }
   ],
   "implementation_tickets": [
@@ -892,7 +890,7 @@
       "story": "STORY-004",
       "plan": "PLAN-004",
       "implemented_by_model": "Claude Opus 5.5",
-      "status": "review",
+      "status": "done",
       "files_changed": [
         "public/index.html",
         "public/assets/arena.css",
@@ -918,15 +916,15 @@
         "compile_errors_after": 0,
         "notes": "Ei turvallisuusvaikutuksia: sivu on staattinen, ja ainoa käyttäjästä peräisin oleva arvo (reitin tunniste) asetetaan textContentillä, kuten ennenkin. Koristeelliset numerot (01–03, sääntöjen timantit) ovat aria-hidden, koska järjestyksen kertoo ol-lista."
       },
-      "commit": null,
-      "progress": 90
+      "commit": "2a611d8",
+      "progress": 100
     },
     {
       "id": "TICKET-IMPL-007",
       "story": "STORY-007",
       "plan": "PLAN-007",
       "implemented_by_model": "Claude Opus 5.5",
-      "status": "review",
+      "status": "done",
       "files_changed": [
         "worker/src/schema.js",
         "worker/src/index.js",
@@ -959,8 +957,8 @@
         "compile_errors_after": 0,
         "notes": "TURVALLISUUS, katselmoi: (1) syötteiden käsittely: kaikki kentät siivotaan palvelimella (ohjausmerkit, bidi-ohitukset ja pituusrajat), ja tuntemattomat kentät ohitetaan. (2) Muokkauskoodista tallennetaan vain HMAC-SHA256-tiiviste, eikä koodi esiinny tunnisteessa, URL:ssa, julkisessa näkymässä eikä selaimen tallennustiloissa (testattu). (3) Julkinen GET ei palauta yhteystietoja eikä tiivistettä. (4) CODE_SECRET-vahti estää tiivistyksen arvolla \"undefined\". (5) Nopeusrajoittimen avain on \"create\", ei IP-osoite (§9 sääntö 6). (6) env.local sisältää selvästi nimetyn testiarvon \"local-dev-only-not-a-secret\", jota ei käytetä tuotannossa."
       },
-      "commit": null,
-      "progress": 90
+      "commit": "719ed6a",
+      "progress": 100
     }
   ],
   "testing_tickets": [
@@ -1230,7 +1228,7 @@
       "id": "TICKET-TEST-004",
       "story": "STORY-004",
       "implementation_ticket": "TICKET-IMPL-004",
-      "status": "in_progress",
+      "status": "done",
       "fix_summary": {
         "problem_and_root_cause": "Uusi ominaisuus. Toteutuksen aikana löytyi ja korjattiin bugi: liukuväriotsikoista puuttuivat ääkkösten pisteet, koska background-clip: text maalaa vain elementin laatikon sisälle.",
         "files_changed": [
@@ -1293,27 +1291,27 @@
         "checked_items": [
           {
             "item": "Etusivulla hero, Vaihda älä myy, kolme osaa, kuusi sääntöä ja liittymislupaus",
-            "checked": false
+            "checked": true
           },
           {
             "item": "390 px: ei vaakavieritystä, ja ulkoasu on luettava puhelimella",
-            "checked": false
+            "checked": true
           },
           {
             "item": "Täsmälleen yksi h1",
-            "checked": false
+            "checked": true
           }
         ],
-        "decision": null,
-        "signed_by": null,
-        "date": null
+        "decision": "accepted",
+        "signed_by": "Sami",
+        "date": "2026-10-06"
       }
     },
     {
       "id": "TICKET-TEST-007",
       "story": "STORY-007",
       "implementation_ticket": "TICKET-IMPL-007",
-      "status": "in_progress",
+      "status": "done",
       "fix_summary": {
         "problem_and_root_cause": "Uusi ominaisuus, ei korjaus.",
         "files_changed": [
@@ -1385,24 +1383,24 @@
         "checked_items": [
           {
             "item": "Pakolliset kentät ja 400-vastaus",
-            "checked": false
+            "checked": true
           },
           {
             "item": "WhatsApp-linkki ilman numeroa hylätään, ja puhelinnumerot ovat +358-muodossa",
-            "checked": false
+            "checked": true
           },
           {
             "item": "Koodi näytetään kerran, eikä sitä löydy mistään myöhemmin",
-            "checked": false
+            "checked": true
           },
           {
             "item": "Lomake ohjeistaa kaupunginosasta",
-            "checked": false
+            "checked": true
           }
         ],
-        "decision": null,
-        "signed_by": null,
-        "date": null
+        "decision": "accepted",
+        "signed_by": "Sami",
+        "date": "2026-10-06"
       }
     }
   ]

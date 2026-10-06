@@ -3,7 +3,7 @@
   "story": "STORY-004",
   "plan": "PLAN-004",
   "implemented_by_model": "Claude Opus 5.5",
-  "status": "review",
+  "status": "done",
   "files_changed": [
     "public/index.html",
     "public/assets/arena.css",
@@ -29,6 +29,6 @@
     "compile_errors_after": 0,
     "notes": "Ei turvallisuusvaikutuksia: sivu on staattinen, ja ainoa käyttäjästä peräisin oleva arvo (reitin tunniste) asetetaan textContentillä, kuten ennenkin. Koristeelliset numerot (01–03, sääntöjen timantit) ovat aria-hidden, koska järjestyksen kertoo ol-lista."
   },
-  "commit": null,
-  "progress": 90
+  "commit": "2a611d8",
+  "progress": 100
 }

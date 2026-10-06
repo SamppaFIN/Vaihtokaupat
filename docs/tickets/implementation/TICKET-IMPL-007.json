@@ -3,7 +3,7 @@
   "story": "STORY-007",
   "plan": "PLAN-007",
   "implemented_by_model": "Claude Opus 5.5",
-  "status": "review",
+  "status": "done",
   "files_changed": [
     "worker/src/schema.js",
     "worker/src/index.js",
@@ -36,6 +36,6 @@
     "compile_errors_after": 0,
     "notes": "TURVALLISUUS, katselmoi: (1) syötteiden käsittely: kaikki kentät siivotaan palvelimella (ohjausmerkit, bidi-ohitukset ja pituusrajat), ja tuntemattomat kentät ohitetaan. (2) Muokkauskoodista tallennetaan vain HMAC-SHA256-tiiviste, eikä koodi esiinny tunnisteessa, URL:ssa, julkisessa näkymässä eikä selaimen tallennustiloissa (testattu). (3) Julkinen GET ei palauta yhteystietoja eikä tiivistettä. (4) CODE_SECRET-vahti estää tiivistyksen arvolla \"undefined\". (5) Nopeusrajoittimen avain on \"create\", ei IP-osoite (§9 sääntö 6). (6) env.local sisältää selvästi nimetyn testiarvon \"local-dev-only-not-a-secret\", jota ei käytetä tuotannossa."
   },
-  "commit": null,
-  "progress": 90
+  "commit": "719ed6a",
+  "progress": 100
 }

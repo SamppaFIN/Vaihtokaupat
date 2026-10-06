@@ -2,7 +2,7 @@
   "id": "TICKET-TEST-004",
   "story": "STORY-004",
   "implementation_ticket": "TICKET-IMPL-004",
-  "status": "in_progress",
+  "status": "done",
   "fix_summary": {
     "problem_and_root_cause": "Uusi ominaisuus. Toteutuksen aikana löytyi ja korjattiin bugi: liukuväriotsikoista puuttuivat ääkkösten pisteet, koska background-clip: text maalaa vain elementin laatikon sisälle.",
     "files_changed": [
@@ -65,19 +65,19 @@
     "checked_items": [
       {
         "item": "Etusivulla hero, Vaihda älä myy, kolme osaa, kuusi sääntöä ja liittymislupaus",
-        "checked": false
+        "checked": true
       },
       {
         "item": "390 px: ei vaakavieritystä, ja ulkoasu on luettava puhelimella",
-        "checked": false
+        "checked": true
       },
       {
         "item": "Täsmälleen yksi h1",
-        "checked": false
+        "checked": true
       }
     ],
-    "decision": null,
-    "signed_by": null,
-    "date": null
+    "decision": "accepted",
+    "signed_by": "Sami",
+    "date": "2026-10-06"
   }
 }

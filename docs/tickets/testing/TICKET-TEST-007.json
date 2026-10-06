@@ -2,7 +2,7 @@
   "id": "TICKET-TEST-007",
   "story": "STORY-007",
   "implementation_ticket": "TICKET-IMPL-007",
-  "status": "in_progress",
+  "status": "done",
   "fix_summary": {
     "problem_and_root_cause": "Uusi ominaisuus, ei korjaus.",
     "files_changed": [
@@ -74,23 +74,23 @@
     "checked_items": [
       {
         "item": "Pakolliset kentät ja 400-vastaus",
-        "checked": false
+        "checked": true
       },
       {
         "item": "WhatsApp-linkki ilman numeroa hylätään, ja puhelinnumerot ovat +358-muodossa",
-        "checked": false
+        "checked": true
       },
       {
         "item": "Koodi näytetään kerran, eikä sitä löydy mistään myöhemmin",
-        "checked": false
+        "checked": true
       },
       {
         "item": "Lomake ohjeistaa kaupunginosasta",
-        "checked": false
+        "checked": true
       }
     ],
-    "decision": null,
-    "signed_by": null,
-    "date": null
+    "decision": "accepted",
+    "signed_by": "Sami",
+    "date": "2026-10-06"
   }
 }

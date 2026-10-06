@@ -32,9 +32,7 @@
     "test/e2e/routing.spec.js",
     "test/pages-sim.test.js"
   ],
-  "open_questions": [
-    "Säännön 6 sanamuoto \"Sopikaa vaihdon yksityiskohdat yksityisviestillä\" on Arenasta, mutta alustalla ei ole viestejä. Pidetäänkö se?"
-  ],
+  "open_questions": [],
   "steps": [
     {
       "step": 1,
@@ -52,5 +50,5 @@
       "verify": "arena.spec.js: axe 0 rikkomusta. Pikselitesti 33 tekstielementille, kontrasti vähintään 4,5:1."
     }
   ],
-  "status": "draft"
+  "status": "approved"
 }
