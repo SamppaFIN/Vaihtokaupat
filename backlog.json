@@ -1,10 +1,10 @@
 {
   "_meta": {
     "schema_version": "1.1",
-    "generated_at": "2026-10-05T21:30:00Z",
-    "generated_by": "Hermes (Claude Code), STORY-001",
-    "git_commit": "d95b515",
-    "git_branch": "main",
+    "generated_at": "2026-10-06T01:20:00Z",
+    "generated_by": "Hermes (Claude Code), STORY-002",
+    "git_commit": "b206733",
+    "git_branch": "feature/STORY-002",
     "language": "fi"
   },
   "project": {
@@ -141,17 +141,17 @@
       "depends_on": [
         "STORY-001"
       ],
-      "status": "todo",
+      "status": "review",
       "acceptance_criteria": [
         "Pull request ajaa yksikkö-, integraatio- ja E2E-testit, ja punainen testi estää mergen",
         "Push main-haaraan julkaisee Workerin ennen Pagesia, ja epäonnistunut Worker-julkaisu jättää sivun edelliseen versioon",
         "Puuttuva CLOUDFLARE_API_TOKEN tai CLOUDFLARE_ACCOUNT_ID pysäyttää ajon selkeään virheeseen ennen deployta",
         "Dependabot on päällä npm-paketeille ja GitHub Actionsille"
       ],
-      "progress": 0,
+      "progress": 90,
       "linked": {
-        "plan": null,
-        "implementation": null,
+        "plan": "PLAN-002",
+        "implementation": "TICKET-IMPL-002",
         "testing": null
       }
     },
@@ -543,6 +543,62 @@
         }
       ],
       "status": "approved"
+    },
+    {
+      "id": "PLAN-002",
+      "story": "STORY-002",
+      "author_model": "Claude Opus 5.5",
+      "date": "2026-10-05",
+      "approach": "Yksi GitHub Actions -workflow (.github/workflows/deploy.yml), joka kopioidaan BandRockin pages.yml:stä (SamppaFIN/BandRock@7098a01). Siinä on kolme jobia: verify → worker → pages. verify ajaa jokaisessa pull requestissa ja pushissa yksikkötestit (npm test) ja Playwright-E2E:n Chromiumilla. worker ja pages ajetaan vain main-haaraan pushattaessa, ja pages riippuu workerista, joten epäonnistunut Worker-julkaisu jättää sivun edelliseen versioon. Ennen wrangler deploytä tarkistetaan, että CLOUDFLARE_API_TOKEN ja CLOUDFLARE_ACCOUNT_ID ovat olemassa. Dependabot tarkistaa npm-paketit ja GitHub Actionsit viikoittain. Mergen estää haaran suojaussääntö, joka vaatii verify-tarkistuksen.",
+      "alternatives_considered": [
+        {
+          "name": "Erilliset workflowt testeille ja julkaisulle (workflow_run-ketju)",
+          "pros": "Testit ja julkaisu näkyisivät GitHubissa erikseen.",
+          "cons": "workflow_run-ketju on vaikeampi seurata, ja järjestystakuu Worker → Pages olisi kahden workflown välissä.",
+          "rejected_because": "Yksi workflow ja needs-riippuvuudet antavat järjestyksen suoraan, ja BandRockin malli on todettu toimivaksi tuotannossa."
+        },
+        {
+          "name": "Cloudflaren oma Git-integraatio (Workers Builds) Workerin julkaisuun",
+          "pros": "Ei API-tokenia GitHubiin.",
+          "cons": "Worker julkaistaisiin GitHub Actionsista riippumatta, jolloin järjestystä testit → Worker → Pages ei voisi taata.",
+          "rejected_because": "Rikkoo hyväksymiskriteerin 2."
+        }
+      ],
+      "files_to_change": [
+        ".github/workflows/deploy.yml",
+        ".github/dependabot.yml"
+      ],
+      "open_questions": [
+        "Integraatiotestejä (API wrangler deviä ja paikallista R2:ta vasten) ei vielä ole, koska Workerissa ei ole reittejä. CI ajaa ne samalla npm test -komennolla, kun ne tulevat STORY-007:ssä. Riittääkö tämä hyväksymiskriteeriin 1 tässä vaiheessa?"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "deploy.yml BandRockin pohjalta: verify ajaa npm ci, npm test ja Playwright-E2E:n. worker ja pages ajetaan vain mainissa, ja pages riippuu verifystä ja workerista.",
+          "verify": "Pull requestin CI-ajossa verify menee läpi, ja worker sekä pages näkyvät ohitettuina."
+        },
+        {
+          "step": 2,
+          "action": "Salaisuustarkistus ennen wrangler deploytä",
+          "verify": "Sama shell-pätkä ajetaan paikallisesti tyhjillä muuttujilla: exit 1 ja ::error::-rivi."
+        },
+        {
+          "step": 3,
+          "action": "dependabot.yml npm-paketeille ja GitHub Actionsille",
+          "verify": "Repon Insights → Dependency graph → Dependabot näyttää kaksi ekosysteemiä mergen jälkeen."
+        },
+        {
+          "step": 4,
+          "action": "Haaran suojaus: mainiin pääsee vain pull requestilla, kun verify on vihreä",
+          "verify": "GET /repos/.../branches/main/protection näyttää required_status_checks: verify."
+        },
+        {
+          "step": 5,
+          "action": "Merge mainiin (Sami) → ensimmäinen oikea julkaisu",
+          "verify": "Actions-ajossa järjestys verify → worker → pages. curl tuotanto-/api palauttaa 200, ja https://samppafin.github.io/Vaihtokaupat/0142 avautuu syvälinkkinä."
+        }
+      ],
+      "status": "draft"
     }
   ],
   "implementation_tickets": [
@@ -590,6 +646,28 @@
       },
       "commit": null,
       "progress": 100
+    },
+    {
+      "id": "TICKET-IMPL-002",
+      "story": "STORY-002",
+      "plan": "PLAN-002",
+      "implemented_by_model": "Claude Opus 5.5",
+      "status": "review",
+      "files_changed": [
+        ".github/workflows/deploy.yml",
+        ".github/dependabot.yml"
+      ],
+      "change_summary": "GitHub Actions -workflow kopioitiin BandRockista (SamppaFIN/BandRock@7098a01, pages.yml), ja siinä on ketju verify → worker → pages. verify ajaa npm ci:n, npm testin ja Playwright-E2E:n Chromiumilla, ja kuvakaappaukset tallentuvat artifaktiksi. worker ja pages ajetaan vain mainissa, ja pages riippuu workerista. Salaisuustarkistus pysäyttää ajon ennen wrangler deploytä. Dependabot tarkistaa npm-paketit ja GitHub Actionsit viikoittain. Mainin haaran suojaus vaatii verify-tarkistuksen (strict, koskee myös ylläpitäjiä). Pages-actionit pidettiin BandRockin todetuissa versioissa, ja uudet pääversiot tulevat Dependabotin kautta.",
+      "impact_analysis": {
+        "changed_symbols": [],
+        "call_sites_found": [],
+        "call_sites_updated": [],
+        "compile_errors_before": null,
+        "compile_errors_after": null,
+        "notes": "Turvallisuuteen vaikuttavat: CI käyttää salaisuuksia CLOUDFLARE_API_TOKEN ja CLOUDFLARE_ACCOUNT_ID vain worker-jobissa, joka ei aja pull requesteissa, joten forkin PR ei pääse niihin. Workflown oikeudet ovat contents: read, pages: write ja id-token: write. Haaran suojaus estää force pushin ja haaran poiston. Ensimmäinen CI-ajo peruuntui GitHubin runner-häiriön takia ennen yhtäkään askelta. Uudelleenajo (attempt 2) meni läpi 2026-10-06."
+      },
+      "commit": "b206733",
+      "progress": 90
     }
   ],
   "testing_tickets": [
