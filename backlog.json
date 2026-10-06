@@ -1,9 +1,9 @@
 {
   "_meta": {
     "schema_version": "1.1",
-    "generated_at": "2026-10-06T11:30:00Z",
+    "generated_at": "2026-10-06T12:00:00Z",
     "generated_by": "Hermes (Claude Code)",
-    "git_commit": "fe3f7ea",
+    "git_commit": "8f3134b",
     "git_branch": "main",
     "language": "fi"
   },
@@ -70,13 +70,13 @@
       "title": "Etusivu ja selaus",
       "icon": "🎸",
       "description": "Kävijä ymmärtää idean ja löytää kiinnostavan vaihdon.",
-      "status": "in_progress",
+      "status": "done",
       "stories": [
         "STORY-004",
         "STORY-005",
         "STORY-006"
       ],
-      "progress": 67
+      "progress": 100
     },
     {
       "id": "EPIC-003",
@@ -234,13 +234,13 @@
       "depends_on": [
         "STORY-005"
       ],
-      "status": "review",
+      "status": "done",
       "acceptance_criteria": [
         "Ilmoitussivulla näkyvät tarjottava, toivottava, noutopaikka, kuva ja tila, ja syvälinkki toimii",
         "Yhteystiedot haetaan erillisestä päätepisteestä vasta napin painalluksesta, eivätkä ne näy HTML:ssä ennen sitä",
         "Sähköposti avautuu mailto:-linkkinä, puhelinnumero tel:-linkkinä ja WhatsApp wa.me-linkkinä"
       ],
-      "progress": 90,
+      "progress": 100,
       "linked": {
         "plan": "PLAN-006",
         "implementation": "TICKET-IMPL-006",
@@ -895,7 +895,7 @@
           "verify": "listing.spec.js: ei yhteystietoja HTML:ssä ennen klikkausta, tasan yksi POST, linkkien href:t sekä axe ennen ja jälkeen"
         }
       ],
-      "status": "draft"
+      "status": "approved"
     }
   ],
   "implementation_tickets": [
@@ -1117,7 +1117,7 @@
       "story": "STORY-006",
       "plan": "PLAN-006",
       "implemented_by_model": "Claude Opus 5.5",
-      "status": "review",
+      "status": "done",
       "files_changed": [
         "worker/src/contact.js",
         "worker/src/index.js",
@@ -1145,8 +1145,8 @@
         "compile_errors_after": 0,
         "notes": "TURVALLISUUS, katselmoi: (1) Yhteystiedot paljastetaan vain POST-pyynnöllä. Ne eivät ole sivun HTML:ssä ennen napin painallusta, mikä on testattu, eivätkä listassa tai julkisessa näkymässä. (2) Linkit rakentaa palvelin vain normalisoiduista arvoista (§12 sääntö 4), ja selain hyväksyy lisäksi vain alut mailto:, tel:+ ja https://wa.me/ (testattu javascript:-linkillä). (3) Nopeusrajoittimen avain on ilmoituskohtainen eikä IP-osoite. (4) Botit voivat vielä haravoida yhteystietoja kutsumalla päätepistettä suoraan. Turnstile (STORY-015) on tarkoitettu juuri tähän."
       },
-      "commit": null,
-      "progress": 90
+      "commit": "8f3134b",
+      "progress": 100
     }
   ],
   "testing_tickets": [
@@ -1677,7 +1677,7 @@
       "id": "TICKET-TEST-006",
       "story": "STORY-006",
       "implementation_ticket": "TICKET-IMPL-006",
-      "status": "in_progress",
+      "status": "done",
       "fix_summary": {
         "problem_and_root_cause": "Uusi ominaisuus. Toteutuksen aikana testit löysivät bugin: hidden-attribuutti ei piilottanut .button-elementtejä, koska luokan display: inline-flex voitti selaimen oletussäännön.",
         "files_changed": [
@@ -1745,20 +1745,20 @@
         "checked_items": [
           {
             "item": "Ilmoitussivulla tarjoan, toivon, noutopaikka ja tila, ja syvälinkki toimii (kuva STORY-008:ssa)",
-            "checked": false
+            "checked": true
           },
           {
             "item": "Yhteystiedot haetaan vasta napista, eivätkä ne ole HTML:ssä ennen sitä",
-            "checked": false
+            "checked": true
           },
           {
             "item": "mailto:, tel: ja wa.me-linkit toimivat puhelimessa",
-            "checked": false
+            "checked": true
           }
         ],
-        "decision": null,
-        "signed_by": null,
-        "date": null
+        "decision": "accepted",
+        "signed_by": "Sami",
+        "date": "2026-10-06"
       }
     }
   ]

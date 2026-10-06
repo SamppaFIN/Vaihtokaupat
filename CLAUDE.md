@@ -281,13 +281,13 @@ hakemisto.
   "source": "backlog.json",
   "epics": [
     { "id": "EPIC-001", "icon": "🏗️", "title": "Perusta ja julkaisuputki", "status": "done", "stories": ["STORY-001", "STORY-002", "STORY-003"] },
-    { "id": "EPIC-002", "icon": "🎸", "title": "Etusivu ja selaus", "status": "in_progress", "stories": ["STORY-004", "STORY-005", "STORY-006"] },
+    { "id": "EPIC-002", "icon": "🎸", "title": "Etusivu ja selaus", "status": "done", "stories": ["STORY-004", "STORY-005", "STORY-006"] },
     { "id": "EPIC-003", "icon": "✍️", "title": "Ilmoituksen elinkaari", "status": "in_progress", "stories": ["STORY-007", "STORY-008", "STORY-009", "STORY-010", "STORY-011"] },
     { "id": "EPIC-004", "icon": "🛡️", "title": "Tietosuoja ja ylläpito", "status": "todo", "stories": ["STORY-012", "STORY-013", "STORY-014", "STORY-015"] }
   ],
   "stories_total": 15,
   "testing_tickets": ["TICKET-TEST-001"],
-  "next": "STORY-006"
+  "next": "STORY-008"
 }
 ```
 

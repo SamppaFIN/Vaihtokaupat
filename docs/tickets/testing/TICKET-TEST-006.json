@@ -2,7 +2,7 @@
   "id": "TICKET-TEST-006",
   "story": "STORY-006",
   "implementation_ticket": "TICKET-IMPL-006",
-  "status": "in_progress",
+  "status": "done",
   "fix_summary": {
     "problem_and_root_cause": "Uusi ominaisuus. Toteutuksen aikana testit löysivät bugin: hidden-attribuutti ei piilottanut .button-elementtejä, koska luokan display: inline-flex voitti selaimen oletussäännön.",
     "files_changed": [
@@ -70,19 +70,19 @@
     "checked_items": [
       {
         "item": "Ilmoitussivulla tarjoan, toivon, noutopaikka ja tila, ja syvälinkki toimii (kuva STORY-008:ssa)",
-        "checked": false
+        "checked": true
       },
       {
         "item": "Yhteystiedot haetaan vasta napista, eivätkä ne ole HTML:ssä ennen sitä",
-        "checked": false
+        "checked": true
       },
       {
         "item": "mailto:, tel: ja wa.me-linkit toimivat puhelimessa",
-        "checked": false
+        "checked": true
       }
     ],
-    "decision": null,
-    "signed_by": null,
-    "date": null
+    "decision": "accepted",
+    "signed_by": "Sami",
+    "date": "2026-10-06"
   }
 }

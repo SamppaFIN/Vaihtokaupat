@@ -5,8 +5,18 @@
   "date": "2026-10-06",
   "approach": "Ilmoitussivu /<5-numeroinen tunniste> hakee julkisen näkymän osoitteesta GET /api/listings/:id ja näyttää otsikon, lippunumeron, nimen ja paikkakunnan sekä lippukortissa tarjoan-, toivon- ja noutopaikkatiedot ja tilan. Yhteystiedot haetaan vasta Näytä yhteystiedot -napista erillisestä päätepisteestä POST /api/listings/:id/contact, jonka linkit palvelin rakentaa normalisoiduista arvoista (contact.js: mailto:, tel:+ ja https://wa.me/). Selain hyväksyy lisävarmistuksena vain nämä kolme alkua. Päätepisteellä on ilmoituskohtainen nopeusrajoitin (contact:<id>), ja piilotettu ilmoitus palauttaa 404.",
   "alternatives_considered": [
-    { "name": "GET /api/listings/:id/contact", "pros": "Yksinkertaisempi.", "cons": "GET voi päätyä välimuisteihin ja hakurobottien seuraamaksi linkiksi, ja Turnstile-token (STORY-015) kulkee luontevammin POSTin rungossa.", "rejected_because": "POST pitää yhteystiedot poissa välimuisteista ja valmistaa STORY-015:een." },
-    { "name": "Yhteystiedot julkisessa näkymässä, piilotettuina CSS:llä", "pros": "Ei toista pyyntöä.", "cons": "Ne olisivat HTML:ssä ja kenen tahansa haravoitavissa.", "rejected_because": "Rikkoo hyväksymiskriteerin 2 ja §9 sääntö 7:n." }
+    {
+      "name": "GET /api/listings/:id/contact",
+      "pros": "Yksinkertaisempi.",
+      "cons": "GET voi päätyä välimuisteihin ja hakurobottien seuraamaksi linkiksi, ja Turnstile-token (STORY-015) kulkee luontevammin POSTin rungossa.",
+      "rejected_because": "POST pitää yhteystiedot poissa välimuisteista ja valmistaa STORY-015:een."
+    },
+    {
+      "name": "Yhteystiedot julkisessa näkymässä, piilotettuina CSS:llä",
+      "pros": "Ei toista pyyntöä.",
+      "cons": "Ne olisivat HTML:ssä ja kenen tahansa haravoitavissa.",
+      "rejected_because": "Rikkoo hyväksymiskriteerin 2 ja §9 sääntö 7:n."
+    }
   ],
   "files_to_change": [
     "worker/src/contact.js",
@@ -22,9 +32,21 @@
   ],
   "open_questions": [],
   "steps": [
-    { "step": 1, "action": "contact.js: linkit normalisoiduista arvoista", "verify": "contact.test.js: CLAUDE.md:n esimerkki 040 123 4567 → https://wa.me/358401234567, ja normalisoimattomasta arvosta ei tule linkkiä" },
-    { "step": 2, "action": "POST /api/listings/:id/contact, nopeusrajoitin ja piilotettu 404", "verify": "api.test.js ja worker.test.js" },
-    { "step": 3, "action": "Ilmoitussivu, nappi ja tilat (lataus, ei löydy, virhe ja yhteystiedot poistettu)", "verify": "listing.spec.js: ei yhteystietoja HTML:ssä ennen klikkausta, tasan yksi POST, linkkien href:t sekä axe ennen ja jälkeen" }
+    {
+      "step": 1,
+      "action": "contact.js: linkit normalisoiduista arvoista",
+      "verify": "contact.test.js: CLAUDE.md:n esimerkki 040 123 4567 → https://wa.me/358401234567, ja normalisoimattomasta arvosta ei tule linkkiä"
+    },
+    {
+      "step": 2,
+      "action": "POST /api/listings/:id/contact, nopeusrajoitin ja piilotettu 404",
+      "verify": "api.test.js ja worker.test.js"
+    },
+    {
+      "step": 3,
+      "action": "Ilmoitussivu, nappi ja tilat (lataus, ei löydy, virhe ja yhteystiedot poistettu)",
+      "verify": "listing.spec.js: ei yhteystietoja HTML:ssä ennen klikkausta, tasan yksi POST, linkkien href:t sekä axe ennen ja jälkeen"
+    }
   ],
-  "status": "draft"
+  "status": "approved"
 }

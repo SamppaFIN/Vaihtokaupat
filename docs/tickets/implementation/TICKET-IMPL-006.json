@@ -3,7 +3,7 @@
   "story": "STORY-006",
   "plan": "PLAN-006",
   "implemented_by_model": "Claude Opus 5.5",
-  "status": "review",
+  "status": "done",
   "files_changed": [
     "worker/src/contact.js",
     "worker/src/index.js",
@@ -31,6 +31,6 @@
     "compile_errors_after": 0,
     "notes": "TURVALLISUUS, katselmoi: (1) Yhteystiedot paljastetaan vain POST-pyynnöllä. Ne eivät ole sivun HTML:ssä ennen napin painallusta, mikä on testattu, eivätkä listassa tai julkisessa näkymässä. (2) Linkit rakentaa palvelin vain normalisoiduista arvoista (§12 sääntö 4), ja selain hyväksyy lisäksi vain alut mailto:, tel:+ ja https://wa.me/ (testattu javascript:-linkillä). (3) Nopeusrajoittimen avain on ilmoituskohtainen eikä IP-osoite. (4) Botit voivat vielä haravoida yhteystietoja kutsumalla päätepistettä suoraan. Turnstile (STORY-015) on tarkoitettu juuri tähän."
   },
-  "commit": null,
-  "progress": 90
+  "commit": "8f3134b",
+  "progress": 100
 }
