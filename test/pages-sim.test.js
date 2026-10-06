@@ -15,7 +15,7 @@ const get = (path) => fetch(origin + path, { redirect: 'manual' });
 test('site answers under the sub-path /Vaihtokaupat/', async () => {
   const res = await get(BASE);
   assert.equal(res.status, 200);
-  assert.match(await res.text(), /<h1>Vaihtokaupat<\/h1>/);
+  assert.match(await res.text(), /<h1[^>]*>Vaihtokaupat<\/h1>/);
 });
 
 test('"/" and the sub-path without slash redirect to the sub-path', async () => {

@@ -1,0 +1,56 @@
+{
+  "id": "PLAN-004",
+  "story": "STORY-004",
+  "author_model": "Claude Opus 5.5",
+  "date": "2026-10-06",
+  "approach": "Etusivu rakennetaan staattisena HTML:nä Arena-suunnitelman pohjalta. Tekstit tulevat sanatarkasti, ja tyylit muunnetaan arena.css:n komponenteiksi tokeneilla. Arenan SVG-kuvitukset (logo, sääntötimantti, plektra) kopioidaan sellaisinaan sivulle, ja ne käsitellään kuvatiedoston tapaan. Ilmoitussivun paikkamerkki (STORY-006) korvaa etusivun, kun osoitteessa on tunniste.",
+  "alternatives_considered": [
+    {
+      "name": "Esimerkkivaihdot (Hanna, Mari, Jenni) mukaan",
+      "pros": "Näyttää, miltä vaihto näyttää.",
+      "cons": "Ei kuulu STORY-004:n kriteereihin. Lisäksi \"3 ehdotusta\" -laskuri on rajattu MVP:n ulkopuolelle (päätös 2026-10-05).",
+      "rejected_because": "Oikeat ilmoituskortit tulevat STORY-005:ssä."
+    },
+    {
+      "name": "\"Liity\"-napit ja CTA-osio heti",
+      "pros": "Vastaa suunnitelmaa täydellisesti.",
+      "cons": "Lomaketta (STORY-007) ei ole, joten napit eivät johtaisi mihinkään.",
+      "rejected_because": "Kuollut nappi on huonompi kuin ei nappia. Napit lisätään STORY-007:ssä."
+    },
+    {
+      "name": "Kultaisen otsikon liukuväri sellaisenaan (tumma #6E5210-kaista)",
+      "pros": "Täsmälleen suunnitelman mukainen.",
+      "cons": "Kaistan kontrasti taustaa vasten on noin 2,7:1, eli alle ison tekstin rajan 3:1.",
+      "rejected_because": "Liukuväri tehdään tokeneista (--c-accent-hi → --c-accent → --c-accent-hi)."
+    }
+  ],
+  "files_to_change": [
+    "public/index.html",
+    "public/assets/arena.css",
+    "test/e2e/home.spec.js",
+    "test/e2e/arena.spec.js",
+    "test/e2e/routing.spec.js",
+    "test/pages-sim.test.js"
+  ],
+  "open_questions": [
+    "Säännön 6 sanamuoto \"Sopikaa vaihdon yksityiskohdat yksityisviestillä\" on Arenasta, mutta alustalla ei ole viestejä. Pidetäänkö se?"
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "action": "Etusivun osiot Arenasta: hero, Vaihda älä myy, ilmoituksen kolme osaa, kuusi sääntöä, liittymislupaus ja alatunniste",
+      "verify": "home.spec.js tarkistaa otsikot, osat, säännöt ja lupauksen tekstin."
+    },
+    {
+      "step": 2,
+      "action": "Täsmälleen yksi h1 ja ei vaakavieritystä",
+      "verify": "home.spec.js 390 px ja 1440 px leveydellä."
+    },
+    {
+      "step": 3,
+      "action": "axe ja kontrasti koko etusivulle",
+      "verify": "arena.spec.js: axe 0 rikkomusta. Pikselitesti 33 tekstielementille, kontrasti vähintään 4,5:1."
+    }
+  ],
+  "status": "draft"
+}

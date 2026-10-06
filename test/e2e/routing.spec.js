@@ -11,7 +11,7 @@ test('front page opens on the sub-path without console errors', async ({ page },
   const errors = collectErrors(page);
   await page.goto('');
   await expect(page.locator('h1')).toHaveCount(1);
-  await expect(page.locator('#route')).toHaveText('Etusivu');
+  await expect(page.locator('h1')).toHaveText('Vaihtokaupat');
   // The deep-link test below opens 404.html on purpose; here nothing may fail.
   expect(errors).toEqual([]);
   await page.screenshot({ path: info.outputPath('front.png'), fullPage: true });

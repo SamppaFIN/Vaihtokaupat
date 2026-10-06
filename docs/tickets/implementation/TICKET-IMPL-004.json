@@ -1,0 +1,34 @@
+{
+  "id": "TICKET-IMPL-004",
+  "story": "STORY-004",
+  "plan": "PLAN-004",
+  "implemented_by_model": "Claude Opus 5.5",
+  "status": "review",
+  "files_changed": [
+    "public/index.html",
+    "public/assets/arena.css",
+    "test/e2e/home.spec.js",
+    "test/e2e/arena.spec.js",
+    "test/e2e/routing.spec.js",
+    "test/pages-sim.test.js"
+  ],
+  "change_summary": "Etusivun osiot rakennettiin Arenasta sanatarkoin tekstein. arena.css sai komponentit: label, gold- ja chrome-liukuväriteksti, hero, osiot, kitarankielierotin, lippukortti, sääntökortti, lupaus ja alatunniste. Lisäksi tuli tokenit --c-on-accent (Arenan #1A1305) ja --fs-quote. Arenan SVG-symbolit kopioitiin index.html:ään sellaisinaan. Kuvakaappauksesta löytyi bugi: background-clip: text ei maalannut Ä:n ja Ö:n pisteitä tiukan rivikorkeuden takia (\"TEHDAAN\"). Ensin kirjoitettiin testi, joka toisti vian (0 vs. 381 ja 660 pikseliä), ja korjaus oli padding-block: 0.25em 0.1em. Kahdesta olemassa olevasta testistä muutettiin paikkamerkin varaan rakentuneet tarkistukset (pages-sim h1-regex ja routing-testin \"Etusivu\"), ja syy sanottiin ääneen ennen muutosta.",
+  "impact_analysis": {
+    "changed_symbols": [
+      "index.html: #route on nyt vain ilmoitusreitin h1. Etusivulla sitä ei ole."
+    ],
+    "call_sites_found": [
+      "test/e2e/routing.spec.js",
+      "test/e2e/arena.spec.js"
+    ],
+    "call_sites_updated": [
+      "test/e2e/routing.spec.js",
+      "test/e2e/arena.spec.js"
+    ],
+    "compile_errors_before": null,
+    "compile_errors_after": 0,
+    "notes": "Ei turvallisuusvaikutuksia: sivu on staattinen, ja ainoa käyttäjästä peräisin oleva arvo (reitin tunniste) asetetaan textContentillä, kuten ennenkin. Koristeelliset numerot (01–03, sääntöjen timantit) ovat aria-hidden, koska järjestyksen kertoo ol-lista."
+  },
+  "commit": null,
+  "progress": 90
+}

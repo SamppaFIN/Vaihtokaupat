@@ -1,7 +1,7 @@
 {
   "_meta": {
     "schema_version": "1.1",
-    "generated_at": "2026-10-06T05:30:00Z",
+    "generated_at": "2026-10-06T06:30:00Z",
     "generated_by": "Hermes (Claude Code)",
     "git_commit": "42cad48",
     "git_branch": "main",
@@ -70,7 +70,7 @@
       "title": "Etusivu ja selaus",
       "icon": "🎸",
       "description": "Kävijä ymmärtää idean ja löytää kiinnostavan vaihdon.",
-      "status": "todo",
+      "status": "in_progress",
       "stories": [
         "STORY-004",
         "STORY-005",
@@ -188,17 +188,17 @@
       "depends_on": [
         "STORY-003"
       ],
-      "status": "todo",
+      "status": "review",
       "acceptance_criteria": [
         "Etusivulla ovat hero, \"Vaihda, älä myy\", ilmoituksen kolme osaa, kuusi pelisääntöä ja liittymislupaus",
         "Leveydellä 390 px ei synny vaakavieritystä, ja axe-core on puhdas",
         "Sivulla on täsmälleen yksi h1"
       ],
-      "progress": 0,
+      "progress": 90,
       "linked": {
-        "plan": null,
-        "implementation": null,
-        "testing": null
+        "plan": "PLAN-004",
+        "implementation": "TICKET-IMPL-004",
+        "testing": "TICKET-TEST-004"
       }
     },
     {
@@ -669,6 +669,62 @@
         }
       ],
       "status": "approved"
+    },
+    {
+      "id": "PLAN-004",
+      "story": "STORY-004",
+      "author_model": "Claude Opus 5.5",
+      "date": "2026-10-06",
+      "approach": "Etusivu rakennetaan staattisena HTML:nä Arena-suunnitelman pohjalta. Tekstit tulevat sanatarkasti, ja tyylit muunnetaan arena.css:n komponenteiksi tokeneilla. Arenan SVG-kuvitukset (logo, sääntötimantti, plektra) kopioidaan sellaisinaan sivulle, ja ne käsitellään kuvatiedoston tapaan. Ilmoitussivun paikkamerkki (STORY-006) korvaa etusivun, kun osoitteessa on tunniste.",
+      "alternatives_considered": [
+        {
+          "name": "Esimerkkivaihdot (Hanna, Mari, Jenni) mukaan",
+          "pros": "Näyttää, miltä vaihto näyttää.",
+          "cons": "Ei kuulu STORY-004:n kriteereihin. Lisäksi \"3 ehdotusta\" -laskuri on rajattu MVP:n ulkopuolelle (päätös 2026-10-05).",
+          "rejected_because": "Oikeat ilmoituskortit tulevat STORY-005:ssä."
+        },
+        {
+          "name": "\"Liity\"-napit ja CTA-osio heti",
+          "pros": "Vastaa suunnitelmaa täydellisesti.",
+          "cons": "Lomaketta (STORY-007) ei ole, joten napit eivät johtaisi mihinkään.",
+          "rejected_because": "Kuollut nappi on huonompi kuin ei nappia. Napit lisätään STORY-007:ssä."
+        },
+        {
+          "name": "Kultaisen otsikon liukuväri sellaisenaan (tumma #6E5210-kaista)",
+          "pros": "Täsmälleen suunnitelman mukainen.",
+          "cons": "Kaistan kontrasti taustaa vasten on noin 2,7:1, eli alle ison tekstin rajan 3:1.",
+          "rejected_because": "Liukuväri tehdään tokeneista (--c-accent-hi → --c-accent → --c-accent-hi)."
+        }
+      ],
+      "files_to_change": [
+        "public/index.html",
+        "public/assets/arena.css",
+        "test/e2e/home.spec.js",
+        "test/e2e/arena.spec.js",
+        "test/e2e/routing.spec.js",
+        "test/pages-sim.test.js"
+      ],
+      "open_questions": [
+        "Säännön 6 sanamuoto \"Sopikaa vaihdon yksityiskohdat yksityisviestillä\" on Arenasta, mutta alustalla ei ole viestejä. Pidetäänkö se?"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "action": "Etusivun osiot Arenasta: hero, Vaihda älä myy, ilmoituksen kolme osaa, kuusi sääntöä, liittymislupaus ja alatunniste",
+          "verify": "home.spec.js tarkistaa otsikot, osat, säännöt ja lupauksen tekstin."
+        },
+        {
+          "step": 2,
+          "action": "Täsmälleen yksi h1 ja ei vaakavieritystä",
+          "verify": "home.spec.js 390 px ja 1440 px leveydellä."
+        },
+        {
+          "step": 3,
+          "action": "axe ja kontrasti koko etusivulle",
+          "verify": "arena.spec.js: axe 0 rikkomusta. Pikselitesti 33 tekstielementille, kontrasti vähintään 4,5:1."
+        }
+      ],
+      "status": "draft"
     }
   ],
   "implementation_tickets": [
@@ -768,6 +824,40 @@
       },
       "commit": "42cad48",
       "progress": 100
+    },
+    {
+      "id": "TICKET-IMPL-004",
+      "story": "STORY-004",
+      "plan": "PLAN-004",
+      "implemented_by_model": "Claude Opus 5.5",
+      "status": "review",
+      "files_changed": [
+        "public/index.html",
+        "public/assets/arena.css",
+        "test/e2e/home.spec.js",
+        "test/e2e/arena.spec.js",
+        "test/e2e/routing.spec.js",
+        "test/pages-sim.test.js"
+      ],
+      "change_summary": "Etusivun osiot rakennettiin Arenasta sanatarkoin tekstein. arena.css sai komponentit: label, gold- ja chrome-liukuväriteksti, hero, osiot, kitarankielierotin, lippukortti, sääntökortti, lupaus ja alatunniste. Lisäksi tuli tokenit --c-on-accent (Arenan #1A1305) ja --fs-quote. Arenan SVG-symbolit kopioitiin index.html:ään sellaisinaan. Kuvakaappauksesta löytyi bugi: background-clip: text ei maalannut Ä:n ja Ö:n pisteitä tiukan rivikorkeuden takia (\"TEHDAAN\"). Ensin kirjoitettiin testi, joka toisti vian (0 vs. 381 ja 660 pikseliä), ja korjaus oli padding-block: 0.25em 0.1em. Kahdesta olemassa olevasta testistä muutettiin paikkamerkin varaan rakentuneet tarkistukset (pages-sim h1-regex ja routing-testin \"Etusivu\"), ja syy sanottiin ääneen ennen muutosta.",
+      "impact_analysis": {
+        "changed_symbols": [
+          "index.html: #route on nyt vain ilmoitusreitin h1. Etusivulla sitä ei ole."
+        ],
+        "call_sites_found": [
+          "test/e2e/routing.spec.js",
+          "test/e2e/arena.spec.js"
+        ],
+        "call_sites_updated": [
+          "test/e2e/routing.spec.js",
+          "test/e2e/arena.spec.js"
+        ],
+        "compile_errors_before": null,
+        "compile_errors_after": 0,
+        "notes": "Ei turvallisuusvaikutuksia: sivu on staattinen, ja ainoa käyttäjästä peräisin oleva arvo (reitin tunniste) asetetaan textContentillä, kuten ennenkin. Koristeelliset numerot (01–03, sääntöjen timantit) ovat aria-hidden, koska järjestyksen kertoo ol-lista."
+      },
+      "commit": null,
+      "progress": 90
     }
   ],
   "testing_tickets": [
@@ -1031,6 +1121,89 @@
         "decision": "accepted",
         "signed_by": "Sami",
         "date": "2026-10-06"
+      }
+    },
+    {
+      "id": "TICKET-TEST-004",
+      "story": "STORY-004",
+      "implementation_ticket": "TICKET-IMPL-004",
+      "status": "in_progress",
+      "fix_summary": {
+        "problem_and_root_cause": "Uusi ominaisuus. Toteutuksen aikana löytyi ja korjattiin bugi: liukuväriotsikoista puuttuivat ääkkösten pisteet, koska background-clip: text maalaa vain elementin laatikon sisälle.",
+        "files_changed": [
+          "public/index.html",
+          "public/assets/arena.css",
+          "test/e2e/home.spec.js",
+          "test/e2e/arena.spec.js",
+          "test/e2e/routing.spec.js",
+          "test/pages-sim.test.js"
+        ]
+      },
+      "ai_testing": {
+        "environment": "Pages-simulaattori http://localhost:8082/Vaihtokaupat/, 390 px ja 1440 px",
+        "tooling": "Playwright 1.63 (Chromium), @axe-core/playwright 4.13",
+        "cases": [
+          {
+            "steps": "Etusivun osiot",
+            "expected": "Hero, \"Vaihda, älä myy\", ilmoituksen kolme osaa, kuusi sääntöä ja liittymislupaus",
+            "result": "h1, kolme h2:ta, kolme osaa h3-otsikoineen, kuusi sääntöä ja lupauksen teksti sanatarkasti (390 px ja 1440 px).",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Vaakavieritys",
+            "expected": "scrollWidth = clientWidth",
+            "result": "Ylivuoto 0 px (390 px ja 1440 px).",
+            "outcome": "pass"
+          },
+          {
+            "steps": "axe-core WCAG 2.1 AA",
+            "expected": "violations = []",
+            "result": "0 rikkomusta (390 px ja 1440 px).",
+            "outcome": "pass"
+          },
+          {
+            "steps": "h1-otsikoiden määrä",
+            "expected": "Täsmälleen yksi",
+            "result": "1 (390 px ja 1440 px).",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Kontrasti 33 tekstielementille, myös liukuväriteksteille (tummin pysäkki) ja spottivalojen päällä",
+            "expected": "Vähintään 4,5:1",
+            "result": "Pienimmät: hero-label 5,1, h1 5,49, h2 6,3 (1440 px). 390 px: 5,59, 6,1 ja 6,3.",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Liukuväriteksti maalaa ääkkösten pisteet",
+            "expected": "Laatikon ulkopuolella vähintään 90 % tasavärisen tekstin pikseleistä",
+            "result": "Ennen korjausta 0 vs. 381 ja 660 pikseliä (fail). Korjauksen jälkeen kaikki läpi. Tarkistettu myös silmällä täydellä tarkkuudella.",
+            "outcome": "pass"
+          }
+        ],
+        "console_findings": [],
+        "screenshots": [
+          "test-results/arena-screenshot-of-the-Arena-stage-mobile-390/arena.png",
+          "test-results/arena-screenshot-of-the-Arena-stage-desktop-1440/arena.png"
+        ]
+      },
+      "human_acceptance": {
+        "checked_items": [
+          {
+            "item": "Etusivulla hero, Vaihda älä myy, kolme osaa, kuusi sääntöä ja liittymislupaus",
+            "checked": false
+          },
+          {
+            "item": "390 px: ei vaakavieritystä, ja ulkoasu on luettava puhelimella",
+            "checked": false
+          },
+          {
+            "item": "Täsmälleen yksi h1",
+            "checked": false
+          }
+        ],
+        "decision": null,
+        "signed_by": null,
+        "date": null
       }
     }
   ]

@@ -10,14 +10,128 @@
 <link rel="stylesheet" href="assets/arena.css">
 </head>
 <body>
+<!-- Arena illustrations (logo, rule gem, pick), copied as-is from "Design system/Vaihtokaupat Arena.dc.html" -->
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+<defs>
+<linearGradient id="vkGoldA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF3B0"></stop><stop offset=".35" stop-color="#F6E27A"></stop><stop offset=".62" stop-color="#D4AF37"></stop><stop offset="1" stop-color="#8A6A1C"></stop></linearGradient>
+<linearGradient id="vkChromeA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FAFAFB"></stop><stop offset=".42" stop-color="#B8BCC4"></stop><stop offset=".5" stop-color="#4A4E55"></stop><stop offset=".62" stop-color="#C9CCD2"></stop><stop offset="1" stop-color="#F4F4F6"></stop></linearGradient>
+<radialGradient id="vkGlowA"><stop offset="0" stop-color="#F6E27A" stop-opacity=".5"></stop><stop offset="1" stop-color="#F6E27A" stop-opacity="0"></stop></radialGradient>
+<symbol id="vkLogoA" viewBox="0 0 100 100">
+<circle cx="50" cy="50" r="48" fill="url(#vkChromeA)"></circle>
+<circle cx="50" cy="50" r="44" fill="none" stroke="#FFFFFF" stroke-opacity=".6" stroke-width=".7"></circle>
+<circle cx="50" cy="50" r="41" fill="#0D0D10" stroke="#000000" stroke-opacity=".7" stroke-width="1.5"></circle>
+<circle cx="50" cy="50" r="22" fill="url(#vkGlowA)"></circle>
+<path d="M23.7 40.4A28 28 0 0 1 76.3 40.4" fill="none" stroke="#E5E4E2" stroke-width="4" stroke-linecap="round"></path>
+<polygon points="78.3,46 80.7,37.8 71.3,41.2" fill="#E5E4E2"></polygon>
+<path d="M76.3 59.6A28 28 0 0 1 23.7 59.6" fill="none" stroke="#E5E4E2" stroke-width="4" stroke-linecap="round"></path>
+<polygon points="21.7,54 19.3,62.2 28.7,58.8" fill="#E5E4E2"></polygon>
+<polygon points="42,37 58,37 66,45 50,64 34,45" fill="url(#vkGoldA)" stroke="#FFF3B0" stroke-width=".8"></polygon>
+<path d="M34 45H66M42 37L46 45L50 37L54 45L58 37M46 45L50 64L54 45" fill="none" stroke="#5C4510" stroke-opacity=".5" stroke-width=".8"></path>
+</symbol>
+<symbol id="vkDiamondA" viewBox="0 0 64 56">
+<polygon points="16,2 48,2 62,18 32,54 2,18" fill="url(#vkGoldA)" stroke="#FFF3B0" stroke-width="1"></polygon>
+<polygon points="16,2 22,18 2,18" fill="#FFFFFF" fill-opacity=".38"></polygon>
+<polygon points="32,2 42,18 22,18" fill="#FFFFFF" fill-opacity=".18"></polygon>
+<polygon points="42,18 62,18 32,54" fill="#5C4510" fill-opacity=".22"></polygon>
+<path d="M2 18H62M16 2L22 18L32 2L42 18L48 2" fill="none" stroke="#5C4510" stroke-opacity=".45" stroke-width="1"></path>
+<path d="M50 0L51.2 4.8L56 6L51.2 7.2L50 12L48.8 7.2L44 6L48.8 4.8Z" fill="#9FE8FF"></path>
+</symbol>
+<symbol id="vkPickA" viewBox="0 0 32 36"><path d="M16 1C28 1 31 7 30.5 12C29 21 21 30 16 35C11 30 3 21 1.5 12C1 7 4 1 16 1Z" fill="url(#vkGoldA)" stroke="#FFF3B0" stroke-width=".8"></path><path d="M16 5C24 5 26.5 9 26 12" fill="none" stroke="#FFFFFF" stroke-opacity=".55" stroke-width="1.2" stroke-linecap="round"></path></symbol>
+</defs>
+</svg>
+
 <div class="page">
 <main id="app">
-  <section class="hero" id="hero">
-    <p class="label">Vaihdetaan tavaraa</p>
-    <h1>Vaihtokaupat</h1>
-    <p id="route"></p>
-  </section>
+
+<section class="hero" id="hero">
+  <header class="site-header">
+    <svg viewBox="0 0 100 100" width="48" height="48" aria-hidden="true"><use href="#vkLogoA"></use></svg>
+    <span class="brand">Vaihtokaupat</span>
+  </header>
+  <div class="hero-body">
+    <p class="label twin">Vaihdetaan tavaraa</p>
+    <h1 class="gold-text shine">Vaihtokaupat</h1>
+    <p class="lead">Tavara vaihtaa omistajaa ilman rahaa. Ei myyntiä, ei ostamista – vain aitoja vaihtoja.</p>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="kuvaus">
+  <div class="inner prose">
+    <p class="label">Mistä on kyse</p>
+    <h2 id="kuvaus" class="chrome-text">Vaihda,<br>älä myy</h2>
+    <p>Vaihtokaupat on ryhmä, jossa tavara vaihtaa omistajaa ilman rahaa. Ei myyntiä, ei ostamista – vain aitoja vaihtoja.</p>
+    <p>Jätä ilmoitus, kerro mitä tarjoat ja mitä etsit tilalle. Sovi vaihto suoraan toisen jäsenen kanssa. <strong>Tervetuloa vaihtamaan!</strong></p>
+  </div>
+</section>
+
+<div class="strings" aria-hidden="true"><svg viewBox="0 0 32 36" width="30" height="34"><use href="#vkPickA"></use></svg></div>
+
+<section class="section" aria-labelledby="ilmoitus">
+  <div class="inner">
+    <p class="label">Ilmoitus kolmessa osassa</p>
+    <h2 id="ilmoitus" class="chrome-text">Miten ilmoitus tehdään</h2>
+    <ol class="grid">
+      <li class="card"><div class="card-bezel"><div class="card-body">
+        <span class="card-num" aria-hidden="true">01</span>
+        <h3>Mitä tarjotaan</h3>
+        <p>Kuvaile tavara ja sen kunto rehellisesti. Kuva auttaa.</p>
+        <p class="example">Tarjoan: vauvanvaatteita, koot 74–80</p>
+      </div></div></li>
+      <li class="card"><div class="card-bezel"><div class="card-body">
+        <span class="card-num" aria-hidden="true">02</span>
+        <h3>Mitä toivotaan tilalle</h3>
+        <p>Kerro mitä etsit vastineeksi – <strong>tai avoimet ehdotukset</strong>.</p>
+        <p class="example">Toivon: koot 92–98 tai avoimet ehdotukset</p>
+      </div></div></li>
+      <li class="card"><div class="card-bezel"><div class="card-body">
+        <span class="card-num" aria-hidden="true">03</span>
+        <h3>Paikkakunta / noutopaikka</h3>
+        <p>Missä tavara on ja mistä sen voi noutaa.</p>
+        <p class="example">Espoo, nouto Leppävaarasta</p>
+      </div></div></li>
+    </ol>
+  </div>
+</section>
+
+<div class="strings" aria-hidden="true"><svg viewBox="0 0 32 36" width="30" height="34"><use href="#vkPickA"></use></svg></div>
+
+<section class="section" aria-labelledby="saannot">
+  <div class="inner">
+    <p class="label">Pelisäännöt</p>
+    <h2 id="saannot" class="chrome-text">Ryhmän säännöt</h2>
+    <ol class="grid" style="--col: 330px">
+      <li class="rule"><div class="rule-body"><div class="gem" aria-hidden="true"><svg viewBox="0 0 64 56" width="58" height="51"><use href="#vkDiamondA"></use></svg><span>1</span></div><p><strong>Ei ostoa eikä myyntiä – vain vaihtoja.</strong> Rahaa ei saa pyytää eikä tarjota.</p></div></li>
+      <li class="rule"><div class="rule-body"><div class="gem" aria-hidden="true"><svg viewBox="0 0 64 56" width="58" height="51"><use href="#vkDiamondA"></use></svg><span>2</span></div><p>Ilmoituksessa kerro selkeästi <strong>mitä tarjotaan, mitä toivotaan tilalle</strong> ja paikkakunta / noutopaikka.</p></div></li>
+      <li class="rule"><div class="rule-body"><div class="gem" aria-hidden="true"><svg viewBox="0 0 64 56" width="58" height="51"><use href="#vkDiamondA"></use></svg><span>3</span></div><p><strong>Ei mainoksia,</strong> ei kaupallisia ilmoituksia, ei linkkejä verkkokauppoihin.</p></div></li>
+      <li class="rule"><div class="rule-body"><div class="gem" aria-hidden="true"><svg viewBox="0 0 64 56" width="58" height="51"><use href="#vkDiamondA"></use></svg><span>4</span></div><p><strong>Ole rehellinen tavaran kunnosta.</strong> Huijaaminen = <span class="ban">banni</span>.</p></div></li>
+      <li class="rule"><div class="rule-body"><div class="gem" aria-hidden="true"><svg viewBox="0 0 64 56" width="58" height="51"><use href="#vkDiamondA"></use></svg><span>5</span></div><p><strong>Kunnioita muita</strong> – ei herjaamista, ei painostamista.</p></div></li>
+      <li class="rule"><div class="rule-body"><div class="gem" aria-hidden="true"><svg viewBox="0 0 64 56" width="58" height="51"><use href="#vkDiamondA"></use></svg><span>6</span></div><p>Sopikaa vaihdon yksityiskohdat <strong>yksityisviestillä</strong>.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section" aria-label="Liittymislupaus">
+  <div class="pledge-frame">
+    <figure class="pledge">
+      <span class="corner tl" aria-hidden="true"></span><span class="corner tr" aria-hidden="true"></span>
+      <span class="corner bl" aria-hidden="true"></span><span class="corner br" aria-hidden="true"></span>
+      <figcaption class="label twin">Liittymislupaus</figcaption>
+      <blockquote><p class="gold-text">”Lupaan, että en myy enkä osta tässä ryhmässä – vain vaihdan.”</p></blockquote>
+    </figure>
+  </div>
+</section>
+
 </main>
+
+<footer class="site-footer">
+  <div class="inner">
+    <div class="logo-row">
+      <svg viewBox="0 0 100 100" width="64" height="64" aria-hidden="true"><use href="#vkLogoA"></use></svg>
+      <div><p class="brand">Vaihtokaupat</p><p>Vaihdetaan tavaraa</p></div>
+    </div>
+    <div><p class="slogan">Ei myyntiä · Ei ostamista · Vain vaihtoja</p><p>© 2026 Vaihtokaupat</p></div>
+  </div>
+</footer>
 </div>
 
 <script type="module">
@@ -25,12 +139,25 @@ import { restoreFromRedirect, parseRoute } from './assets/router.js';
 import { mountStage } from './assets/stage.js';
 
 restoreFromRedirect();
-mountStage(document.getElementById('hero'));
 
-// Placeholder until the front page (STORY-004) and listing page (STORY-006) exist:
-// shows which route was parsed. Route ids come from the URL, so textContent only.
+// Listing page placeholder until STORY-006: replaces the front page with the parsed id.
+// Route ids come from the URL, so textContent only.
 var r = parseRoute();
-document.getElementById('route').textContent = r.id ? 'Ilmoitus ' + r.id : 'Etusivu';
+if (r.id) {
+  var hero = document.createElement('section');
+  hero.className = 'hero';
+  var body = document.createElement('div');
+  body.className = 'hero-body';
+  var h1 = document.createElement('h1');
+  h1.id = 'route';
+  h1.textContent = 'Ilmoitus ' + r.id;
+  body.append(h1);
+  hero.append(body);
+  document.getElementById('app').replaceChildren(hero);
+  mountStage(hero);
+} else {
+  mountStage(document.getElementById('hero'));
+}
 </script>
 </body>
 </html>

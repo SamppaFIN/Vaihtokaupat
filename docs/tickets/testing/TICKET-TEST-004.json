@@ -1,0 +1,83 @@
+{
+  "id": "TICKET-TEST-004",
+  "story": "STORY-004",
+  "implementation_ticket": "TICKET-IMPL-004",
+  "status": "in_progress",
+  "fix_summary": {
+    "problem_and_root_cause": "Uusi ominaisuus. Toteutuksen aikana löytyi ja korjattiin bugi: liukuväriotsikoista puuttuivat ääkkösten pisteet, koska background-clip: text maalaa vain elementin laatikon sisälle.",
+    "files_changed": [
+      "public/index.html",
+      "public/assets/arena.css",
+      "test/e2e/home.spec.js",
+      "test/e2e/arena.spec.js",
+      "test/e2e/routing.spec.js",
+      "test/pages-sim.test.js"
+    ]
+  },
+  "ai_testing": {
+    "environment": "Pages-simulaattori http://localhost:8082/Vaihtokaupat/, 390 px ja 1440 px",
+    "tooling": "Playwright 1.63 (Chromium), @axe-core/playwright 4.13",
+    "cases": [
+      {
+        "steps": "Etusivun osiot",
+        "expected": "Hero, \"Vaihda, älä myy\", ilmoituksen kolme osaa, kuusi sääntöä ja liittymislupaus",
+        "result": "h1, kolme h2:ta, kolme osaa h3-otsikoineen, kuusi sääntöä ja lupauksen teksti sanatarkasti (390 px ja 1440 px).",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Vaakavieritys",
+        "expected": "scrollWidth = clientWidth",
+        "result": "Ylivuoto 0 px (390 px ja 1440 px).",
+        "outcome": "pass"
+      },
+      {
+        "steps": "axe-core WCAG 2.1 AA",
+        "expected": "violations = []",
+        "result": "0 rikkomusta (390 px ja 1440 px).",
+        "outcome": "pass"
+      },
+      {
+        "steps": "h1-otsikoiden määrä",
+        "expected": "Täsmälleen yksi",
+        "result": "1 (390 px ja 1440 px).",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Kontrasti 33 tekstielementille, myös liukuväriteksteille (tummin pysäkki) ja spottivalojen päällä",
+        "expected": "Vähintään 4,5:1",
+        "result": "Pienimmät: hero-label 5,1, h1 5,49, h2 6,3 (1440 px). 390 px: 5,59, 6,1 ja 6,3.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Liukuväriteksti maalaa ääkkösten pisteet",
+        "expected": "Laatikon ulkopuolella vähintään 90 % tasavärisen tekstin pikseleistä",
+        "result": "Ennen korjausta 0 vs. 381 ja 660 pikseliä (fail). Korjauksen jälkeen kaikki läpi. Tarkistettu myös silmällä täydellä tarkkuudella.",
+        "outcome": "pass"
+      }
+    ],
+    "console_findings": [],
+    "screenshots": [
+      "test-results/arena-screenshot-of-the-Arena-stage-mobile-390/arena.png",
+      "test-results/arena-screenshot-of-the-Arena-stage-desktop-1440/arena.png"
+    ]
+  },
+  "human_acceptance": {
+    "checked_items": [
+      {
+        "item": "Etusivulla hero, Vaihda älä myy, kolme osaa, kuusi sääntöä ja liittymislupaus",
+        "checked": false
+      },
+      {
+        "item": "390 px: ei vaakavieritystä, ja ulkoasu on luettava puhelimella",
+        "checked": false
+      },
+      {
+        "item": "Täsmälleen yksi h1",
+        "checked": false
+      }
+    ],
+    "decision": null,
+    "signed_by": null,
+    "date": null
+  }
+}

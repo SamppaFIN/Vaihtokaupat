@@ -43,31 +43,53 @@ test('axe-core finds no WCAG 2.1 AA violations', async ({ page }) => {
 // axe cannot measure text over gradients and blended beams (it reports them as
 // "incomplete"), so this measures the rendered result: hide the text, sample the backdrop
 // under each text element at 8 points of the animation cycle and compare against the
-// brightest pixel found. Stars and lamps are 1–18 px decoration and are left out.
+// brightest pixel found. Gradient text counts as its darkest opaque colour stop.
+// Stars and lamps are 1–18 px decoration and are left out.
+const CONTRAST_TARGETS = [
+  '.brand', '.label', '.hero h1', '.lead', '.section h2', '.prose p',
+  '.card-body h3', '.card-body p', '.rule-body p', '.pledge blockquote p', '.site-footer p',
+];
+
 test('text keeps at least 4.5:1 contrast over spotlights and gradients', async ({ page }, info) => {
   await page.goto('');
   await page.evaluate(() => document.fonts.ready);
-  const targets = ['.hero .label', '.hero h1', '#route'];
 
-  const colors = await page.evaluate((sels) => {
+  const targets = await page.evaluate((selectors) => {
     const ctx = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
-    return sels.map((s) => {
+    const rgba = (css) => {
       ctx.clearRect(0, 0, 1, 1);
-      ctx.fillStyle = getComputedStyle(document.querySelector(s)).color;
+      ctx.fillStyle = css;
       ctx.fillRect(0, 0, 1, 1);
-      return Array.from(ctx.getImageData(0, 0, 1, 1).data.slice(0, 3));
-    });
-  }, targets);
-  const boxes = [];
-  for (const s of targets) boxes.push(await page.locator(s).boundingBox());
+      return Array.from(ctx.getImageData(0, 0, 1, 1).data);
+    };
+    const lum = ([r, g, b]) => [r, g, b].reduce((s, c, i) => {
+      c /= 255; c = c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+      return s + [0.2126, 0.7152, 0.0722][i] * c;
+    }, 0);
+    const out = [];
+    for (const el of document.querySelectorAll(selectors.join(','))) {
+      const cs = getComputedStyle(el);
+      let colors = [rgba(cs.color)];
+      if (cs.webkitTextFillColor.endsWith(', 0)') || cs.webkitTextFillColor === 'transparent') {
+        const stops = cs.backgroundImage.match(/(?:oklch|oklab|rgba?|color)\([^()]*\)/g) || [];
+        colors = stops.map(rgba).filter((c) => c[3] === 255);
+      }
+      const darkest = colors.sort((a, b) => lum(a) - lum(b))[0].slice(0, 3);
+      const r = el.getBoundingClientRect();
+      out.push({ name: `${el.tagName.toLowerCase()}.${el.className || ''} "${el.textContent.trim().slice(0, 24)}"`, text: darkest, box: { x: r.x + scrollX, y: r.y + scrollY, w: r.width, h: r.height } });
+      el.dataset.ct = '';
+    }
+    return out;
+  }, CONTRAST_TARGETS);
+  expect(targets.length).toBeGreaterThan(20);
 
-  await page.addStyleTag({ content: '.hero :not(.stage-fx, .stage-fx *) { color: transparent !important; } .stage-fx .star, .stage-fx .lamp { display: none; }' });
+  await page.addStyleTag({ content: '[data-ct] { visibility: hidden !important; } .stage-fx .star, .stage-fx .lamp { display: none; }' });
 
-  const worst = targets.map(() => [0, 0, 0]);
   const lum = ([r, g, b]) => {
     const f = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
     return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
   };
+  const worst = targets.map(() => [0, 0, 0]);
   for (let k = 0; k < 8; k++) {
     await page.evaluate((k) => {
       for (const a of document.getAnimations()) {
@@ -75,18 +97,18 @@ test('text keeps at least 4.5:1 contrast over spotlights and gradients', async (
         a.currentTime = (k / 8) * a.effect.getComputedTiming().duration;
       }
     }, k);
-    const png = (await page.screenshot()).toString('base64');
+    const png = (await page.screenshot({ fullPage: true })).toString('base64');
     const maxima = await page.evaluate(async ({ png, boxes }) => {
       const img = new Image();
       img.src = 'data:image/png;base64,' + png;
       await img.decode();
       const c = document.createElement('canvas');
       c.width = img.width; c.height = img.height;
-      const ctx = c.getContext('2d');
+      const ctx = c.getContext('2d', { willReadFrequently: true });
       ctx.drawImage(img, 0, 0);
-      const scale = img.width / innerWidth;
+      const scale = img.width / document.documentElement.clientWidth;
       return boxes.map((b) => {
-        const d = ctx.getImageData(Math.floor(b.x * scale), Math.floor(b.y * scale), Math.ceil(b.width * scale), Math.ceil(b.height * scale)).data;
+        const d = ctx.getImageData(Math.floor(b.x * scale), Math.floor(b.y * scale), Math.max(1, Math.ceil(b.w * scale)), Math.max(1, Math.ceil(b.h * scale))).data;
         let best = [0, 0, 0], bestSum = -1;
         for (let i = 0; i < d.length; i += 4) {
           const sum = 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2];
@@ -94,13 +116,13 @@ test('text keeps at least 4.5:1 contrast over spotlights and gradients', async (
         }
         return best;
       });
-    }, { png, boxes });
+    }, { png, boxes: targets.map((t) => t.box) });
     maxima.forEach((m, i) => { if (lum(m) > lum(worst[i])) worst[i] = m; });
   }
 
-  const report = targets.map((s, i) => {
-    const [hi, lo] = [lum(colors[i]), lum(worst[i])].sort((a, b) => b - a);
-    return { target: s, text: colors[i], brightestBackground: worst[i], ratio: Math.round(((hi + 0.05) / (lo + 0.05)) * 100) / 100 };
+  const report = targets.map((t, i) => {
+    const [hi, lo] = [lum(t.text), lum(worst[i])].sort((a, b) => b - a);
+    return { target: t.name, text: t.text, brightestBackground: worst[i], ratio: Math.round(((hi + 0.05) / (lo + 0.05)) * 100) / 100 };
   });
   mkdirSync(info.outputDir, { recursive: true });
   writeFileSync(info.outputPath('contrast.json'), JSON.stringify(report, null, 2));
