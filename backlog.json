@@ -1,9 +1,9 @@
 {
   "_meta": {
     "schema_version": "1.1",
-    "generated_at": "2026-10-06T10:00:00Z",
+    "generated_at": "2026-10-06T10:30:00Z",
     "generated_by": "Hermes (Claude Code)",
-    "git_commit": "719ed6a",
+    "git_commit": "fe3f7ea",
     "git_branch": "main",
     "language": "fi"
   },
@@ -76,7 +76,7 @@
         "STORY-005",
         "STORY-006"
       ],
-      "progress": 33
+      "progress": 67
     },
     {
       "id": "EPIC-003",
@@ -211,13 +211,13 @@
       "depends_on": [
         "STORY-007"
       ],
-      "status": "review",
+      "status": "done",
       "acceptance_criteria": [
         "Paikkakunta-, tila- ja tekstihakusuodattimet toimivat yhdessä",
         "Tyhjä tulos näytetään tyhjänä tilana",
         "Listarajapinnan vastauksessa ei ole yhteystietoja (testattu)"
       ],
-      "progress": 90,
+      "progress": 100,
       "linked": {
         "plan": "PLAN-005",
         "implementation": "TICKET-IMPL-005",
@@ -843,7 +843,7 @@
           "verify": "grid.spec.js 390 px ja 1440 px leveydellä, kontrastitesti korteille ja kuvakaappaus"
         }
       ],
-      "status": "draft"
+      "status": "approved"
     }
   ],
   "implementation_tickets": [
@@ -1024,7 +1024,7 @@
       "story": "STORY-005",
       "plan": "PLAN-005",
       "implemented_by_model": "Claude Opus 5.5",
-      "status": "review",
+      "status": "done",
       "files_changed": [
         "worker/src/index.js",
         "public/assets/filter.js",
@@ -1057,8 +1057,8 @@
         "compile_errors_after": 0,
         "notes": "TURVALLISUUS: listarajapinta rakentuu sallittujen kenttien listasta, joten yhteystiedot, tiiviste ja ilmoitusmäärä eivät voi vuotaa, vaikka ne olisivat tallennetussa ilmoituksessa (testattu). Metatieto ei sisällä yhteystietoja (testattu), ja sen koko pysyy alle R2:n 2 kt:n rajan. Kortit rakennetaan textContentillä. Huomio: STORY-012:n piilotuksen on päivitettävä myös customMetadatan status, muuten piilotettu ilmoitus näkyy listassa."
       },
-      "commit": null,
-      "progress": 90
+      "commit": "fe3f7ea",
+      "progress": 100
     }
   ],
   "testing_tickets": [
@@ -1507,7 +1507,7 @@
       "id": "TICKET-TEST-005",
       "story": "STORY-005",
       "implementation_ticket": "TICKET-IMPL-005",
-      "status": "in_progress",
+      "status": "done",
       "fix_summary": {
         "problem_and_root_cause": "Uusi ominaisuus, ei korjaus.",
         "files_changed": [
@@ -1569,20 +1569,20 @@
         "checked_items": [
           {
             "item": "Paikkakunta-, tila- ja tekstihakusuodattimet toimivat yhdessä",
-            "checked": false
+            "checked": true
           },
           {
             "item": "Tyhjä tulos näytetään tyhjänä tilana",
-            "checked": false
+            "checked": true
           },
           {
             "item": "Listarajapinnan vastauksessa ei ole yhteystietoja",
-            "checked": false
+            "checked": true
           }
         ],
-        "decision": null,
-        "signed_by": null,
-        "date": null
+        "decision": "accepted",
+        "signed_by": "Sami",
+        "date": "2026-10-06"
       }
     }
   ]

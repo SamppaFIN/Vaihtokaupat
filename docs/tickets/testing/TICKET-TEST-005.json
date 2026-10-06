@@ -2,7 +2,7 @@
   "id": "TICKET-TEST-005",
   "story": "STORY-005",
   "implementation_ticket": "TICKET-IMPL-005",
-  "status": "in_progress",
+  "status": "done",
   "fix_summary": {
     "problem_and_root_cause": "Uusi ominaisuus, ei korjaus.",
     "files_changed": [
@@ -64,19 +64,19 @@
     "checked_items": [
       {
         "item": "Paikkakunta-, tila- ja tekstihakusuodattimet toimivat yhdessä",
-        "checked": false
+        "checked": true
       },
       {
         "item": "Tyhjä tulos näytetään tyhjänä tilana",
-        "checked": false
+        "checked": true
       },
       {
         "item": "Listarajapinnan vastauksessa ei ole yhteystietoja",
-        "checked": false
+        "checked": true
       }
     ],
-    "decision": null,
-    "signed_by": null,
-    "date": null
+    "decision": "accepted",
+    "signed_by": "Sami",
+    "date": "2026-10-06"
   }
 }

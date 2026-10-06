@@ -3,7 +3,7 @@
   "story": "STORY-005",
   "plan": "PLAN-005",
   "implemented_by_model": "Claude Opus 5.5",
-  "status": "review",
+  "status": "done",
   "files_changed": [
     "worker/src/index.js",
     "public/assets/filter.js",
@@ -36,6 +36,6 @@
     "compile_errors_after": 0,
     "notes": "TURVALLISUUS: listarajapinta rakentuu sallittujen kenttien listasta, joten yhteystiedot, tiiviste ja ilmoitusmäärä eivät voi vuotaa, vaikka ne olisivat tallennetussa ilmoituksessa (testattu). Metatieto ei sisällä yhteystietoja (testattu), ja sen koko pysyy alle R2:n 2 kt:n rajan. Kortit rakennetaan textContentillä. Huomio: STORY-012:n piilotuksen on päivitettävä myös customMetadatan status, muuten piilotettu ilmoitus näkyy listassa."
   },
-  "commit": null,
-  "progress": 90
+  "commit": "fe3f7ea",
+  "progress": 100
 }

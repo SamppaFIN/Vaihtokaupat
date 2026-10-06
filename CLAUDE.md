@@ -287,7 +287,7 @@ hakemisto.
   ],
   "stories_total": 15,
   "testing_tickets": ["TICKET-TEST-001"],
-  "next": "STORY-005"
+  "next": "STORY-006"
 }
 ```
 

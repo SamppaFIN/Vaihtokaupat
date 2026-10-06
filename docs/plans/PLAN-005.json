@@ -5,9 +5,24 @@
   "date": "2026-10-06",
   "approach": "GET /api/listings listaa R2:n listings/-etuliitteen customMetadatasta (v1: tunniste, otsikko, nimi, paikkakunta, alue, 140 merkin tiivistelmät tarjoan- ja toivon-teksteistä, tila ja luontiaika). Kortti rakennetaan kenttä kerrallaan sallittujen kenttien listasta, joten yhteystiedot eivät voi päätyä listaan. Vanhoille ilmoituksille ilman v1-metatietoa tiedot luetaan itse ilmoituksesta (§12 sääntö 6). Selain hakee kaikki näkyvät ilmoitukset kerran ja suodattaa ne paikkakunnan, tilan (oletuksena Avoimet) ja tekstihaun mukaan puhtaalla filter.js-moduulilla. Kortit noudattavat Arenan keikkalippumallia, ja ruudukossa on lataus-, tyhjä- ja virhetila.",
   "alternatives_considered": [
-    { "name": "Suodatus palvelimella kyselyparametreilla", "pros": "Pienempi vastaus, kun ilmoituksia on paljon.", "cons": "Jokainen suodatinmuutos vaatisi verkkopyynnön. Satoja ilmoituksia mahtuu yhteen vastaukseen.", "rejected_because": "CLAUDE.md §8: mitoitetaan nykyisen koon mukaan ja muutetaan mittauksen perusteella." },
-    { "name": "Lista luetaan jokaisen ilmoituksen JSON-tiedostosta", "pros": "Ei metatietoversiointia.", "cons": "Jokainen ilmoitus vaatisi oman R2-lukunsa jokaisella sivulatauksella.", "rejected_because": "customMetadata tulee list()-kutsun mukana ilman lisälukuja. Vanhat ilmoitukset luetaan tiedostosta vain siirtymävaiheessa." },
-    { "name": "Esimerkkivaihdot-osion paikalle ruudukko", "pros": "Sama paikka kuin Arena-suunnitelmassa.", "cons": "Ilmoitukset jäisivät kolmen esittelyosion alle.", "rejected_because": "Selaaminen on palvelun ydin, joten ruudukko tulee heti heron alle." }
+    {
+      "name": "Suodatus palvelimella kyselyparametreilla",
+      "pros": "Pienempi vastaus, kun ilmoituksia on paljon.",
+      "cons": "Jokainen suodatinmuutos vaatisi verkkopyynnön. Satoja ilmoituksia mahtuu yhteen vastaukseen.",
+      "rejected_because": "CLAUDE.md §8: mitoitetaan nykyisen koon mukaan ja muutetaan mittauksen perusteella."
+    },
+    {
+      "name": "Lista luetaan jokaisen ilmoituksen JSON-tiedostosta",
+      "pros": "Ei metatietoversiointia.",
+      "cons": "Jokainen ilmoitus vaatisi oman R2-lukunsa jokaisella sivulatauksella.",
+      "rejected_because": "customMetadata tulee list()-kutsun mukana ilman lisälukuja. Vanhat ilmoitukset luetaan tiedostosta vain siirtymävaiheessa."
+    },
+    {
+      "name": "Esimerkkivaihdot-osion paikalle ruudukko",
+      "pros": "Sama paikka kuin Arena-suunnitelmassa.",
+      "cons": "Ilmoitukset jäisivät kolmen esittelyosion alle.",
+      "rejected_because": "Selaaminen on palvelun ydin, joten ruudukko tulee heti heron alle."
+    }
   ],
   "files_to_change": [
     "worker/src/index.js",
@@ -24,9 +39,21 @@
   ],
   "open_questions": [],
   "steps": [
-    { "step": 1, "action": "GET /api/listings, v1-metatieto, vanhan muodon luku tiedostosta ja piilotettujen pois jättäminen", "verify": "worker.test.js (vanha muoto, piilotettu, järjestys, ei yhteystietoja, tiivistelmä ja metatiedon koko alle 2 kt) ja api.test.js oikealla Workerilla" },
-    { "step": 2, "action": "filter.js: paikkakunta, tila ja tekstihaku yhdessä", "verify": "filter.test.js" },
-    { "step": 3, "action": "Ruudukko, kortit ja tilat (lataus, tyhjä, ei ilmoituksia, virhe ja uudelleenyritys)", "verify": "grid.spec.js 390 px ja 1440 px leveydellä, kontrastitesti korteille ja kuvakaappaus" }
+    {
+      "step": 1,
+      "action": "GET /api/listings, v1-metatieto, vanhan muodon luku tiedostosta ja piilotettujen pois jättäminen",
+      "verify": "worker.test.js (vanha muoto, piilotettu, järjestys, ei yhteystietoja, tiivistelmä ja metatiedon koko alle 2 kt) ja api.test.js oikealla Workerilla"
+    },
+    {
+      "step": 2,
+      "action": "filter.js: paikkakunta, tila ja tekstihaku yhdessä",
+      "verify": "filter.test.js"
+    },
+    {
+      "step": 3,
+      "action": "Ruudukko, kortit ja tilat (lataus, tyhjä, ei ilmoituksia, virhe ja uudelleenyritys)",
+      "verify": "grid.spec.js 390 px ja 1440 px leveydellä, kontrastitesti korteille ja kuvakaappaus"
+    }
   ],
-  "status": "draft"
+  "status": "approved"
 }
