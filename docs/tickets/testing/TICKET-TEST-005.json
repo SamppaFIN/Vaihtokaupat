@@ -1,0 +1,82 @@
+{
+  "id": "TICKET-TEST-005",
+  "story": "STORY-005",
+  "implementation_ticket": "TICKET-IMPL-005",
+  "status": "in_progress",
+  "fix_summary": {
+    "problem_and_root_cause": "Uusi ominaisuus, ei korjaus.",
+    "files_changed": [
+      "worker/src/index.js",
+      "public/assets/filter.js",
+      "public/assets/grid.js",
+      "public/assets/arena.css",
+      "public/index.html",
+      "test/filter.test.js",
+      "test/worker.test.js",
+      "test/api.test.js",
+      "test/e2e/grid.spec.js",
+      "test/e2e/home.spec.js",
+      "test/e2e/arena.spec.js"
+    ]
+  },
+  "ai_testing": {
+    "environment": "Pages-simulaattori :8082 ja wrangler dev --env local :8797. Integraatio unstable_dev.",
+    "tooling": "node:test, wrangler unstable_dev, Playwright 1.63 (paikallisesti --workers=1, koska kone oli kuormitettu)",
+    "cases": [
+      {
+        "steps": "Paikkakunta, tila ja tekstihaku yhdessä",
+        "expected": "Jokainen suodatin rajaa, ja yhdistelmät toimivat",
+        "result": "E2E: haku → 3, paikkakunta → 2, sana lisää → 1, Vaihdetut → 0 (390 px ja 1440 px). filter.test.js: oletus Avoimet, Vaihdetut ja Kaikki, paikkakunta kirjainkoosta riippumatta, kaikkien sanojen oltava osumia ja yhdistelmät.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Tyhjä tulos",
+        "expected": "Tyhjä tila",
+        "result": "\"Ei ilmoituksia näillä hakuehdoilla.\" ja Tyhjennä suodattimet -nappi palauttaa lomakkeen. Kun ilmoituksia ei ole lainkaan: \"Vielä ei ilmoituksia. Jätä ensimmäinen!\" Latausvirhe näyttää virheen ja Yritä uudelleen -napin, joka toimii.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Listarajapinnassa ei yhteystietoja",
+        "expected": "Ei sähköpostia, puhelinta, tiivistettä eikä contact-kenttää",
+        "result": "Testattu kolmella tasolla: worker.test.js (myös tallennetun ilmoituksen yhteystiedot ja tiiviste), api.test.js oikealla Workerilla ja E2E: ei listavastauksessa eikä sivun HTML:ssä.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Vanha ilmoitus ilman v1-metatietoa (§12 sääntö 6)",
+        "expected": "Näkyy listassa täydellisenä",
+        "result": "worker.test.js: kortin kentät luetaan itse ilmoituksesta.",
+        "outcome": "pass"
+      },
+      {
+        "steps": "Saavutettavuus ja ulkoasu",
+        "expected": "axe 0, kontrasti vähintään 4,5:1, kuvakaappaukset",
+        "result": "axe 0 rikkomusta. Kontrastitesti kattaa korttien tekstit ja suodattimet, ja kaikki läpäisivät. Kolmen kortin kuvakaappaukset 390 px ja 1440 px on katsottu.",
+        "outcome": "pass"
+      }
+    ],
+    "console_findings": [],
+    "screenshots": [
+      "scratchpad grid-390.png ja grid-1440.png (suodatettu kolmeen korttiin)",
+      "test-results/grid-screenshot-of-the-grid-*/grid.png"
+    ]
+  },
+  "human_acceptance": {
+    "checked_items": [
+      {
+        "item": "Paikkakunta-, tila- ja tekstihakusuodattimet toimivat yhdessä",
+        "checked": false
+      },
+      {
+        "item": "Tyhjä tulos näytetään tyhjänä tilana",
+        "checked": false
+      },
+      {
+        "item": "Listarajapinnan vastauksessa ei ole yhteystietoja",
+        "checked": false
+      }
+    ],
+    "decision": null,
+    "signed_by": null,
+    "date": null
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "id": "TICKET-IMPL-005",
+  "story": "STORY-005",
+  "plan": "PLAN-005",
+  "implemented_by_model": "Claude Opus 5.5",
+  "status": "review",
+  "files_changed": [
+    "worker/src/index.js",
+    "public/assets/filter.js",
+    "public/assets/grid.js",
+    "public/assets/arena.css",
+    "public/index.html",
+    "test/filter.test.js",
+    "test/worker.test.js",
+    "test/api.test.js",
+    "test/e2e/grid.spec.js",
+    "test/e2e/home.spec.js",
+    "test/e2e/arena.spec.js"
+  ],
+  "change_summary": "GET /api/listings palauttaa kortit R2:n v1-customMetadatasta. Kortti rakennetaan sallittujen kenttien listasta (cardFor), ja tarjoan- ja toivon-teksteistä tulee 140 merkin tiivistelmät. Ilmoitukset ilman v1-metatietoa luetaan itse ilmoituksesta (§12 sääntö 6), piilotetut jätetään pois, ja lista järjestetään uusin ensin. Luonti kirjoittaa nyt v1-metatiedon. Etusivulla on heron alla Vaihtopöytä/Ilmoitukset-osio, jossa on haku, paikkakunta (koottu datasta) ja tila (oletuksena Avoimet). Kortit ovat Arenan keikkalippuja: lippunumero, otsikko on linkki ilmoitussivulle, ja tila on tekstinä. Ruudukossa on lataus-, tyhjä-, ei ilmoituksia- ja virhetila sekä uudelleenyritys.",
+  "impact_analysis": {
+    "changed_symbols": [
+      "worker: customMetaFor() kirjoittaa nyt kortin kentät ja v=1",
+      "index.html: Ilmoitukset-osio on ensimmäinen h2"
+    ],
+    "call_sites_found": [
+      "createListing (customMetaFor)",
+      "test/e2e/home.spec.js (h2-lista)",
+      "test/e2e/arena.spec.js (kontrastikohteet)"
+    ],
+    "call_sites_updated": [
+      "test/e2e/home.spec.js",
+      "test/e2e/arena.spec.js"
+    ],
+    "compile_errors_before": null,
+    "compile_errors_after": 0,
+    "notes": "TURVALLISUUS: listarajapinta rakentuu sallittujen kenttien listasta, joten yhteystiedot, tiiviste ja ilmoitusmäärä eivät voi vuotaa, vaikka ne olisivat tallennetussa ilmoituksessa (testattu). Metatieto ei sisällä yhteystietoja (testattu), ja sen koko pysyy alle R2:n 2 kt:n rajan. Kortit rakennetaan textContentillä. Huomio: STORY-012:n piilotuksen on päivitettävä myös customMetadatan status, muuten piilotettu ilmoitus näkyy listassa."
+  },
+  "commit": null,
+  "progress": 90
+}

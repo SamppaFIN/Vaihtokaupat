@@ -93,6 +93,17 @@ test('honeypot: looks like success to a bot, nothing is stored', async () => {
   assert.equal((await worker.fetch(`/api/listings/${id}`)).status, 404);
 });
 
+test('list returns the new listing as a card without contacts', async () => {
+  const { id } = await (await post(valid())).json();
+  const res = await worker.fetch('/api/listings');
+  assert.equal(res.status, 200);
+  const text = await res.text();
+  const card = JSON.parse(text).listings.find((l) => l.id === id);
+  assert.equal(card.title, 'Vauvanvaatteet 74–80');
+  assert.equal(card.status, 'open');
+  for (const secret of ['testi@example.fi', '401234567', 'codeHash', 'contact']) assert.equal(text.includes(secret), false, secret);
+});
+
 test('unknown or malformed id answers 404', async () => {
   assert.equal((await worker.fetch('/api/listings/99999x')).status, 404);
   assert.equal((await worker.fetch('/api/listings/..%2F..%2Fsecret')).status, 404);

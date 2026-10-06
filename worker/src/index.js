@@ -3,6 +3,7 @@
  * Structure copied from SamppaFIN/BandRock@7098a01 (worker/src/index.js).
  *
  *   GET    /api                  health check
+ *   GET    /api/listings         cards for the grid (no contacts, no hidden listings)
  *   POST   /api/listings         new listing; returns the edit code ONCE
  *   GET    /api/listings/:id     public view (never the code hash, never contacts)
  *
@@ -60,9 +61,34 @@ function publicView(listing) {
   return pub;
 }
 
-// Searchable fields for the list (R2 customMetadata). Never contacts (§9 rule 7).
+const SUMMARY = 140;
+const summary = (text) => {
+  const s = String(text || '').replace(/\s+/g, ' ').trim();
+  return s.length > SUMMARY ? s.slice(0, SUMMARY - 1).trimEnd() + '…' : s;
+};
+
+// One card in the list. Built field by field (a whitelist), so contacts, the code hash
+// or report counts can never slip into the list response (§9 rule 7). Values are strings
+// because R2 customMetadata only holds strings.
+function cardFor(listing) {
+  return {
+    id: String(listing.id),
+    title: listing.title || '',
+    name: listing.name || '',
+    city: listing.city || '',
+    area: listing.area || '',
+    offer: summary(listing.offer),
+    want: summary(listing.want),
+    status: listing.status || 'open',
+    created: String(listing.created || 0),
+  };
+}
+
+// customMetadata version. Listings saved before v1 (STORY-007) only had id/title/city/
+// area/status; listListings reads those from the object itself (§12 rule 6).
+const META_VERSION = '1';
 function customMetaFor(listing) {
-  return { id: listing.id, title: listing.title, city: listing.city, area: listing.area, status: listing.status };
+  return { ...cardFor(listing), v: META_VERSION };
 }
 
 // Ticket-style number such as 40291. Listings are public, so the id is not a secret,
@@ -106,6 +132,29 @@ async function createListing(request, env, cors) {
   return json({ ok: true, id, code }, 201, cors);
 }
 
+async function listListings(env, cors) {
+  const listings = [];
+  let cursor;
+  do {
+    const page = await env.BUCKET.list({ prefix: 'listings/', cursor, include: ['customMetadata'] });
+    for (const obj of page.objects) {
+      let card;
+      if (obj.customMetadata && obj.customMetadata.v === META_VERSION) {
+        const { v, ...meta } = obj.customMetadata;
+        card = cardFor(meta);
+      } else {
+        const body = await env.BUCKET.get(obj.key);
+        if (!body) continue;
+        card = cardFor(await body.json());
+      }
+      if (card.status !== 'hidden') listings.push(card);
+    }
+    cursor = page.truncated ? page.cursor : undefined;
+  } while (cursor);
+  listings.sort((a, b) => Number(b.created) - Number(a.created));
+  return json({ listings }, 200, { ...cors, 'cache-control': 'no-store' });
+}
+
 async function getListing(env, id, cors) {
   if (!/^\d{5}$/.test(id)) return json({ error: 'not_found' }, 404, cors);
   const obj = await env.BUCKET.get(keyOf(id));
@@ -129,6 +178,7 @@ export default {
       }
 
       if (parts[0] === 'api' && parts[1] === 'listings') {
+        if (parts.length === 2 && request.method === 'GET') return await listListings(env, cors);
         if (parts.length === 2 && request.method === 'POST') return await createListing(request, env, cors);
         if (parts.length === 3 && request.method === 'GET') return await getListing(env, decodeURIComponent(parts[2]), cors);
         return json({ error: 'method_not_allowed' }, 405, cors);

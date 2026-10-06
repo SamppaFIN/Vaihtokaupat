@@ -1,7 +1,7 @@
 {
   "_meta": {
     "schema_version": "1.1",
-    "generated_at": "2026-10-06T08:30:00Z",
+    "generated_at": "2026-10-06T10:00:00Z",
     "generated_by": "Hermes (Claude Code)",
     "git_commit": "719ed6a",
     "git_branch": "main",
@@ -211,17 +211,17 @@
       "depends_on": [
         "STORY-007"
       ],
-      "status": "todo",
+      "status": "review",
       "acceptance_criteria": [
         "Paikkakunta-, tila- ja tekstihakusuodattimet toimivat yhdessä",
         "Tyhjä tulos näytetään tyhjänä tilana",
         "Listarajapinnan vastauksessa ei ole yhteystietoja (testattu)"
       ],
-      "progress": 0,
+      "progress": 90,
       "linked": {
-        "plan": null,
-        "implementation": null,
-        "testing": null
+        "plan": "PLAN-005",
+        "implementation": "TICKET-IMPL-005",
+        "testing": "TICKET-TEST-005"
       }
     },
     {
@@ -785,6 +785,65 @@
         }
       ],
       "status": "approved"
+    },
+    {
+      "id": "PLAN-005",
+      "story": "STORY-005",
+      "author_model": "Claude Opus 5.5",
+      "date": "2026-10-06",
+      "approach": "GET /api/listings listaa R2:n listings/-etuliitteen customMetadatasta (v1: tunniste, otsikko, nimi, paikkakunta, alue, 140 merkin tiivistelmät tarjoan- ja toivon-teksteistä, tila ja luontiaika). Kortti rakennetaan kenttä kerrallaan sallittujen kenttien listasta, joten yhteystiedot eivät voi päätyä listaan. Vanhoille ilmoituksille ilman v1-metatietoa tiedot luetaan itse ilmoituksesta (§12 sääntö 6). Selain hakee kaikki näkyvät ilmoitukset kerran ja suodattaa ne paikkakunnan, tilan (oletuksena Avoimet) ja tekstihaun mukaan puhtaalla filter.js-moduulilla. Kortit noudattavat Arenan keikkalippumallia, ja ruudukossa on lataus-, tyhjä- ja virhetila.",
+      "alternatives_considered": [
+        {
+          "name": "Suodatus palvelimella kyselyparametreilla",
+          "pros": "Pienempi vastaus, kun ilmoituksia on paljon.",
+          "cons": "Jokainen suodatinmuutos vaatisi verkkopyynnön. Satoja ilmoituksia mahtuu yhteen vastaukseen.",
+          "rejected_because": "CLAUDE.md §8: mitoitetaan nykyisen koon mukaan ja muutetaan mittauksen perusteella."
+        },
+        {
+          "name": "Lista luetaan jokaisen ilmoituksen JSON-tiedostosta",
+          "pros": "Ei metatietoversiointia.",
+          "cons": "Jokainen ilmoitus vaatisi oman R2-lukunsa jokaisella sivulatauksella.",
+          "rejected_because": "customMetadata tulee list()-kutsun mukana ilman lisälukuja. Vanhat ilmoitukset luetaan tiedostosta vain siirtymävaiheessa."
+        },
+        {
+          "name": "Esimerkkivaihdot-osion paikalle ruudukko",
+          "pros": "Sama paikka kuin Arena-suunnitelmassa.",
+          "cons": "Ilmoitukset jäisivät kolmen esittelyosion alle.",
+          "rejected_because": "Selaaminen on palvelun ydin, joten ruudukko tulee heti heron alle."
+        }
+      ],
+      "files_to_change": [
+        "worker/src/index.js",
+        "public/assets/filter.js",
+        "public/assets/grid.js",
+        "public/assets/arena.css",
+        "public/index.html",
+        "test/filter.test.js",
+        "test/worker.test.js",
+        "test/api.test.js",
+        "test/e2e/grid.spec.js",
+        "test/e2e/home.spec.js",
+        "test/e2e/arena.spec.js"
+      ],
+      "open_questions": [],
+      "steps": [
+        {
+          "step": 1,
+          "action": "GET /api/listings, v1-metatieto, vanhan muodon luku tiedostosta ja piilotettujen pois jättäminen",
+          "verify": "worker.test.js (vanha muoto, piilotettu, järjestys, ei yhteystietoja, tiivistelmä ja metatiedon koko alle 2 kt) ja api.test.js oikealla Workerilla"
+        },
+        {
+          "step": 2,
+          "action": "filter.js: paikkakunta, tila ja tekstihaku yhdessä",
+          "verify": "filter.test.js"
+        },
+        {
+          "step": 3,
+          "action": "Ruudukko, kortit ja tilat (lataus, tyhjä, ei ilmoituksia, virhe ja uudelleenyritys)",
+          "verify": "grid.spec.js 390 px ja 1440 px leveydellä, kontrastitesti korteille ja kuvakaappaus"
+        }
+      ],
+      "status": "draft"
     }
   ],
   "implementation_tickets": [
@@ -959,6 +1018,47 @@
       },
       "commit": "719ed6a",
       "progress": 100
+    },
+    {
+      "id": "TICKET-IMPL-005",
+      "story": "STORY-005",
+      "plan": "PLAN-005",
+      "implemented_by_model": "Claude Opus 5.5",
+      "status": "review",
+      "files_changed": [
+        "worker/src/index.js",
+        "public/assets/filter.js",
+        "public/assets/grid.js",
+        "public/assets/arena.css",
+        "public/index.html",
+        "test/filter.test.js",
+        "test/worker.test.js",
+        "test/api.test.js",
+        "test/e2e/grid.spec.js",
+        "test/e2e/home.spec.js",
+        "test/e2e/arena.spec.js"
+      ],
+      "change_summary": "GET /api/listings palauttaa kortit R2:n v1-customMetadatasta. Kortti rakennetaan sallittujen kenttien listasta (cardFor), ja tarjoan- ja toivon-teksteistä tulee 140 merkin tiivistelmät. Ilmoitukset ilman v1-metatietoa luetaan itse ilmoituksesta (§12 sääntö 6), piilotetut jätetään pois, ja lista järjestetään uusin ensin. Luonti kirjoittaa nyt v1-metatiedon. Etusivulla on heron alla Vaihtopöytä/Ilmoitukset-osio, jossa on haku, paikkakunta (koottu datasta) ja tila (oletuksena Avoimet). Kortit ovat Arenan keikkalippuja: lippunumero, otsikko on linkki ilmoitussivulle, ja tila on tekstinä. Ruudukossa on lataus-, tyhjä-, ei ilmoituksia- ja virhetila sekä uudelleenyritys.",
+      "impact_analysis": {
+        "changed_symbols": [
+          "worker: customMetaFor() kirjoittaa nyt kortin kentät ja v=1",
+          "index.html: Ilmoitukset-osio on ensimmäinen h2"
+        ],
+        "call_sites_found": [
+          "createListing (customMetaFor)",
+          "test/e2e/home.spec.js (h2-lista)",
+          "test/e2e/arena.spec.js (kontrastikohteet)"
+        ],
+        "call_sites_updated": [
+          "test/e2e/home.spec.js",
+          "test/e2e/arena.spec.js"
+        ],
+        "compile_errors_before": null,
+        "compile_errors_after": 0,
+        "notes": "TURVALLISUUS: listarajapinta rakentuu sallittujen kenttien listasta, joten yhteystiedot, tiiviste ja ilmoitusmäärä eivät voi vuotaa, vaikka ne olisivat tallennetussa ilmoituksessa (testattu). Metatieto ei sisällä yhteystietoja (testattu), ja sen koko pysyy alle R2:n 2 kt:n rajan. Kortit rakennetaan textContentillä. Huomio: STORY-012:n piilotuksen on päivitettävä myös customMetadatan status, muuten piilotettu ilmoitus näkyy listassa."
+      },
+      "commit": null,
+      "progress": 90
     }
   ],
   "testing_tickets": [
@@ -1401,6 +1501,88 @@
         "decision": "accepted",
         "signed_by": "Sami",
         "date": "2026-10-06"
+      }
+    },
+    {
+      "id": "TICKET-TEST-005",
+      "story": "STORY-005",
+      "implementation_ticket": "TICKET-IMPL-005",
+      "status": "in_progress",
+      "fix_summary": {
+        "problem_and_root_cause": "Uusi ominaisuus, ei korjaus.",
+        "files_changed": [
+          "worker/src/index.js",
+          "public/assets/filter.js",
+          "public/assets/grid.js",
+          "public/assets/arena.css",
+          "public/index.html",
+          "test/filter.test.js",
+          "test/worker.test.js",
+          "test/api.test.js",
+          "test/e2e/grid.spec.js",
+          "test/e2e/home.spec.js",
+          "test/e2e/arena.spec.js"
+        ]
+      },
+      "ai_testing": {
+        "environment": "Pages-simulaattori :8082 ja wrangler dev --env local :8797. Integraatio unstable_dev.",
+        "tooling": "node:test, wrangler unstable_dev, Playwright 1.63 (paikallisesti --workers=1, koska kone oli kuormitettu)",
+        "cases": [
+          {
+            "steps": "Paikkakunta, tila ja tekstihaku yhdessä",
+            "expected": "Jokainen suodatin rajaa, ja yhdistelmät toimivat",
+            "result": "E2E: haku → 3, paikkakunta → 2, sana lisää → 1, Vaihdetut → 0 (390 px ja 1440 px). filter.test.js: oletus Avoimet, Vaihdetut ja Kaikki, paikkakunta kirjainkoosta riippumatta, kaikkien sanojen oltava osumia ja yhdistelmät.",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Tyhjä tulos",
+            "expected": "Tyhjä tila",
+            "result": "\"Ei ilmoituksia näillä hakuehdoilla.\" ja Tyhjennä suodattimet -nappi palauttaa lomakkeen. Kun ilmoituksia ei ole lainkaan: \"Vielä ei ilmoituksia. Jätä ensimmäinen!\" Latausvirhe näyttää virheen ja Yritä uudelleen -napin, joka toimii.",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Listarajapinnassa ei yhteystietoja",
+            "expected": "Ei sähköpostia, puhelinta, tiivistettä eikä contact-kenttää",
+            "result": "Testattu kolmella tasolla: worker.test.js (myös tallennetun ilmoituksen yhteystiedot ja tiiviste), api.test.js oikealla Workerilla ja E2E: ei listavastauksessa eikä sivun HTML:ssä.",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Vanha ilmoitus ilman v1-metatietoa (§12 sääntö 6)",
+            "expected": "Näkyy listassa täydellisenä",
+            "result": "worker.test.js: kortin kentät luetaan itse ilmoituksesta.",
+            "outcome": "pass"
+          },
+          {
+            "steps": "Saavutettavuus ja ulkoasu",
+            "expected": "axe 0, kontrasti vähintään 4,5:1, kuvakaappaukset",
+            "result": "axe 0 rikkomusta. Kontrastitesti kattaa korttien tekstit ja suodattimet, ja kaikki läpäisivät. Kolmen kortin kuvakaappaukset 390 px ja 1440 px on katsottu.",
+            "outcome": "pass"
+          }
+        ],
+        "console_findings": [],
+        "screenshots": [
+          "scratchpad grid-390.png ja grid-1440.png (suodatettu kolmeen korttiin)",
+          "test-results/grid-screenshot-of-the-grid-*/grid.png"
+        ]
+      },
+      "human_acceptance": {
+        "checked_items": [
+          {
+            "item": "Paikkakunta-, tila- ja tekstihakusuodattimet toimivat yhdessä",
+            "checked": false
+          },
+          {
+            "item": "Tyhjä tulos näytetään tyhjänä tilana",
+            "checked": false
+          },
+          {
+            "item": "Listarajapinnan vastauksessa ei ole yhteystietoja",
+            "checked": false
+          }
+        ],
+        "decision": null,
+        "signed_by": null,
+        "date": null
       }
     }
   ]

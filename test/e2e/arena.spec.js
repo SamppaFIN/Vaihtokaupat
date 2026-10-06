@@ -48,11 +48,15 @@ test('axe-core finds no WCAG 2.1 AA violations', async ({ page }) => {
 const CONTRAST_TARGETS = [
   '.brand', '.label', '.hero h1', '.lead', '.section h2', '.prose p',
   '.card-body h3', '.card-body p', '.rule-body p', '.pledge blockquote p', '.site-footer p',
+  '.filters label', '.result-count', '.ticket-meta span', '.ticket h3', '.ticket dt', '.ticket dd', '.status',
 ];
 
-test('text keeps at least 4.5:1 contrast over spotlights and gradients', async ({ page }, info) => {
+test('text keeps at least 4.5:1 contrast over spotlights and gradients', async ({ page, request }, info) => {
+  // At least one ticket card on the page (local Worker).
+  await request.post('http://localhost:8797/api/listings', { data: { title: 'Kontrastitesti', offer: 'Pulkka', want: 'Sukset', city: 'Espoo', phone: '0401234567', pledge: true } });
   await page.goto('');
   await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator('.ticket h3').first()).toBeVisible();
 
   const targets = await page.evaluate((selectors) => {
     const ctx = document.createElement('canvas').getContext('2d', { willReadFrequently: true });

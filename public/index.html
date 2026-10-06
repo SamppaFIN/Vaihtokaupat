@@ -57,6 +57,29 @@
   </div>
 </section>
 
+<section class="section" id="ilmoitukset" aria-labelledby="ilmoitukset-h">
+  <div class="inner">
+    <p class="label">Vaihtopöytä</p>
+    <h2 id="ilmoitukset-h" class="chrome-text">Ilmoitukset</h2>
+    <form class="filters" role="search" aria-label="Suodata ilmoituksia">
+      <label>Hae<input type="search" name="q" autocomplete="off"></label>
+      <label>Paikkakunta<select name="city"><option value="">Kaikki paikkakunnat</option></select></label>
+      <label>Tila<select name="status"><option value="open" selected>Avoimet</option><option value="traded">Vaihdetut</option><option value="">Kaikki</option></select></label>
+    </form>
+    <p class="result-count" role="status"></p>
+    <ul class="grid tickets" style="--col: 320px"></ul>
+    <div class="empty" hidden>
+      <p class="empty-text"></p>
+      <button class="button ghost clear" type="button">Tyhjennä suodattimet</button>
+      <a class="button ghost" href="uusi">Jätä ilmoitus</a>
+    </div>
+    <div class="load-error" role="alert" hidden>
+      <p>Virhe: ilmoituksia ei voitu ladata. Tarkista verkkoyhteys ja yritä uudelleen.</p>
+      <button class="button ghost" type="button">Yritä uudelleen</button>
+    </div>
+  </div>
+</section>
+
 <section class="section" aria-labelledby="kuvaus">
   <div class="inner prose">
     <p class="label">Mistä on kyse</p>
@@ -242,6 +265,7 @@
 import { restoreFromRedirect, parseRoute } from './assets/router.js';
 import { mountStage } from './assets/stage.js';
 import { mountCreate } from './assets/create.js';
+import { mountGrid } from './assets/grid.js';
 
 restoreFromRedirect();
 
@@ -264,6 +288,7 @@ if (r.id === 'uusi') {
   mountStage(hero);
 } else {
   mountStage(document.getElementById('hero'));
+  mountGrid(document.getElementById('ilmoitukset'));
 }
 </script>
 </body>
